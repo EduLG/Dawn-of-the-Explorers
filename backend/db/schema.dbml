@@ -14,7 +14,7 @@ Table characters {
 
 Table equipment_types {
   type_id int [pk, increment]
-  name varchar(50) [not null] // head, chest, legs, primary_arm, secondary_arm
+  name varchar(50) [not null] // head, chest, Accesory, primary_arm, secondary_arm
 }
 
 Table equipment {
