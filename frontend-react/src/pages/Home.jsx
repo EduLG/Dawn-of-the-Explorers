@@ -59,50 +59,53 @@ const Home = () => {
 
         <main className="space-y-6">
           <section>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {cards.map((card) => (
                 <div
                   key={card}
                   className="relative rounded-xl overflow-hidden border border-white/6 bg-gradient-to-b from-white/6 to-white/3 shadow-lg hover:scale-[1.02] transition-transform duration-200"
                 >
-                  <div className="p-4 flex flex-col items-center gap-3">
-                    <div className="w-36 h-36 rounded-full bg-[#e6d3a3] p-2 flex items-center justify-center">
-                      <Avatar
-                        src={adventurer}
-                        alt={`Adventurer ${card}`}
-                        size="8"
-                      />
-                    </div>
-                    <div className="text-center">
-                      <div className="text-base font-semibold text-[#3b2a1a]">
-                        Adventurer
+                  <div className="p-4 h-full flex flex-col md:flex-row items-center md:items-stretch gap-4">
+                    <div className="flex-shrink-0 flex items-center justify-center md:pl-2">
+                      <div className="w-28 h-28 rounded-full bg-[#e6d3a3] p-1 flex items-center justify-center">
+                        <Avatar
+                          src={adventurer}
+                          alt={`Adventurer ${card}`}
+                          size="7"
+                        />
                       </div>
                     </div>
 
-                    <div className="w-full mt-2">
-                      <div className="flex items-start justify-between w-full text-sm text-[#6b4f2a]">
-                        <div className="flex-1">
-                          <div className="text-xs text-[#e6d3a3]">
-                            Equipment
-                          </div>
-                          <ul className="mt-1 space-y-1">
-                            <li className="text-[#3b2a1a]">Primary arm</li>
-                            <li className="text-[#3b2a1a]">Secondary arm</li>
-                            <li className="text-[#3b2a1a]">Head</li>
-                            <li className="text-[#3b2a1a]">Chest</li>
-                            <li className="text-[#3b2a1a]">Accessory</li>
-                          </ul>
-                        </div>
+                    <div className="flex-1 flex flex-col justify-center w-full">
+                      <div className="text-base font-semibold text-[#3b2a1a] mb-1">
+                        Adventurer
+                      </div>
 
-                        <div className="flex-1 text-right">
-                          <div className="text-xs text-[#e6d3a3]">Equipped</div>
-                          <ul className="mt-1 space-y-1">
-                            <li className="text-[#3b2a1a]">Iron Sword</li>
-                            <li className="text-[#3b2a1a]">Iron Shield</li>
-                            <li className="text-[#3b2a1a]">Helmet</li>
-                            <li className="text-[#3b2a1a]">Steel Chest</li>
-                            <li className="text-[#3b2a1a]">Silver Ring</li>
-                          </ul>
+                      <div className="w-full mt-0 text-sm text-[#6b4f2a]">
+                        <div className="flex items-start justify-between w-full">
+                          <div className="flex-1">
+                            <div className="text-xs text-[#e6d3a3]">Type</div>
+                            <ul className="mt-1 space-y-1">
+                              <li className="text-[#3b2a1a]">Primary arm</li>
+                              <li className="text-[#3b2a1a]">Secondary arm</li>
+                              <li className="text-[#3b2a1a]">Head</li>
+                              <li className="text-[#3b2a1a]">Chest</li>
+                              <li className="text-[#3b2a1a]">Accessory</li>
+                            </ul>
+                          </div>
+
+                          <div className="flex-1 text-right">
+                            <div className="text-xs text-[#e6d3a3]">
+                              Equipped
+                            </div>
+                            <ul className="mt-1 space-y-1">
+                              <li className="text-[#3b2a1a]">Iron Sword</li>
+                              <li className="text-[#3b2a1a]">Iron Shield</li>
+                              <li className="text-[#3b2a1a]">Helmet</li>
+                              <li className="text-[#3b2a1a]">Steel Chest</li>
+                              <li className="text-[#3b2a1a]">Silver Ring</li>
+                            </ul>
+                          </div>
                         </div>
                       </div>
                     </div>
