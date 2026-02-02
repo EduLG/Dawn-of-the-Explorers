@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@radix-ui/themes";
+import { Button, Avatar } from "@radix-ui/themes";
 import adventurer from "../assets/resources/character-templates/adventurer.png";
 import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
@@ -20,30 +20,11 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4">
             <img src={headerlogo} alt="Logo" className="h-15" />
-            <div className="hidden sm:flex items-center bg-white/6 rounded-md px-3 py-1 gap-2">
-              <input
-                className="bg-transparent outline-none placeholder:text-[#e6d3a3] text-[#f3e5c8] w-56"
-                placeholder="Search characters, equipment..."
-              />
-              <Button variant="ghost" size="small">
-                Search
-              </Button>
-            </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Button variant="ghost" className="px-3 py-2 hidden sm:inline-flex">
-              New
-            </Button>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#b08d57] to-[#6b4f2a] flex items-center justify-center text-white font-semibold">
-                E
-              </div>
-              <div className="text-sm hidden sm:block">
-                <div className="text-[#f3e5c8] font-medium">eduladron</div>
-                <div className="text-[#e6d3a3] text-[12px]">View profile</div>
-              </div>
-            </div>
+            <Avatar fallback="E" />
+            <div className="text-[#f3e5c8] font-medium">eduladron</div>
           </div>
         </div>
       </header>
@@ -59,12 +40,17 @@ const Home = () => {
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
-                  Equipment
+                  Manage equipment
                 </Button>
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
                   Dungeons
+                </Button>
+              </li>
+              <li>
+                <Button variant="ghost" className="w-full justify-start">
+                  Market
                 </Button>
               </li>
             </ul>
@@ -81,18 +67,45 @@ const Home = () => {
                 >
                   <div className="p-4 flex flex-col items-center gap-3">
                     <div className="w-36 h-36 rounded-full bg-[#e6d3a3] p-2 flex items-center justify-center">
-                      <img
+                      <Avatar
                         src={adventurer}
-                        alt="Adventurer"
-                        className="w-full h-full object-contain"
+                        alt={`Adventurer ${card}`}
+                        size="8"
                       />
                     </div>
                     <div className="text-center">
                       <div className="text-base font-semibold text-[#3b2a1a]">
-                        Adventurer #{card}
+                        Adventurer
                       </div>
                     </div>
-                    <div className="w-full flex gap-2 mt-2"></div>
+
+                    <div className="w-full mt-2">
+                      <div className="flex items-start justify-between w-full text-sm text-[#6b4f2a]">
+                        <div className="flex-1">
+                          <div className="text-xs text-[#e6d3a3]">
+                            Equipment
+                          </div>
+                          <ul className="mt-1 space-y-1">
+                            <li className="text-[#3b2a1a]">Primary arm</li>
+                            <li className="text-[#3b2a1a]">Secondary arm</li>
+                            <li className="text-[#3b2a1a]">Head</li>
+                            <li className="text-[#3b2a1a]">Chest</li>
+                            <li className="text-[#3b2a1a]">Accessory</li>
+                          </ul>
+                        </div>
+
+                        <div className="flex-1 text-right">
+                          <div className="text-xs text-[#e6d3a3]">Equipped</div>
+                          <ul className="mt-1 space-y-1">
+                            <li className="text-[#3b2a1a]">Iron Sword</li>
+                            <li className="text-[#3b2a1a]">Iron Shield</li>
+                            <li className="text-[#3b2a1a]">Helmet</li>
+                            <li className="text-[#3b2a1a]">Steel Chest</li>
+                            <li className="text-[#3b2a1a]">Silver Ring</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
