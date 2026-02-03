@@ -65,7 +65,6 @@ const Home = () => {
                   key={c}
                   name={`Adventurer ${c}`}
                   characterClass="Adventurer"
-                  // mock data per card (later replace with backend payload)
                   equipmentTypes={[
                     "Primary arm",
                     "Secondary arm",

@@ -3,7 +3,7 @@ import adventurer from "../assets/resources/character-templates/adventurer.png";
 
 const CharacterCard = ({
   name = "Edu",
-  characterClass = "Adventurer",
+  characterClass = "rer",
   equipmentTypes = [
     "Primary arm",
     "Secondary arm",
@@ -22,10 +22,10 @@ const CharacterCard = ({
 }) => {
   return (
     <Card className="relative rounded-xl overflow-hidden border border-white/6 bg-gradient-to-b from-white/6 to-white/3 shadow-lg hover:scale-[1.02] transition-transform duration-200">
-      <div className="p-4 h-full flex flex-col md:flex-row items-center md:items-stretch gap-4">
+      <div className="p-2 h-full flex flex-col md:flex-row items-center md:items-stretch gap-6">
         <div className="flex-shrink-0 flex items-center justify-center md:pl-2">
-          <div className="w-28 h-28 rounded-full bg-[#e6d3a3] p-1 flex items-center justify-center">
-            <Avatar src={avatarSrc} alt={name} size="7" />
+          <div className="rounded-full bg-[#e6d3a3] flex items-center justify-center">
+            <Avatar src={avatarSrc} alt={name} size="9" />
           </div>
         </div>
 
