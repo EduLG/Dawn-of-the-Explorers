@@ -2,64 +2,82 @@ from app import create_app
 from app.extensions import db
 from werkzeug.security import generate_password_hash
 
+from app.models.job import Job
 from app.models.user import User
+from app.models.party import Party
 from app.models.character import Character
-from app.models.equipment_type import EquipmentType
 from app.models.equipment import Equipment
+from app.models.party_character import PartyCharacter
 from app.models.character_equipment import CharacterEquipment
 
 app = create_app()
 
 with app.app_context():
-    # Create user
+
+    db.drop_all()
+    db.create_all()
+
+
     user = User(username="eduladron", email="edu@example.com", password=generate_password_hash("12345678"))
     db.session.add(user)
     db.session.commit()
 
-    # Create characters
-    character_types = ["adventurer", "engineer", "alchemist", "scholar"]
-    characters = []
-    for ctype in character_types:
-        character = Character(user_id=user.user_id, character_type=ctype, name=f"{ctype}_char")
-        db.session.add(character)
-        characters.append(character)
+    job_names = [
+        "engineer", "gunslinger", "adventurer", "alchemist",
+        "warrior", "fender", "sage", "assasin", "scholar", "beastmaster"
+    ]
+
+    jobs = []
+    for name in job_names:
+        icon_path = f"frontend-react/src/assets/resources/character_templates/{name}_male.png"
+        jobs.append(Job(name=name, icon=icon_path))
+        
+    db.session.add_all(jobs)
     db.session.commit()
 
-    # Create equipment-types
-    equipment_type_names = ["head", "chest", "legs", "main_arm", "secondary_arm"]
-    equipment_types = []
-    for name in equipment_type_names:
-        etype = EquipmentType(name=name)
-        db.session.add(etype)
-        equipment_types.append(etype)
+    characters = [
+        Character(name="Firion", current_job_id=jobs[4].id),      # warrior
+        Character(name="Lenna", current_job_id=jobs[3].id),      # alchemist
+        Character(name="Galuf", current_job_id=jobs[0].id),      # engineer
+        Character(name="Farmer X", current_job_id=jobs[2].id)    # adventurer
+    ]
+    db.session.add_all(characters)
     db.session.commit()
 
-    # Create equipments
-    equipments = []
-    for etype in equipment_types:
-        for ctype in character_types:
-            eq = Equipment(
-                name=f"{ctype}_{etype.name}",
-                type_id=etype.type_id,
-                rating=5,
-                strength=10,
-                defense=5,
-                character_type=ctype
-            )
-            db.session.add(eq)
-            equipments.append(eq)
+
+    equipments = [
+        Equipment(name="Iron Helmet", type="HEAD", rating=5),
+        Equipment(name="Chain Mail", type="CHEST", rating=12),
+        Equipment(name="Steel Sword", type="PRIMARY_ARM", rating=10),
+        Equipment(name="Wooden Shield", type="SECONDARY_ARM", rating=3),
+        Equipment(name="Ring of Luck", type="ACCESSORY", rating=7)
+    ]
+    db.session.add_all(equipments)
     db.session.commit()
 
-    # Assign equipment to characters
-    for character in characters:
-        for eq in equipments:
-            if eq.character_type == character.character_type:
-                char_eq = CharacterEquipment(
-                    character_id=character.character_id,
-                    equipment_id=eq.equipment_id,
-                    type_id=eq.type_id
-                )
-                db.session.add(char_eq)
+
+    firion = characters[0]
+    char_equipments = [
+        CharacterEquipment(character_id=firion.id, equipment_id=equipments[0].id, slot="head"),
+        CharacterEquipment(character_id=firion.id, equipment_id=equipments[1].id, slot="chest"),
+        CharacterEquipment(character_id=firion.id, equipment_id=equipments[2].id, slot="right_hand"),
+        CharacterEquipment(character_id=firion.id, equipment_id=equipments[3].id, slot="left_hand"),
+        CharacterEquipment(character_id=firion.id, equipment_id=equipments[4].id, slot="accessory"),
+    ]
+    db.session.add_all(char_equipments)
     db.session.commit()
 
+
+    party = Party(name="Heroes Party", level=1, experience=0, rating=0)
+    db.session.add(party)
+    db.session.commit()
+
+    party_chars = [
+        PartyCharacter(party_id=party.id, character_id=c.id, party_slot=i+1)
+        for i, c in enumerate(characters)
+    ]
+    db.session.add_all(party_chars)
+    db.session.commit()
+
+    
     print("Seeding data inserted successfully")
