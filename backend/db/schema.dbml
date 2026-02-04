@@ -1,39 +1,61 @@
-Table users {
-  user_id int [pk, increment]
-  username varchar(50) [not null]
-  email varchar(100) [not null, unique]
-  password varchar(255) [not null]
+Table User {
+  id int [pk, increment]
+  username varchar
+  email varchar
+  password varchar
+  party_id int [ref: > Party.id, unique] // 1:1
 }
 
-Table characters {
-  character_id int [pk, increment]
-  user_id int [not null, ref: > users.user_id]
-  character_type varchar(20) [not null] // adventurer, engineer, alchemist, scholar
-  name varchar(50) [not null]
+Table Party {
+  id int [pk, increment]
+  name varchar
+  level int
+  experience int
+  rating int
 }
 
-Table equipment_types {
-  type_id int [pk, increment]
-  name varchar(50) [not null] // head, chest, Accesory, primary_arm, secondary_arm
-}
-
-Table equipment {
-  equipment_id int [pk, increment]
-  name varchar(50) [not null]
-  type_id int [not null, ref: > equipment_types.type_id]
-  rating int [not null]
-  strength int [default: 0]
-  defense int [default: 0]
-  character_type varchar(20) [not null] // indica qué personaje puede equiparlo
-}
-
-Table character_equipment {
-  char_eq_id int [pk, increment]
-  character_id int [not null, ref: > characters.character_id]
-  equipment_id int [not null, ref: > equipment.equipment_id]
-  type_id int [not null, ref: > equipment_types.type_id]
+Table PartyCharacter {
+  id int [pk, increment]
+  party_id int [ref: > Party.id]
+  character_id int [ref: > Character.id]
+  party_slot int // 1-4
 
   Indexes {
-    (character_id, type_id) [unique]
+    (party_id, party_slot) [unique]
+  }
+}
+
+Table Character {
+  id int [pk, increment]
+  name varchar
+  current_job_id int [ref: > Job.id]
+}
+
+Table Job {
+  id int [pk, increment]
+  name varchar
+}
+
+Table CharacterJob {
+  id int [pk, increment]
+  character_id int [ref: > Character.id]
+  job_id int [ref: > Job.id]
+}
+
+Table Equipment {
+  id int [pk, increment]
+  name varchar
+  type varchar // HEAD, CHEST, LEGS, PRIMARY_ARM, SECONDARY_ARM, ACCESSORY
+  rating int
+}
+
+Table CharacterEquipment {
+  id int [pk, increment]
+  character_id int [ref: > Character.id]
+  equipment_id int [ref: > Equipment.id]
+  slot varchar
+
+  Indexes {
+    (character_id, slot) [unique]
   }
 }
