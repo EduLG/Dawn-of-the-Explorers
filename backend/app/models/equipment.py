@@ -1,15 +1,12 @@
-from ..extensions import db
+from . import db
+from .character_equipment import CharacterEquipment
 
 class Equipment(db.Model):
-    __tablename__ = 'equipments'
+    __tablename__ = 'equipment'
 
-    equipment_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(50), nullable=False)
-    type_id = db.Column(db.Integer, db.ForeignKey('equipment_types.type_id'), nullable=False)
-    rating = db.Column(db.Integer, nullable=False)
-    strength = db.Column(db.Integer, default=0)
-    defense = db.Column(db.Integer, default=0)
-    character_type = db.Column(db.String(20), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, nullable=False)
+    type = db.Column(db.String, nullable=False)
+    rating = db.Column(db.Integer, default=0)
 
-    # Relation with CharacterEquipment
-    assignments = db.relationship('CharacterEquipment', backref='equipment', lazy=True)
+    equipped_by = db.relationship('CharacterEquipment', back_populates='equipment', cascade='all, delete-orphan')
