@@ -1,5 +1,5 @@
 import { Avatar, Card } from "@radix-ui/themes";
-import adventurer from "../assets/resources/character-templates/adventurer.png";
+import adventurer from "../assets/resources/character-templates/adventurer_male.png";
 
 const CharacterCard = ({
   name = "Edu",
