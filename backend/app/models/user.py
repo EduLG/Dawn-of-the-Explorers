@@ -1,5 +1,4 @@
-from . import db
-from .party import Party
+from ..extensions import db
 
 class User(db.Model):
     __tablename__ = 'user'

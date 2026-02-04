@@ -1,5 +1,4 @@
-from . import db
-from .character_equipment import CharacterEquipment
+from ..extensions import db
 
 class Equipment(db.Model):
     __tablename__ = 'equipment'

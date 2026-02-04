@@ -1,6 +1,4 @@
-from . import db
-from .character import Character
-from .job import Job
+from ..extensions import db
 
 class CharacterJob(db.Model):
     __tablename__ = 'character_job'

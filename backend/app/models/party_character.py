@@ -1,6 +1,4 @@
-from . import db
-from .party import Party
-from .character import Character
+from ..extensions import db
 
 class PartyCharacter(db.Model):
     __tablename__ = 'party_character'

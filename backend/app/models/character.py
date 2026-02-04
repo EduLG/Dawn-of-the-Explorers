@@ -1,8 +1,4 @@
-from . import db
-from .job import Job
-from .character_job import CharacterJob
-from .character_equipment import CharacterEquipment
-from .party_character import PartyCharacter
+from ..extensions import db
 
 class Character(db.Model):
     __tablename__ = 'character'

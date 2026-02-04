@@ -1,4 +1,4 @@
-from . import db
+from ..extensions import db
 from .character import Character
 from .equipment import Equipment
 
