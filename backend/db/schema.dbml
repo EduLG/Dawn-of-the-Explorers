@@ -34,6 +34,7 @@ Table Character {
 Table Job {
   id int [pk, increment]
   name varchar
+  icon varchar //route or path to icon image
 }
 
 Table CharacterJob {
