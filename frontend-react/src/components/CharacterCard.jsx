@@ -4,8 +4,8 @@ import adventurer from "../assets/resources/character-templates/adventurer_male.
 
 const CharacterCard = () => {
   return (
-    <Card className="relative rounded-xl overflow-hidden border border-white/6 bg-gradient-to-b from-white/6 to-white/3 shadow-lg hover:scale-[1.02] transition-transform duration-200">
-      <div className="bg-gradient-to-r from-[#5b3e1f]/80 to-[#3b2720]/60 border-b border-white/6 px-4 py-2">
+    <Card className="relative bg-gradient-to-b from-white/9 to-white/3 rounded-xl overflow-hidden border border-white/6 shadow-lg hover:scale-[1.02] transition-transform duration-200">
+      <div className="bg-gradient-to-r rounded-md from-[#5b3e1f]/80 to-[#3b2720]/60 border-b border-white/6 px-4 py-2">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm text-[#e6d3a3]">Aldric</div>
