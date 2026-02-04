@@ -5,34 +5,52 @@
   "detailLevel": "All",
   "tablePositions": [
     {
-      "name": "users",
+      "name": "User",
       "schemaName": "public",
-      "x": -324.6894473118192,
-      "y": 69.2795245202226
+      "x": -1447.7494911273545,
+      "y": -477.22156248712236
     },
     {
-      "name": "characters",
+      "name": "Party",
       "schemaName": "public",
-      "x": -24.42752962748574,
-      "y": 37.03165733681874
+      "x": -1227.7367226902752,
+      "y": -348.8685547518442
     },
     {
-      "name": "equipment_types",
+      "name": "PartyCharacter",
       "schemaName": "public",
-      "x": 628.4394777863708,
-      "y": 205.6022619437682
+      "x": -1026.5567309398741,
+      "y": -383.33993932095586
     },
     {
-      "name": "equipment",
+      "name": "Character",
       "schemaName": "public",
-      "x": 628.4394777863708,
-      "y": -77.96755921696166
+      "x": -822.6800022978783,
+      "y": -316.8685547518442
     },
     {
-      "name": "character_equipment",
+      "name": "Job",
       "schemaName": "public",
-      "x": 300.04360646269987,
-      "y": 5.317217613546688
+      "x": -599.7231864793494,
+      "y": -181.49324390735939
+    },
+    {
+      "name": "CharacterJob",
+      "schemaName": "public",
+      "x": -599.7231864793494,
+      "y": -326.6450816897025
+    },
+    {
+      "name": "Equipment",
+      "schemaName": "public",
+      "x": -304.80376546942665,
+      "y": -439.7823946062614
+    },
+    {
+      "name": "CharacterEquipment",
+      "schemaName": "public",
+      "x": -599.7231864793494,
+      "y": -503.23692044120304
     }
   ],
   "tableGroupCollapseStates": [],
@@ -40,75 +58,120 @@
   "referencePaths": [
     {
       "firstFieldNames": [
-        "user_id"
+        "id"
       ],
-      "firstTableName": "users",
+      "firstTableName": "Party",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "user_id"
+        "party_id"
       ],
-      "secondTableName": "characters",
+      "secondTableName": "User",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
     },
     {
       "firstFieldNames": [
-        "type_id"
+        "id"
       ],
-      "firstTableName": "equipment_types",
+      "firstTableName": "Party",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "type_id"
+        "party_id"
       ],
-      "secondTableName": "equipment",
+      "secondTableName": "PartyCharacter",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
     },
     {
       "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Character",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
         "character_id"
       ],
-      "firstTableName": "characters",
+      "secondTableName": "PartyCharacter",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Job",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "current_job_id"
+      ],
+      "secondTableName": "Character",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Character",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
         "character_id"
       ],
-      "secondTableName": "character_equipment",
+      "secondTableName": "CharacterJob",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
     },
     {
       "firstFieldNames": [
-        "equipment_id"
+        "id"
       ],
-      "firstTableName": "equipment",
+      "firstTableName": "Job",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "equipment_id"
+        "job_id"
       ],
-      "secondTableName": "character_equipment",
+      "secondTableName": "CharacterJob",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
     },
     {
       "firstFieldNames": [
-        "type_id"
+        "id"
       ],
-      "firstTableName": "equipment_types",
+      "firstTableName": "Character",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "type_id"
+        "character_id"
       ],
-      "secondTableName": "character_equipment",
+      "secondTableName": "CharacterEquipment",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Equipment",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "equipment_id"
+      ],
+      "secondTableName": "CharacterEquipment",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []

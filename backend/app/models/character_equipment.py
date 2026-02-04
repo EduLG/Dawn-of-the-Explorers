@@ -1,14 +1,18 @@
 from ..extensions import db
-from sqlalchemy import UniqueConstraint
+from .character import Character
+from .equipment import Equipment
 
 class CharacterEquipment(db.Model):
-    __tablename__ = 'character_equipments'
+    __tablename__ = 'character_equipment'
 
-    char_eq_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    character_id = db.Column(db.Integer, db.ForeignKey('characters.character_id'), nullable=False)
-    equipment_id = db.Column(db.Integer, db.ForeignKey('equipments.equipment_id'), nullable=False)
-    type_id = db.Column(db.Integer, db.ForeignKey('equipment_types.type_id'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
+    equipment_id = db.Column(db.Integer, db.ForeignKey('equipment.id'), nullable=False)
+    slot = db.Column(db.String, nullable=False)
+
+    character = db.relationship('Character', back_populates='equipment')
+    equipment = db.relationship('Equipment', back_populates='equipped_by')
 
     __table_args__ = (
-        UniqueConstraint('character_id', 'type_id', name='uix_character_type'),
+        db.UniqueConstraint('character_id', 'slot', name='uix_character_slot'),
     )

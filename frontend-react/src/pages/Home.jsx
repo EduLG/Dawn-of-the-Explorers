@@ -45,7 +45,7 @@ const Home = () => {
               </li>
               <li>
                 <Button variant="ghost" className="w-full justify-start">
-                  Dungeons
+                  Exploration quests
                 </Button>
               </li>
               <li>
@@ -58,29 +58,47 @@ const Home = () => {
         </aside>
 
         <main className="space-y-6">
+          <div className="flex items-center justify-between bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
+            <div>
+              <h2 className="text-2xl font-bold text-[#f3e5c8]">
+                Heroes party
+              </h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-[#e6d3a3]">
+                Party strength value: <span className="font-medium">1200</span>
+              </p>
+            </div>
+          </div>
+
           <section>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {cards.map((c) => (
-                <CharacterCard
-                  key={c}
-                  name={`Adventurer ${c}`}
-                  characterClass="Adventurer"
-                  equipmentTypes={[
-                    "Primary arm",
-                    "Secondary arm",
-                    "Head",
-                    "Chest",
-                    "Accessory",
-                  ]}
-                  equipped={[
-                    "Iron Sword",
-                    "Iron Shield",
-                    "Helmet",
-                    "Steel Chest",
-                    "Silver Ring",
-                  ]}
-                />
-              ))}
+              {cards.map((c) => {
+                return (
+                  <div key={c} className="relative">
+                    <div>
+                      <CharacterCard
+                        name={`Adventurer ${c}`}
+                        characterClass="Adventurer"
+                        equipmentTypes={[
+                          "Primary arm",
+                          "Secondary arm",
+                          "Head",
+                          "Chest",
+                          "Accessory",
+                        ]}
+                        equipped={[
+                          "Iron Sword",
+                          "Iron Shield",
+                          "Helmet",
+                          "Steel Chest",
+                          "Silver Ring",
+                        ]}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         </main>
