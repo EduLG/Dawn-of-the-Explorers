@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "http://localhost:5000/auth";
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
