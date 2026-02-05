@@ -1,59 +1,54 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API_BASE = "http://localhost:5000/users";
+const API_BASE =
+  import.meta?.env?.VITE_API_BASE || "http://localhost:5000/users";
 
-export function useUser(userId) {
-  const [user, setUser] = useState(null);
+export default function useUser(userId) {
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchUser = useCallback(async (id) => {
-    if (!id) return null;
-    setLoading(true);
-    setError(null);
+  const fetchUser = useCallback(
+    async (signal) => {
+      if (!userId) return;
+      setLoading(true);
+      setError(null);
 
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${API_BASE}/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
+      try {
+        const res = await fetch(`${API_BASE}/${encodeURIComponent(userId)}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          signal,
+        });
 
-      const contentType = res.headers.get("content-type") || "";
-      const data = contentType.includes("application/json")
-        ? await res.json()
-        : null;
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(text || `Request failed with status ${res.status}`);
+        }
 
-      if (!res.ok) {
-        const msg = (data && data.error) || "Failed to fetch user";
-        throw new Error(msg);
+        const payload = await res.json();
+        setData(payload);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setError(err);
+      } finally {
+        setLoading(false);
       }
-
-      setUser(data);
-      return data;
-    } catch (err) {
-      setError(err.message || String(err));
-      setUser(null);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    },
+    [userId],
+  );
 
   useEffect(() => {
-    if (userId) {
-      fetchUser(userId).catch(() => {});
-    }
+    if (!userId) return;
+    const controller = new AbortController();
+    fetchUser(controller.signal);
+    return () => controller.abort();
   }, [userId, fetchUser]);
 
-  return {
-    user,
-    loading,
-    error,
-    refetch: () => fetchUser(userId),
-  };
-}
+  const refetch = useCallback(() => {
+    const controller = new AbortController();
+    fetchUser(controller.signal);
+  }, [fetchUser]);
 
-export default useUser;
+  return { data, loading, error, refetch };
+}
