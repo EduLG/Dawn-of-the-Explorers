@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API_BASE =
-  import.meta?.env?.VITE_API_BASE || "http://localhost:5000/users";
+const API_URL = "http://localhost:5000/users";
 
 export default function useUser(userId) {
   const [data, setData] = useState(null);
@@ -15,7 +14,7 @@ export default function useUser(userId) {
       setError(null);
 
       try {
-        const res = await fetch(`${API_BASE}/${encodeURIComponent(userId)}`, {
+        const res = await fetch(`${API_URL}/${encodeURIComponent(userId)}`, {
           method: "GET",
           headers: { "Content-Type": "application/json" },
           signal,
