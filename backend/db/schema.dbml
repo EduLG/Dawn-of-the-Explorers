@@ -37,12 +37,6 @@ Table Job {
   icon varchar //route or path to icon image
 }
 
-Table CharacterJob {
-  id int [pk, increment]
-  character_id int [ref: > Character.id]
-  job_id int [ref: > Job.id]
-}
-
 Table Equipment {
   id int [pk, increment]
   name varchar

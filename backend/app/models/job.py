@@ -8,4 +8,3 @@ class Job(db.Model):
     icon = db.Column(db.String, nullable=False)
 
     characters = db.relationship('Character', back_populates='current_job')
-    character_jobs = db.relationship('CharacterJob', back_populates='job', cascade='all, delete-orphan')
