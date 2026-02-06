@@ -8,6 +8,5 @@ class Character(db.Model):
     current_job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
 
     current_job = db.relationship('Job', back_populates='characters')
-    jobs = db.relationship('CharacterJob', back_populates='character', cascade='all, delete-orphan')
     equipment = db.relationship('CharacterEquipment', back_populates='character', cascade='all, delete-orphan')
     party_entries = db.relationship('PartyCharacter', back_populates='character')
