@@ -17,8 +17,13 @@ with app.app_context():
     db.drop_all()
     db.create_all()
 
+    party = Party(name="Heroes Party", level=1, experience=0, rating=0)
+    db.session.add(party)
+    db.session.commit()
 
-    user = User(username="eduladron", email="edu@example.com", password=generate_password_hash("12345678"))
+    user = User(username="eduladron", email="edu@example.com",
+                password=generate_password_hash("12345678"),
+                party_id=party.id)
     db.session.add(user)
     db.session.commit()
 
@@ -67,10 +72,6 @@ with app.app_context():
     db.session.add_all(char_equipments)
     db.session.commit()
 
-
-    party = Party(name="Heroes Party", level=1, experience=0, rating=0)
-    db.session.add(party)
-    db.session.commit()
 
     party_chars = [
         PartyCharacter(party_id=party.id, character_id=c.id, party_slot=i+1)

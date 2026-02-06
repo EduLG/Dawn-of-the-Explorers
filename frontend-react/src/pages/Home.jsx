@@ -8,9 +8,10 @@ import headerlogo from "../assets/resources/header-logo.png";
 
 const Home = () => {
   const cards = [1, 2, 3, 4];
-  const userId = getUserIdFromToken(localStorage.getItem("token"));
-  console.log("User ID from token:", userId);
-  const { data: user, loading, error } = useUser(userId);
+  const { data: user } = useUser(
+    getUserIdFromToken(localStorage.getItem("token")),
+  );
+  console.log("User data:", user);
   return (
     <div
       className="min-h-screen w-full antialiased text-[#2b1e14]"
@@ -67,7 +68,7 @@ const Home = () => {
           <div className="flex items-center justify-between bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
             <div>
               <h2 className="text-2xl font-bold text-[#f3e5c8]">
-                Explorers party
+                {user?.party?.name || "Your Party"}
               </h2>
             </div>
             <div className="flex items-center gap-2">
