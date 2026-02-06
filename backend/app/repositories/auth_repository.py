@@ -1,5 +1,6 @@
 from app.extensions import db
 from app.models.user import User
+from app.models.party import Party
 
 
 def get_user_by_username(username):
@@ -12,6 +13,7 @@ def get_user_by_email(email):
 
 def create_user(username, email, password_hash):
     user = User(username=username, email=email, password=password_hash)
+    user.party = Party(name="Explorers party")
     db.session.add(user)
     db.session.commit()
     return user
