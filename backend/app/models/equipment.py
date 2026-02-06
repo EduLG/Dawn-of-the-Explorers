@@ -8,4 +8,4 @@ class Equipment(db.Model):
     type = db.Column(db.String, nullable=False)
     rating = db.Column(db.Integer, default=0)
 
-    equipped_by = db.relationship('CharacterEquipment', back_populates='equipment', cascade='all, delete-orphan')
+    job_assignments = db.relationship('JobEquipment', back_populates='equipment', cascade='all, delete-orphan')

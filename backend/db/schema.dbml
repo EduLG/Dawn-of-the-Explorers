@@ -44,13 +44,13 @@ Table Equipment {
   rating int
 }
 
-Table CharacterEquipment {
+Table JobEquipment {
   id int [pk, increment]
-  character_id int [ref: > Character.id]
+  job_id int [ref: > Job.id]
   equipment_id int [ref: > Equipment.id]
   slot varchar
 
   Indexes {
-    (character_id, slot) [unique]
+    (job_id, slot) [unique]
   }
 }

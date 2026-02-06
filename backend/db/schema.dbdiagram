@@ -41,7 +41,7 @@
       "y": -454.32826006839406
     },
     {
-      "name": "CharacterEquipment",
+      "name": "JobEquipment",
       "schemaName": "public",
       "x": -813.7276381184456,
       "y": -518.1350415090802
@@ -114,13 +114,13 @@
       "firstFieldNames": [
         "id"
       ],
-      "firstTableName": "Character",
+      "firstTableName": "Job",
       "firstSchemaName": "public",
       "firstRelation": "1",
       "secondFieldNames": [
-        "character_id"
+        "job_id"
       ],
-      "secondTableName": "CharacterEquipment",
+      "secondTableName": "JobEquipment",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
@@ -135,7 +135,7 @@
       "secondFieldNames": [
         "equipment_id"
       ],
-      "secondTableName": "CharacterEquipment",
+      "secondTableName": "JobEquipment",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []

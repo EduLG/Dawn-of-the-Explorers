@@ -7,7 +7,7 @@ from app.models.party_character import PartyCharacter
 from app.models.character import Character
 from app.models.job import Job
 from app.models.equipment import Equipment
-from app.models.character_equipment import CharacterEquipment
+from app.models.job_equipment import JobEquipment
 
 app = create_app()
 

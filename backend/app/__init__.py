@@ -22,7 +22,7 @@ def create_app():
     from app.models.character import Character
     from app.models.job import Job
     from app.models.equipment import Equipment
-    from app.models.character_equipment import CharacterEquipment
+    from app.models.job_equipment import JobEquipment
 
 
     app.register_blueprint(auth_bp, url_prefix="/auth")

@@ -8,7 +8,7 @@ from app.models.party import Party
 from app.models.character import Character
 from app.models.equipment import Equipment
 from app.models.party_character import PartyCharacter
-from app.models.character_equipment import CharacterEquipment
+from app.models.job_equipment import JobEquipment
 
 app = create_app()
 
@@ -90,36 +90,36 @@ with app.app_context():
     balthier = characters[2]
     locke = characters[3]
 
-    char_equipments = [
+    job_equipments = [
         # Firion (indices 0-4)
-        CharacterEquipment(character_id=firion.id, equipment_id=equipments[0].id, slot="head"),
-        CharacterEquipment(character_id=firion.id, equipment_id=equipments[1].id, slot="chest"),
-        CharacterEquipment(character_id=firion.id, equipment_id=equipments[2].id, slot="right_hand"),
-        CharacterEquipment(character_id=firion.id, equipment_id=equipments[3].id, slot="left_hand"),
-        CharacterEquipment(character_id=firion.id, equipment_id=equipments[4].id, slot="accessory"),
+        JobEquipment(job_id=firion.current_job_id, equipment_id=equipments[0].id, slot="head"),
+        JobEquipment(job_id=firion.current_job_id, equipment_id=equipments[1].id, slot="chest"),
+        JobEquipment(job_id=firion.current_job_id, equipment_id=equipments[2].id, slot="right_hand"),
+        JobEquipment(job_id=firion.current_job_id, equipment_id=equipments[3].id, slot="left_hand"),
+        JobEquipment(job_id=firion.current_job_id, equipment_id=equipments[4].id, slot="accessory"),
 
         # Sabin (indices 5-9)
-        CharacterEquipment(character_id=sabin.id, equipment_id=equipments[5].id, slot="head"),
-        CharacterEquipment(character_id=sabin.id, equipment_id=equipments[6].id, slot="chest"),
-        CharacterEquipment(character_id=sabin.id, equipment_id=equipments[7].id, slot="right_hand"),
-        CharacterEquipment(character_id=sabin.id, equipment_id=equipments[8].id, slot="left_hand"),
-        CharacterEquipment(character_id=sabin.id, equipment_id=equipments[9].id, slot="accessory"),
+        JobEquipment(job_id=sabin.current_job_id, equipment_id=equipments[5].id, slot="head"),
+        JobEquipment(job_id=sabin.current_job_id, equipment_id=equipments[6].id, slot="chest"),
+        JobEquipment(job_id=sabin.current_job_id, equipment_id=equipments[7].id, slot="right_hand"),
+        JobEquipment(job_id=sabin.current_job_id, equipment_id=equipments[8].id, slot="left_hand"),
+        JobEquipment(job_id=sabin.current_job_id, equipment_id=equipments[9].id, slot="accessory"),
 
         # Balthier (indices 10-14)
-        CharacterEquipment(character_id=balthier.id, equipment_id=equipments[10].id, slot="head"),
-        CharacterEquipment(character_id=balthier.id, equipment_id=equipments[11].id, slot="chest"),
-        CharacterEquipment(character_id=balthier.id, equipment_id=equipments[12].id, slot="right_hand"),
-        CharacterEquipment(character_id=balthier.id, equipment_id=equipments[13].id, slot="left_hand"),
-        CharacterEquipment(character_id=balthier.id, equipment_id=equipments[14].id, slot="accessory"),
+        JobEquipment(job_id=balthier.current_job_id, equipment_id=equipments[10].id, slot="head"),
+        JobEquipment(job_id=balthier.current_job_id, equipment_id=equipments[11].id, slot="chest"),
+        JobEquipment(job_id=balthier.current_job_id, equipment_id=equipments[12].id, slot="right_hand"),
+        JobEquipment(job_id=balthier.current_job_id, equipment_id=equipments[13].id, slot="left_hand"),
+        JobEquipment(job_id=balthier.current_job_id, equipment_id=equipments[14].id, slot="accessory"),
 
         # Locke (indices 15-19)
-        CharacterEquipment(character_id=locke.id, equipment_id=equipments[15].id, slot="head"),
-        CharacterEquipment(character_id=locke.id, equipment_id=equipments[16].id, slot="chest"),
-        CharacterEquipment(character_id=locke.id, equipment_id=equipments[17].id, slot="right_hand"),
-        CharacterEquipment(character_id=locke.id, equipment_id=equipments[18].id, slot="left_hand"),
-        CharacterEquipment(character_id=locke.id, equipment_id=equipments[19].id, slot="accessory"),
+        JobEquipment(job_id=locke.current_job_id, equipment_id=equipments[15].id, slot="head"),
+        JobEquipment(job_id=locke.current_job_id, equipment_id=equipments[16].id, slot="chest"),
+        JobEquipment(job_id=locke.current_job_id, equipment_id=equipments[17].id, slot="right_hand"),
+        JobEquipment(job_id=locke.current_job_id, equipment_id=equipments[18].id, slot="left_hand"),
+        JobEquipment(job_id=locke.current_job_id, equipment_id=equipments[19].id, slot="accessory"),
     ]
-    db.session.add_all(char_equipments)
+    db.session.add_all(job_equipments)
     db.session.commit()
 
 
