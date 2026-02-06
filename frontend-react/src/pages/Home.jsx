@@ -1,12 +1,16 @@
 import React from "react";
 import { Button, Avatar } from "@radix-ui/themes";
+import useUser from "../hooks/useUser";
+import getUserIdFromToken from "../utils/jwt";
 import CharacterCard from "../components/CharacterCard";
 import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
 
 const Home = () => {
   const cards = [1, 2, 3, 4];
-
+  const userId = getUserIdFromToken(localStorage.getItem("token"));
+  console.log("User ID from token:", userId);
+  const { data: user, loading, error } = useUser(userId);
   return (
     <div
       className="min-h-screen w-full antialiased text-[#2b1e14]"
@@ -24,7 +28,9 @@ const Home = () => {
 
           <div className="flex items-center gap-3">
             <Avatar fallback="E" />
-            <div className="text-[#f3e5c8] font-medium">eduladron</div>
+            <div className="text-[#f3e5c8] font-medium">
+              {user?.username || "Guest"}
+            </div>
           </div>
         </div>
       </header>
@@ -61,7 +67,7 @@ const Home = () => {
           <div className="flex items-center justify-between bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
             <div>
               <h2 className="text-2xl font-bold text-[#f3e5c8]">
-                Heroes party
+                Explorers party
               </h2>
             </div>
             <div className="flex items-center gap-2">
