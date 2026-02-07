@@ -40,8 +40,18 @@ Table Job {
 Table Equipment {
   id int [pk, increment]
   name varchar
-  type varchar // HEAD, CHEST, LEGS, PRIMARY_ARM, SECONDARY_ARM, ACCESSORY
+  type enum('head', 'chest', 'primary hand', 'secondary hand', 'accesory')
   rating int
+}
+
+Table JobEquipment {
+  id int [pk, increment]
+  job_id int [ref: > Job.id]
+  equipment_id int [ref: > Equipment.id]
+
+  Indexes {
+    (job_id, equipment_id) [unique]
+  }
 }
 
 Table CharacterEquipment {
