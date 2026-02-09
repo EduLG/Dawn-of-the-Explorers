@@ -9,5 +9,8 @@ class Party(db.Model):
     experience = db.Column(db.Integer, default=0)
     rating = db.Column(db.Integer, default=0)
 
+    # 1:1 with User
     user = db.relationship('User', back_populates='party', uselist=False)
-    characters = db.relationship('PartyCharacter', back_populates='party', cascade='all, delete-orphan')
+
+    # 1:N with Character
+    characters = db.relationship('Character', back_populates='party', cascade='all, delete-orphan')

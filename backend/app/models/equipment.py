@@ -1,5 +1,6 @@
 from ..extensions import db
 
+# Define allowed equipment types
 EQUIPMENT_TYPES = (
     "head",
     "chest",
@@ -15,13 +16,18 @@ class Equipment(db.Model):
     name = db.Column(db.String, nullable=False)
     type = db.Column(db.String, nullable=False)
     rating = db.Column(db.Integer, default=0)
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
 
+    # Backref to Job
+    job = db.relationship('Job', back_populates='equipments')
+
+    # M:N with Character through CharacterEquipment
     equipped_by = db.relationship('CharacterEquipment', back_populates='equipment', cascade='all, delete-orphan')
-    allowed_jobs = db.relationship('JobEquipment', back_populates='equipment', cascade='all, delete-orphan')
 
+    # Constraint to ensure type is one of the allowed values
     __table_args__ = (
         db.CheckConstraint(
-            "type IN ('head', 'chest', 'primary hand', 'secondary hand', 'accesory')",
+            "type IN ('head', 'chest', 'primary_hand', 'secondary_hand', 'accesory')",
             name="ck_equipment_type",
         ),
     )
