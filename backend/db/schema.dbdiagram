@@ -5,52 +5,52 @@
   "detailLevel": "All",
   "tablePositions": [
     {
-      "name": "User",
+      "name": "user",
       "schemaName": "public",
-      "x": -1441.2720471847992,
-      "y": -380.8685547518442
+      "x": 14.003066797994332,
+      "y": -322.29890647385395
     },
     {
-      "name": "Party",
+      "name": "party",
       "schemaName": "public",
-      "x": -1221.25927874772,
-      "y": -380.8685547518442
+      "x": 263.25650295487105,
+      "y": -322.29890647385395
     },
     {
-      "name": "PartyCharacter",
+      "name": "party_character",
       "schemaName": "public",
-      "x": -1020.0792869973188,
-      "y": -380.8685547518442
+      "x": 500.4175378313039,
+      "y": -313.7817368821634
     },
     {
-      "name": "Character",
+      "name": "character",
       "schemaName": "public",
-      "x": -794.6297377278206,
-      "y": -316.8685547518442
+      "x": 740.0917744896133,
+      "y": -302.61602345988535
     },
     {
-      "name": "Job",
+      "name": "job",
       "schemaName": "public",
-      "x": -286.0473136537353,
-      "y": -252.86291400810296
+      "x": 993.6037954423354,
+      "y": -258.29890647385395
     },
     {
-      "name": "Equipment",
+      "name": "equipment",
       "schemaName": "public",
-      "x": -322.5810333006227,
-      "y": -476.36200290913445
+      "x": 936.1129006984241,
+      "y": -78.51300590974233
     },
     {
-      "name": "JobEquipment",
+      "name": "job_equipment",
       "schemaName": "public",
-      "x": -134.06565146497405,
-      "y": -476.36200290913445
+      "x": 1211.287932037966,
+      "y": -254.24427493732077
     },
     {
-      "name": "CharacterEquipment",
+      "name": "character_equipment",
       "schemaName": "public",
-      "x": -574.4820534096641,
-      "y": -476.36200290913445
+      "x": 983.7669121597422,
+      "y": -446.33922815186236
     }
   ],
   "tableGroupCollapseStates": [],

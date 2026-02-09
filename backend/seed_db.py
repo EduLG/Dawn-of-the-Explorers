@@ -14,7 +14,6 @@ app = create_app()
 
 with app.app_context():
 
-    db.drop_all()
     db.create_all()
 
     party = Party(name="Heroes Party", level=1, experience=0, rating=0)
