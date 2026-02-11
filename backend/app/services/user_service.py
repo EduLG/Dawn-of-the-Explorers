@@ -19,11 +19,11 @@ def get_user_profile(user_id):
 		party = user.party
 		characters = []
 		for entry in party.characters:
-			ch = entry.character
+			ch = getattr(entry, "character", entry)
 			characters.append({
 				"id": ch.id,
 				"name": ch.name,
-				"party_slot": entry.party_slot,
+				"party_slot": getattr(entry, "party_slot", None),
 			})
 
 		result["party"] = {
