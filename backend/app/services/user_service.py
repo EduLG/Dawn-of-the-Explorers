@@ -18,12 +18,33 @@ def get_user_profile(user_id):
 	if user.party:
 		party = user.party
 		characters = []
-		for entry in party.characters:
-			ch = getattr(entry, "character", entry)
+		for ch in party.characters:
+			current_job = None
+			if ch.current_job:
+				current_job = {
+					"id": ch.current_job.id,
+					"name": ch.current_job.name,
+					"icon": ch.current_job.icon,
+				}
+
+			equipped_items = []
+			for relation in ch.equipment:
+				equipment = relation.equipment
+				equipped_items.append({
+					"slot": relation.slot,
+					"equipment": {
+						"id": equipment.id,
+						"name": equipment.name,
+						"type": equipment.type,
+						"rating": equipment.rating,
+					},
+				})
+
 			characters.append({
 				"id": ch.id,
 				"name": ch.name,
-				"party_slot": getattr(entry, "party_slot", None),
+				"current_job": current_job,
+				"equipped_items": equipped_items,
 			})
 
 		result["party"] = {
