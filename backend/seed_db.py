@@ -17,14 +17,14 @@ with app.app_context():
     db.create_all()
 
     # -------------------------------
-    # Crear party
+    # Create party
     # -------------------------------
     party = Party(name="Heroes Party", level=1, experience=0, rating=0)
     db.session.add(party)
     db.session.commit()
 
     # -------------------------------
-    # Crear user
+    # Create user
     # -------------------------------
     user = User(
         username="eduladron",
@@ -36,7 +36,7 @@ with app.app_context():
     db.session.commit()
 
     # -------------------------------
-    # Crear jobs
+    # Create jobs
     # -------------------------------
     job_names = [
         "engineer", "gunslinger", "adventurer", "alchemist",
@@ -52,7 +52,7 @@ with app.app_context():
     db.session.commit()
 
     # -------------------------------
-    # Crear characters
+    # Create characters
     # -------------------------------
     characters = [
         Character(name="Firion", current_job_id=jobs[4].id, party_id=party.id),      # warrior
@@ -65,7 +65,7 @@ with app.app_context():
     db.session.commit()
 
     # -------------------------------
-    # Crear equipments
+    # Create equipments
     # -------------------------------
     equipments = [
         # Firion
@@ -100,7 +100,7 @@ with app.app_context():
     db.session.commit()
 
     # -------------------------------
-    # Asignar equipments a characters
+    # Asign equipments to characters
     # -------------------------------
     firion = characters[0]
     sabin = characters[1]
