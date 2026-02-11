@@ -1,16 +1,13 @@
 import React from "react";
 import { Button, Avatar } from "@radix-ui/themes";
 import useUser from "../hooks/useUser";
-import getUserIdFromToken from "../utils/jwt";
 import CharacterCard from "../components/CharacterCard";
 import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
 
 const Home = () => {
   const cards = [1, 2, 3, 4];
-  const { data: user } = useUser(
-    getUserIdFromToken(localStorage.getItem("token")),
-  );
+  const { data: user } = useUser();
   console.log("User data:", user);
   return (
     <div
