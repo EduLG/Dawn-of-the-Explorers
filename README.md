@@ -30,7 +30,7 @@ Make sure you have installed:
    python -m venv venv
    source venv/bin/activate   # macOS/Linux
    # On Windows (PowerShell):
-   # .\venv\Scripts\Activate.ps1
+   # .\venv\bin\Activate.ps1
    ```
 
 3. Install dependencies:
