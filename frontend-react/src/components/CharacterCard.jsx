@@ -14,20 +14,27 @@ const CharacterCard = ({
 }) => {
   return (
     <Card className="relative bg-gradient-to-b from-white/9 to-white/3 rounded-xl overflow-hidden border border-white/6 shadow-lg hover:scale-[1.02] transition-transform duration-200">
-      <div className="bg-gradient-to-r rounded-md from-[#5b3e1f]/80 to-[#3b2720]/60 border-b border-white/6 px-4 py-2">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="mt-1 inline-flex items-center rounded-md border border-[#f1d59b]/60 bg-[#2b1b11]/60 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-[#ffe7b2]">
-              {charName}
+      <div className="bg-gradient-to-r rounded-md from-[#5b3e1f]/80 to-[#3b2720]/60 border-b border-white/6 px-4 py-3">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <div className="text-[10px] uppercase tracking-[0.2em] text-[#e6d3a3]">
+              Character
             </div>
-            <div className="text-sm font-semibold text-[#f7e7c3]">
-              Class: {characterClass}
+            <div className="mt-1 flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+              <div className="inline-flex w-fit items-center rounded-md border border-[#f1d59b]/60 bg-[#2b1b11]/60 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-[#ffe7b2]">
+                {charName}
+              </div>
+              <div className="text-sm font-semibold text-[#f7e7c3]">
+                <span className="text-[#e6d3a3]">Class:</span> {characterClass}
+              </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <div className="text-xs text-[#e6d3a3]">Rating</div>
-            <div className="bg-[#ffefe0]/90 text-[#3b2a1a] font-semibold px-3 py-1 rounded-full shadow-sm">
+          <div className="flex items-center justify-end gap-2 sm:min-w-[112px]">
+            <div className="text-xs uppercase tracking-wide text-[#e6d3a3]">
+              Rating
+            </div>
+            <div className="min-w-12 rounded-full bg-[#ffefe0]/90 px-3 py-1 text-center font-semibold text-[#3b2a1a] shadow-sm">
               {rating}
             </div>
           </div>
