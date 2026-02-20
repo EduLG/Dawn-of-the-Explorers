@@ -8,7 +8,8 @@ import headerlogo from "../assets/resources/header-logo.png";
 const Home = () => {
   const cards = [1, 2, 3, 4];
   const { data: user } = useUser();
-  console.log("User data:", user);
+  const party = user?.party;
+
   return (
     <div
       className="min-h-screen w-full antialiased text-[#2b1e14]"
@@ -65,12 +66,13 @@ const Home = () => {
           <div className="flex items-center justify-between bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
             <div>
               <h2 className="text-2xl font-bold text-[#f3e5c8]">
-                {user?.party?.name || "Your Party"}
+                {party?.name || "Your Party"}
               </h2>
             </div>
             <div className="flex items-center gap-2">
               <p className="text-sm text-[#e6d3a3]">
-                Party strength value: <span className="font-medium">1200</span>
+                Party strength value:
+                <span className="font-medium text-2xl"> {party?.rating}</span>
               </p>
             </div>
           </div>
@@ -80,26 +82,7 @@ const Home = () => {
               {cards.map((c) => {
                 return (
                   <div key={c} className="relative">
-                    <div>
-                      <CharacterCard
-                        name={`Adventurer ${c}`}
-                        characterClass="Adventurer"
-                        equipmentTypes={[
-                          "Primary arm",
-                          "Secondary arm",
-                          "Head",
-                          "Chest",
-                          "Accessory",
-                        ]}
-                        equipped={[
-                          "Iron Sword",
-                          "Iron Shield",
-                          "Helmet",
-                          "Steel Chest",
-                          "Silver Ring",
-                        ]}
-                      />
-                    </div>
+                    <div>{/* <CharacterCard /> */}</div>
                   </div>
                 );
               })}
