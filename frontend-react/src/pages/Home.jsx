@@ -6,9 +6,24 @@ import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
 
 const Home = () => {
-  const cards = [1, 2, 3, 4];
   const { data: user } = useUser();
   const party = user?.party;
+  const partyCharacters = party?.characters || [];
+
+  const getEquippedItemName = (equippedItems, slot) => {
+    return (
+      equippedItems?.find((item) => item.slot === slot)?.equipment?.name || "-"
+    );
+  };
+
+  const getCharacterRating = (equippedItems) => {
+    return (
+      equippedItems?.reduce(
+        (total, item) => total + (item?.equipment?.rating || 0),
+        0,
+      ) || 0
+    );
+  };
 
   return (
     <div
@@ -79,10 +94,27 @@ const Home = () => {
 
           <section>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {cards.map((c) => {
+              {partyCharacters.map((character) => {
+                const equippedItems = character.equipped_items || [];
                 return (
-                  <div key={c} className="relative">
-                    <div>{/* <CharacterCard /> */}</div>
+                  <div key={character.id} className="relative">
+                    <CharacterCard
+                      charName={character.name}
+                      characterClass={character.current_job?.name}
+                      rating={getCharacterRating(equippedItems)}
+                      icon={character.current_job?.icon}
+                      primaryArm={getEquippedItemName(
+                        equippedItems,
+                        "primary_hand",
+                      )}
+                      secondaryArm={getEquippedItemName(
+                        equippedItems,
+                        "secondary_hand",
+                      )}
+                      head={getEquippedItemName(equippedItems, "head")}
+                      chest={getEquippedItemName(equippedItems, "chest")}
+                      accesory={getEquippedItemName(equippedItems, "accesory")}
+                    />
                   </div>
                 );
               })}
