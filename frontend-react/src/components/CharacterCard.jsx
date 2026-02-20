@@ -17,8 +17,10 @@ const CharacterCard = ({
       <div className="bg-gradient-to-r rounded-md from-[#5b3e1f]/80 to-[#3b2720]/60 border-b border-white/6 px-4 py-2">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm text-[#e6d3a3]">{charName}</div>
-            <div className="text-xs text-[#f3e5c8]">
+            <div className="mt-1 inline-flex items-center rounded-md border border-[#f1d59b]/60 bg-[#2b1b11]/60 px-2 py-0.5 text-xs font-bold uppercase tracking-wide text-[#ffe7b2]">
+              {charName}
+            </div>
+            <div className="text-sm font-semibold text-[#f7e7c3]">
               Class: {characterClass}
             </div>
           </div>
