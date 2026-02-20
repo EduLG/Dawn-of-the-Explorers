@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "http://localhost:5000";
+const API_URL = "http://localhost:5000/api/v1/auth";
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
@@ -28,7 +28,6 @@ export function useAuth() {
       if (contentType && contentType.includes("application/json")) {
         data = await res.json();
       } else {
-        const text = await res.text();
         throw {
           status: res.status,
           message: "Invalid server response",
@@ -71,7 +70,6 @@ export function useAuth() {
       if (contentType && contentType.includes("application/json")) {
         data = await res.json();
       } else {
-        const text = await res.text();
         throw new Error("Server answer invalid");
       }
 

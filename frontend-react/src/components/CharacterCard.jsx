@@ -1,6 +1,6 @@
 import React from "react";
 import { Avatar, Card } from "@radix-ui/themes";
-import adventurer from "../assets/resources/character-templates/adventurer_male.png";
+import scholar from "../assets/resources/character-templates/scholar_male.png";
 
 const CharacterCard = () => {
   return (
@@ -24,7 +24,7 @@ const CharacterCard = () => {
       <div className="p-4 h-full flex flex-col md:flex-row items-center md:items-stretch gap-4">
         <div className="flex-shrink-0 flex items-center justify-center md:pl-2">
           <div className="w-28 h-28 rounded-full bg-[#e6d3a3] p-1 flex items-center justify-center">
-            <Avatar src={adventurer} size="7" />
+            <Avatar src={scholar} size="7" />
           </div>
         </div>
 

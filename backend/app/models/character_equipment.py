@@ -1,6 +1,4 @@
 from ..extensions import db
-from .character import Character
-from .equipment import Equipment
 
 class CharacterEquipment(db.Model):
     __tablename__ = 'character_equipment'
@@ -9,7 +7,7 @@ class CharacterEquipment(db.Model):
     character_id = db.Column(db.Integer, db.ForeignKey('character.id'), nullable=False)
     equipment_id = db.Column(db.Integer, db.ForeignKey('equipment.id'), nullable=False)
     slot = db.Column(db.String, nullable=False)
-
+    
     character = db.relationship('Character', back_populates='equipment')
     equipment = db.relationship('Equipment', back_populates='equipped_by')
 

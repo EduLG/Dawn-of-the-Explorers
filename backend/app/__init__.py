@@ -1,5 +1,6 @@
 from flask import Flask
-from app.routes.auth import auth_bp
+from app.routes.auth_routes import auth_bp
+from app.routes.user_routes import user_bp
 from flask_cors import CORS
 from .extensions import db
 from config import Config
@@ -17,14 +18,13 @@ def create_app():
 
     from app.models.user import User
     from app.models.party import Party
-    from app.models.party_character import PartyCharacter
     from app.models.character import Character
     from app.models.job import Job
-    from app.models.character_job import CharacterJob
     from app.models.equipment import Equipment
     from app.models.character_equipment import CharacterEquipment
 
 
-    app.register_blueprint(auth_bp)
+    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
+    app.register_blueprint(user_bp, url_prefix="/api/v1/users")
 
     return app

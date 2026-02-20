@@ -7,5 +7,8 @@ class Job(db.Model):
     name = db.Column(db.String, nullable=False)
     icon = db.Column(db.String, nullable=False)
 
+    # 1:N with Character
     characters = db.relationship('Character', back_populates='current_job')
-    character_jobs = db.relationship('CharacterJob', back_populates='job', cascade='all, delete-orphan')
+
+    # 1:N with Equipment
+    equipments = db.relationship('Equipment', back_populates='job')

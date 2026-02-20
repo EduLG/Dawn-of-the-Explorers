@@ -5,52 +5,52 @@
   "detailLevel": "All",
   "tablePositions": [
     {
-      "name": "User",
+      "name": "user",
       "schemaName": "public",
-      "x": -1447.7494911273545,
-      "y": -477.22156248712236
+      "x": 14.003066797994332,
+      "y": -322.29890647385395
     },
     {
-      "name": "Party",
+      "name": "party",
       "schemaName": "public",
-      "x": -1227.7367226902752,
-      "y": -348.8685547518442
+      "x": 263.25650295487105,
+      "y": -322.29890647385395
     },
     {
-      "name": "PartyCharacter",
+      "name": "party_character",
       "schemaName": "public",
-      "x": -1026.5567309398741,
-      "y": -383.33993932095586
+      "x": 500.4175378313039,
+      "y": -313.7817368821634
     },
     {
-      "name": "Character",
+      "name": "character",
       "schemaName": "public",
-      "x": -822.6800022978783,
-      "y": -316.8685547518442
+      "x": 740.0917744896133,
+      "y": -302.61602345988535
     },
     {
-      "name": "Job",
+      "name": "job",
       "schemaName": "public",
-      "x": -599.7231864793494,
-      "y": -181.49324390735939
+      "x": 993.6037954423354,
+      "y": -258.29890647385395
     },
     {
-      "name": "CharacterJob",
+      "name": "equipment",
       "schemaName": "public",
-      "x": -599.7231864793494,
-      "y": -326.6450816897025
+      "x": 936.1129006984241,
+      "y": -78.51300590974233
     },
     {
-      "name": "Equipment",
+      "name": "job_equipment",
       "schemaName": "public",
-      "x": -304.80376546942665,
-      "y": -439.7823946062614
+      "x": 1211.287932037966,
+      "y": -254.24427493732077
     },
     {
-      "name": "CharacterEquipment",
+      "name": "character_equipment",
       "schemaName": "public",
-      "x": -599.7231864793494,
-      "y": -503.23692044120304
+      "x": 983.7669121597422,
+      "y": -446.33922815186236
     }
   ],
   "tableGroupCollapseStates": [],
@@ -112,36 +112,6 @@
         "current_job_id"
       ],
       "secondTableName": "Character",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "Character",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "character_id"
-      ],
-      "secondTableName": "CharacterJob",
-      "secondSchemaName": "public",
-      "secondRelation": "*",
-      "checkPoints": []
-    },
-    {
-      "firstFieldNames": [
-        "id"
-      ],
-      "firstTableName": "Job",
-      "firstSchemaName": "public",
-      "firstRelation": "1",
-      "secondFieldNames": [
-        "job_id"
-      ],
-      "secondTableName": "CharacterJob",
       "secondSchemaName": "public",
       "secondRelation": "*",
       "checkPoints": []
