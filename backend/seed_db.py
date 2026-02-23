@@ -45,7 +45,7 @@ with app.app_context():
 
     jobs = []
     for name in job_names:
-        icon_path = f"frontend-react/src/assets/resources/character_templates/{name}_male.png"
+        icon_path = f"/character-templates/{name}_male.png"
         jobs.append(Job(name=name, icon=icon_path))
         
     db.session.add_all(jobs)
