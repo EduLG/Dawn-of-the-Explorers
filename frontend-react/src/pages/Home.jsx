@@ -34,22 +34,25 @@ const Home = () => {
         backgroundPosition: "center",
       }}
     >
+      {/* HEADER */}
       <header className="backdrop-blur-sm bg-white/5 border-b border-white/6 sticky top-0 z-20">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-4">
-            <img src={headerlogo} alt="Logo" className="h-15" />
+            <img src={headerlogo} alt="Logo" className="h-10 sm:h-14" />
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Avatar fallback="E" />
-            <div className="text-[#f3e5c8] font-medium">
+            <div className="text-[#f3e5c8] text-sm sm:text-base font-medium">
               {user?.username || "Guest"}
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
+      {/* LAYOUT */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-4 sm:gap-6">
+        {/* SIDEBAR DESKTOP */}
         <aside className="hidden lg:block">
           <nav className="bg-white/6 p-4 rounded-xl border border-white/6 backdrop-blur-sm">
             <ul className="flex flex-col gap-3">
@@ -77,23 +80,30 @@ const Home = () => {
           </nav>
         </aside>
 
-        <main className="space-y-6">
-          <div className="flex items-center justify-between bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
+        {/* MAIN */}
+        <main className="space-y-6 pb-20 lg:pb-0">
+          {/* PARTY HEADER */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white/5 border border-white/6 rounded-xl p-4 backdrop-blur-sm">
             <div>
-              <h2 className="text-2xl font-bold text-[#f3e5c8]">
+              <h2 className="text-xl sm:text-2xl font-bold text-[#f3e5c8]">
                 {party?.name || "Your Party"}
               </h2>
             </div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-[#e6d3a3]">
+
+            <div>
+              <p className="text-xs sm:text-sm text-[#e6d3a3]">
                 Party strength value:
-                <span className="font-medium text-2xl"> {party?.rating}</span>
+                <span className="font-medium text-xl sm:text-2xl">
+                  {" "}
+                  {party?.rating}
+                </span>
               </p>
             </div>
           </div>
 
+          {/* CHARACTERS GRID */}
           <section>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               {partyCharacters.map((character) => {
                 const equippedItems = character.equipped_items || [];
                 return (
@@ -121,6 +131,14 @@ const Home = () => {
             </div>
           </section>
         </main>
+      </div>
+
+      {/* MOBILE BOTTOM NAV */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md border-t border-white/10 flex justify-around py-2 z-30">
+        <Button variant="ghost">Team</Button>
+        <Button variant="ghost">Equip</Button>
+        <Button variant="ghost">Quests</Button>
+        <Button variant="ghost">Market</Button>
       </div>
     </div>
   );
