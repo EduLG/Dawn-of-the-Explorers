@@ -16,15 +16,6 @@ const Home = () => {
     );
   };
 
-  const getCharacterRating = (equippedItems) => {
-    return (
-      equippedItems?.reduce(
-        (total, item) => total + (item?.equipment?.rating || 0),
-        0,
-      ) || 0
-    );
-  };
-
   return (
     <div
       className="min-h-screen w-full antialiased text-[#2b1e14]"
@@ -111,7 +102,7 @@ const Home = () => {
                     <CharacterCard
                       charName={character.name}
                       characterClass={character.current_job?.name}
-                      rating={getCharacterRating(equippedItems)}
+                      rating={character.rating}
                       icon={character.current_job?.icon}
                       primaryArm={getEquippedItemName(
                         equippedItems,
