@@ -89,7 +89,7 @@ Options:
   GRANT ALL PRIVILEGES ON DATABASE vtt_db TO eduladron;
   ```
 
-- **Use your own credentials**: edit only `backend/.env`.
+- **Change credentials**: update `backend/.env` with your connection details.
 
 ## Initialize and seed the database
 
