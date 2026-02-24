@@ -102,7 +102,7 @@ const Home = () => {
                     <CharacterCard
                       charName={character.name}
                       characterClass={character.current_job?.name}
-                      rating={character.rating}
+                      rating={character.rating || 0}
                       icon={character.current_job?.icon}
                       primaryArm={getEquippedItemName(
                         equippedItems,
