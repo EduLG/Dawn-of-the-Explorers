@@ -69,15 +69,15 @@ The backend can load local variables from `backend/.env` (using `python-dotenv`)
 
 ## Database configuration (PostgreSQL)
 
-The backend uses the configuration defined in `backend/config.py`:
+The backend reads the DB connection from `DATABASE_URL` in `backend/.env`.
 
-```python
+```env
 SQLALCHEMY_DATABASE_URI = "postgresql://eduladron:12341234@localhost:5432/vtt_db"
 ```
 
 Options:
 
-- **Use the default configuration** by creating the user and database:
+- **Use the default example values** by creating the user and database:
 
   ```bash
   psql -U postgres
@@ -89,7 +89,7 @@ Options:
   GRANT ALL PRIVILEGES ON DATABASE vtt_db TO eduladron;
   ```
 
-- **Change credentials**: edit `backend/config.py` with your connection details.
+- **Use your own credentials**: edit only `backend/.env`.
 
 ## Initialize and seed the database
 
