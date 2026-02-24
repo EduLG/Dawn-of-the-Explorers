@@ -36,7 +36,7 @@ Make sure you have installed:
 3. Install dependencies:
 
    ```bash
-   pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary
+   pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary python-dotenv
    ```
 
 ### 2) Frontend (React + Vite)
@@ -51,6 +51,21 @@ Make sure you have installed:
    ```bash
    npm install
    ```
+
+## Environment variables (`.env`)
+
+The backend can load local variables from `backend/.env` (using `python-dotenv`).
+
+1. Copy the example file:
+
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+2. Adjust at least these values:
+   - `DATABASE_URL`: PostgreSQL connection string.
+   - `JWT_SECRET_KEY`: secret key for signing tokens.
+   - `FLASK_DEBUG`: `True`/`False` for debug mode.
 
 ## Database configuration (PostgreSQL)
 
