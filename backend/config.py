@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -12,3 +13,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = os.getenv("FLASK_DEBUG", "True").lower() == "true"
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "super_secret_key")
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
