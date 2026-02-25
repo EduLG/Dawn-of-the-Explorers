@@ -10,7 +10,6 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
-    app.config["JWT_SECRET_KEY"] = "super_secret_key"
     jwt = JWTManager(app)
 
     CORS(app)

@@ -36,7 +36,7 @@ Make sure you have installed:
 3. Install dependencies:
 
    ```bash
-   pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary
+   pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary python-dotenv
    ```
 
 ### 2) Frontend (React + Vite)
@@ -52,17 +52,32 @@ Make sure you have installed:
    npm install
    ```
 
+## Environment variables (`.env`)
+
+The backend can load local variables from `backend/.env` (using `python-dotenv`).
+
+1. Copy the example file:
+
+   ```bash
+   cp backend/.env.example backend/.env
+   ```
+
+2. Adjust at least these values:
+   - `DATABASE_URL`: PostgreSQL connection string.
+   - `JWT_SECRET_KEY`: secret key for signing tokens.
+   - `FLASK_DEBUG`: `True`/`False` for debug mode.
+
 ## Database configuration (PostgreSQL)
 
-The backend uses the configuration defined in `backend/config.py`:
+The backend reads the DB connection from `DATABASE_URL` in `backend/.env`.
 
-```python
+```env
 SQLALCHEMY_DATABASE_URI = "postgresql://eduladron:12341234@localhost:5432/vtt_db"
 ```
 
 Options:
 
-- **Use the default configuration** by creating the user and database:
+- **Use the default example values** by creating the user and database:
 
   ```bash
   psql -U postgres
@@ -74,7 +89,7 @@ Options:
   GRANT ALL PRIVILEGES ON DATABASE vtt_db TO eduladron;
   ```
 
-- **Change credentials**: edit `backend/config.py` with your connection details.
+- **Change credentials**: update `backend/.env` with your connection details.
 
 ## Initialize and seed the database
 
