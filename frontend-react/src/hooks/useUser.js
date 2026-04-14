@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 
-const API_URL = "http://localhost:5000/api/v1/users/me";
+const API_URL = "/api/v1/users/me";
 
 export default function useUser() {
   const [data, setData] = useState(null);
