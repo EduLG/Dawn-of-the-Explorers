@@ -1,4 +1,4 @@
-# Virtual RPG Table Top
+# Dawn Of Explorers
 
 An exploratory-themed idle RPG where players manage a party of heroes, assign jobs, equip characters, and progress passively as the adventure unfolds.
 
