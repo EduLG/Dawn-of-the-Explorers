@@ -1,4 +1,4 @@
-# Dawn Of Explorers
+# Dawn Of the Explorers
 
 An exploratory-themed idle RPG where players manage a party of heroes, assign jobs, equip characters, and progress passively as the adventure unfolds.
 
