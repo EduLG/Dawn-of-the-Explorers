@@ -1,5 +1,5 @@
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, create_refresh_token
 
 from app.repositories.auth_repository import (
     get_user_by_username,
@@ -41,4 +41,10 @@ def authenticate_user(username, password):
         raise ServiceError("Invalid pass", 401)
 
     access_token = create_access_token(identity=user.id)
-    return {"access_token": access_token, "user_id": user.id, "username": user.username}
+    refresh_token = create_refresh_token(identity=user.id)
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "user_id": user.id,
+        "username": user.username,
+    }
