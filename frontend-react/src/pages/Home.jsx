@@ -24,7 +24,7 @@ const mobileLinkClass = ({ isActive }) =>
   }`;
 
 const Home = () => {
-  const { data: user } = useUser();
+  const { data: user, refetch } = useUser();
   const party = user?.party;
 
   return (
@@ -74,7 +74,7 @@ const Home = () => {
 
         {/* MAIN CONTENT */}
         <main className="space-y-5 pb-24 lg:pb-0">
-          <Outlet context={{ user, party }} />
+          <Outlet context={{ user, party, refetch }} />
         </main>
       </div>
 

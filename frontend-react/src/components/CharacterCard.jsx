@@ -40,19 +40,21 @@ const CharacterCard = ({
       </div>
 
       {/* CARD BODY */}
-      <div className="p-5 flex gap-5 items-start">
+      <div className="p-5 flex gap-4 items-stretch">
 
         {/* AVATAR */}
         <div className="flex-shrink-0">
-          <div className="w-40 h-40 rounded-xl bg-[#c9973b]/10 border border-[#c9973b]/20 flex items-center justify-center overflow-hidden">
+          <div className="w-40 h-full min-h-40 rounded-xl bg-[#c9973b]/10 border border-[#c9973b]/20 flex items-center justify-center overflow-hidden">
             <Avatar src={icon} size="9" fallback={charName?.[0] ?? "?"} />
           </div>
         </div>
 
-        {/* EQUIPMENT LIST */}
-        <div className="flex-1 min-w-0">
-          <span className="text-[10px] uppercase tracking-widest text-[#a89070] mb-2 block">Equipment</span>
-          <ul className="space-y-2">
+        {/* EQUIPMENT PANEL */}
+        <div className="flex-1 min-w-0 rounded-xl border border-white/10 bg-white/4 overflow-hidden flex flex-col">
+          <div className="px-4 py-2 border-b border-white/8 bg-white/4">
+            <span className="text-xs uppercase tracking-widest font-semibold text-[#c9973b]">Equipment</span>
+          </div>
+          <ul className="flex-1 px-4 py-3 space-y-2">
             {equipmentSlots.map(({ key, label }) => (
               <li key={key} className="flex items-center justify-between gap-2 text-sm">
                 <span className="text-[#a89070] w-20 shrink-0">{label}</span>

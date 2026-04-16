@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { Avatar } from "@radix-ui/themes";
 import { useEquipment } from "../hooks/useEquipment";
+import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
 
 const SLOT_LABELS = {
   head: "Head",
@@ -61,7 +62,7 @@ const buildInitialSelections = (character, equipmentBySlot) => {
 };
 
 const EquipmentView = () => {
-  const { party } = useOutletContext();
+  const { party, refetch } = useOutletContext();
   const characters = party?.characters || [];
 
   const [selectedCharId, setSelectedCharId] = useState(null);
@@ -71,6 +72,7 @@ const EquipmentView = () => {
   const jobId = selectedChar?.current_job?.id;
 
   const { data: equipment, loading } = useEquipment(jobId);
+  const { updateEquipment, saving } = useUpdateEquipment();
 
   const equipmentBySlot = useMemo(() => {
     return equipment.reduce((acc, item) => {
@@ -95,11 +97,23 @@ const EquipmentView = () => {
     }
   }, [selectedChar?.id, equipment]);
 
-  const handleChange = (slot, value) => {
+  const handleChange = async (slot, value) => {
+    const previous = selections[selectedChar.id]?.[slot];
+
     setSelections((prev) => ({
       ...prev,
-      [selectedCharId]: { ...prev[selectedCharId], [slot]: value },
+      [selectedChar.id]: { ...prev[selectedChar.id], [slot]: value },
     }));
+
+    try {
+      await updateEquipment(selectedChar.id, slot, value.id);
+      refetch();
+    } catch {
+      setSelections((prev) => ({
+        ...prev,
+        [selectedChar.id]: { ...prev[selectedChar.id], [slot]: previous },
+      }));
+    }
   };
 
   return (
@@ -161,6 +175,7 @@ const EquipmentView = () => {
                     optionLabel="name"
                     itemTemplate={itemTemplate}
                     placeholder="No equipment available"
+                    disabled={saving}
                   />
                 </div>
               ))
