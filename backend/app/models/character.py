@@ -7,7 +7,7 @@ class Character(db.Model):
     name = db.Column(db.String, nullable=False)
 
     party_id = db.Column(db.Integer, db.ForeignKey('party.id'), nullable=False)
-    current_job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
+    current_job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
 
     # Backref to Party
     party = db.relationship('Party', back_populates='characters')

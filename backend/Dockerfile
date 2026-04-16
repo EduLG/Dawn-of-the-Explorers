@@ -2,7 +2,8 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-RUN pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary python-dotenv
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
 COPY . .
 
