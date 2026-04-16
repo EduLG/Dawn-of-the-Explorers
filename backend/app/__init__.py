@@ -1,6 +1,7 @@
 from flask import Flask
 from app.routes.auth_routes import auth_bp
 from app.routes.user_routes import user_bp
+from app.routes.equipment_routes import equipment_bp
 from flask_cors import CORS
 from .extensions import db
 from config import Config
@@ -25,5 +26,6 @@ def create_app():
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(user_bp, url_prefix="/api/v1/users")
+    app.register_blueprint(equipment_bp, url_prefix="/api/v1/equipment")
 
     return app

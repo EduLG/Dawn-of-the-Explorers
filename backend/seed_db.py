@@ -95,6 +95,34 @@ with app.app_context():
         Equipment(name="Pitchfork", type="primary_hand", rating=6, job_id=jobs[2].id),
         Equipment(name="Wooden Buckler", type="secondary_hand", rating=1, job_id=jobs[2].id),
         Equipment(name="Lucky Clover", type="accesory", rating=3, job_id=jobs[2].id),
+
+        # Warrior alternatives
+        Equipment(name="Knight's Visor", type="head", rating=7, job_id=jobs[4].id),
+        Equipment(name="Battle Plate", type="chest", rating=14, job_id=jobs[4].id),
+        Equipment(name="Broad Sword", type="primary_hand", rating=13, job_id=jobs[4].id),
+        Equipment(name="Iron Shield", type="secondary_hand", rating=5, job_id=jobs[4].id),
+        Equipment(name="Warrior's Band", type="accesory", rating=4, job_id=jobs[4].id),
+
+        # Alchemist alternatives
+        Equipment(name="Alchemist's Cap", type="head", rating=3, job_id=jobs[3].id),
+        Equipment(name="Scholar's Coat", type="chest", rating=7, job_id=jobs[3].id),
+        Equipment(name="Golden Staff", type="primary_hand", rating=13, job_id=jobs[3].id),
+        Equipment(name="Mana Crystal", type="secondary_hand", rating=5, job_id=jobs[3].id),
+        Equipment(name="Elixir Vial", type="accesory", rating=6, job_id=jobs[3].id),
+
+        # Engineer alternatives
+        Equipment(name="Iron Goggle Mk.II", type="head", rating=5, job_id=jobs[0].id),
+        Equipment(name="Steam Coat", type="chest", rating=9, job_id=jobs[0].id),
+        Equipment(name="Gear Hammer", type="primary_hand", rating=11, job_id=jobs[0].id),
+        Equipment(name="Tool Bracer", type="secondary_hand", rating=6, job_id=jobs[0].id),
+        Equipment(name="Clockwork Charm", type="accesory", rating=7, job_id=jobs[0].id),
+
+        # Adventurer alternatives
+        Equipment(name="Adventurer's Hat", type="head", rating=2, job_id=jobs[2].id),
+        Equipment(name="Traveler's Coat", type="chest", rating=4, job_id=jobs[2].id),
+        Equipment(name="Short Sword", type="primary_hand", rating=5, job_id=jobs[2].id),
+        Equipment(name="Wooden Targe", type="secondary_hand", rating=2, job_id=jobs[2].id),
+        Equipment(name="Journey Stone", type="accesory", rating=5, job_id=jobs[2].id),
     ]
     db.session.add_all(equipments)
     db.session.commit()
