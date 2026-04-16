@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { Avatar } from "@radix-ui/themes";
+import { useEquipment } from "../hooks/useEquipment";
 
 const SLOT_LABELS = {
   head: "Head",
@@ -12,44 +13,6 @@ const SLOT_LABELS = {
 };
 
 const SLOTS = Object.keys(SLOT_LABELS);
-
-const MOCK_OPTIONS = {
-  head: [
-    { name: "Iron Helmet", rating: 5 },
-    { name: "Leather Cap", rating: 2 },
-    { name: "Steel Helm", rating: 8 },
-    { name: "Mystic Hood", rating: 6 },
-    { name: "Shadow Mask", rating: 7 },
-  ],
-  chest: [
-    { name: "Chain Mail", rating: 12 },
-    { name: "Leather Vest", rating: 4 },
-    { name: "Plate Armor", rating: 15 },
-    { name: "Mystic Robe", rating: 9 },
-    { name: "Scout Tunic", rating: 6 },
-  ],
-  primary_hand: [
-    { name: "Steel Sword", rating: 10 },
-    { name: "Crystal Staff", rating: 11 },
-    { name: "Titan Wrench", rating: 9 },
-    { name: "Pitchfork", rating: 6 },
-    { name: "Dragon Blade", rating: 18 },
-  ],
-  secondary_hand: [
-    { name: "Wooden Shield", rating: 3 },
-    { name: "Focus Orb", rating: 2 },
-    { name: "Reinforced Bracer", rating: 4 },
-    { name: "Wooden Buckler", rating: 1 },
-    { name: "Magic Tome", rating: 7 },
-  ],
-  accesory: [
-    { name: "Ring of Luck", rating: 7 },
-    { name: "Amulet of Healing", rating: 8 },
-    { name: "Pocket Compass", rating: 5 },
-    { name: "Lucky Clover", rating: 3 },
-    { name: "Ancient Rune", rating: 10 },
-  ],
-};
 
 const itemTemplate = (option) => (
   <div className="flex items-center justify-between gap-4">
@@ -86,18 +49,15 @@ const dropdownPT = {
   emptyMessage: { className: "px-4 py-3 text-sm text-[#6b5a45] text-center" },
 };
 
-const buildInitialSelections = (characters) => {
-  const state = {};
-  characters.forEach((char) => {
-    state[char.id] = {};
-    SLOTS.forEach((slot) => {
-      const equipped = char.equipped_items?.find((i) => i.slot === slot);
-      const equippedName = equipped?.equipment?.name;
-      const match = MOCK_OPTIONS[slot].find((o) => o.name === equippedName);
-      state[char.id][slot] = match ?? MOCK_OPTIONS[slot][0];
-    });
+const buildInitialSelections = (character, equipmentBySlot) => {
+  const result = {};
+  SLOTS.forEach((slot) => {
+    const equipped = character.equipped_items?.find((i) => i.slot === slot);
+    const equippedId = equipped?.equipment?.id;
+    const options = equipmentBySlot[slot] ?? [];
+    result[slot] = options.find((o) => o.id === equippedId) ?? options[0] ?? null;
   });
-  return state;
+  return result;
 };
 
 const EquipmentView = () => {
@@ -107,14 +67,33 @@ const EquipmentView = () => {
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [selections, setSelections] = useState({});
 
+  const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
+  const jobId = selectedChar?.current_job?.id;
+
+  const { data: equipment, loading } = useEquipment(jobId);
+
+  const equipmentBySlot = useMemo(() => {
+    return equipment.reduce((acc, item) => {
+      if (!acc[item.type]) acc[item.type] = [];
+      acc[item.type].push(item);
+      return acc;
+    }, {});
+  }, [equipment]);
+
   useEffect(() => {
-    if (characters.length > 0) {
-      setSelectedCharId((prev) => prev ?? characters[0].id);
-      setSelections(buildInitialSelections(characters));
+    if (characters.length > 0 && !selectedCharId) {
+      setSelectedCharId(characters[0].id);
     }
   }, [characters]);
 
-  const selectedChar = characters.find((c) => c.id === selectedCharId);
+  useEffect(() => {
+    if (selectedChar && equipment.length > 0) {
+      setSelections((prev) => ({
+        ...prev,
+        [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
+      }));
+    }
+  }, [selectedChar?.id, equipment]);
 
   const handleChange = (slot, value) => {
     setSelections((prev) => ({
@@ -133,7 +112,7 @@ const EquipmentView = () => {
             key={char.id}
             onClick={() => setSelectedCharId(char.id)}
             className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-              selectedCharId === char.id
+              (selectedCharId ?? characters[0]?.id) === char.id
                 ? "bg-[#c9973b]/20 border-[#c9973b]/50 text-[#f3e5c8]"
                 : "bg-white/5 border-white/10 text-[#a89070] hover:bg-white/10 hover:text-[#f3e5c8]"
             }`}
@@ -165,23 +144,27 @@ const EquipmentView = () => {
 
           {/* SLOTS */}
           <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {SLOTS.map((slot) => (
-              <div key={slot} className="flex flex-col gap-1.5">
-                <label className="text-[10px] uppercase tracking-widest text-[#a89070]">
-                  {SLOT_LABELS[slot]}
-                </label>
-                <Dropdown
-                  unstyled
-                  pt={dropdownPT}
-                  value={selections[selectedCharId]?.[slot] ?? null}
-                  onChange={(e) => handleChange(slot, e.value)}
-                  options={MOCK_OPTIONS[slot]}
-                  optionLabel="name"
-                  itemTemplate={itemTemplate}
-                  placeholder="Select equipment"
-                />
-              </div>
-            ))}
+            {loading ? (
+              <p className="text-sm text-[#a89070] col-span-2">Loading equipment...</p>
+            ) : (
+              SLOTS.map((slot) => (
+                <div key={slot} className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase tracking-widest text-[#a89070]">
+                    {SLOT_LABELS[slot]}
+                  </label>
+                  <Dropdown
+                    unstyled
+                    pt={dropdownPT}
+                    value={selections[selectedChar.id]?.[slot] ?? null}
+                    onChange={(e) => handleChange(slot, e.value)}
+                    options={equipmentBySlot[slot] ?? []}
+                    optionLabel="name"
+                    itemTemplate={itemTemplate}
+                    placeholder="No equipment available"
+                  />
+                </div>
+              ))
+            )}
           </div>
         </div>
       )}
