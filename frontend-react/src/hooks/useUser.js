@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { apiFetch } from "../utils/apiFetch";
 
 const API_URL = "/api/v1/users/me";
 
@@ -15,12 +16,8 @@ export default function useUser() {
     setError(null);
 
     try {
-      const res = await fetch(API_URL, {
+      const res = await apiFetch(API_URL, {
         method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         signal,
       });
 

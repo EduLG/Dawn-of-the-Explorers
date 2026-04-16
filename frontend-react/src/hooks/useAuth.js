@@ -78,6 +78,7 @@ export function useAuth() {
       }
 
       localStorage.setItem("token", data.access_token);
+      localStorage.setItem("refresh_token", data.refresh_token);
 
       return data;
     } catch (err) {
