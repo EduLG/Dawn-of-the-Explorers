@@ -16,7 +16,7 @@ class Equipment(db.Model):
     name = db.Column(db.String, nullable=False)
     type = db.Column(db.String, nullable=False)
     rating = db.Column(db.Integer, default=0)
-    job_id = db.Column(db.Integer, db.ForeignKey('job.id'))
+    job_id = db.Column(db.Integer, db.ForeignKey('job.id'), nullable=False)
 
     # Backref to Job
     job = db.relationship('Job', back_populates='equipments')

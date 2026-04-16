@@ -7,7 +7,6 @@ class Party(db.Model):
     name = db.Column(db.String, nullable=False)
     level = db.Column(db.Integer, default=1)
     experience = db.Column(db.Integer, default=0)
-    rating = db.Column(db.Integer, default=0)
 
     # 1:1 with User
     user = db.relationship('User', back_populates='party', uselist=False)
