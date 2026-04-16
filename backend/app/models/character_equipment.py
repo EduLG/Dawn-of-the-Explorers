@@ -13,4 +13,8 @@ class CharacterEquipment(db.Model):
 
     __table_args__ = (
         db.UniqueConstraint('character_id', 'slot', name='uix_character_slot'),
+        db.CheckConstraint(
+            "slot IN ('head', 'chest', 'primary_hand', 'secondary_hand', 'accesory')",
+            name="ck_character_equipment_slot",
+        ),
     )

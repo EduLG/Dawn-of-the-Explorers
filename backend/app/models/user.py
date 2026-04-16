@@ -10,6 +10,6 @@ class User(db.Model):
     password = db.Column(db.String, nullable=False)
 
     # 1:1 relationship with Party
-    party_id = db.Column(db.Integer, db.ForeignKey('party.id'), unique=True)
+    party_id = db.Column(db.Integer, db.ForeignKey('party.id'), unique=True, nullable=False)
     party = db.relationship('Party', back_populates='user', uselist=False)
 

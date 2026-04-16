@@ -19,7 +19,7 @@ with app.app_context():
     # -------------------------------
     # Create party
     # -------------------------------
-    party = Party(name="Heroes Party", level=1, experience=0, rating=0)
+    party = Party(name="Heroes Party", level=1, experience=0)
     db.session.add(party)
     db.session.commit()
 
@@ -68,33 +68,33 @@ with app.app_context():
     # Create equipments
     # -------------------------------
     equipments = [
-        # Firion
-        Equipment(name="Iron Helmet", type="head", rating=5),
-        Equipment(name="Chain Mail", type="chest", rating=12),
-        Equipment(name="Steel Sword", type="primary_hand", rating=10),
-        Equipment(name="Wooden Shield", type="secondary_hand", rating=3),
-        Equipment(name="Ring of Luck", type="accesory", rating=7),
+        # Firion (warrior)
+        Equipment(name="Iron Helmet", type="head", rating=5, job_id=jobs[4].id),
+        Equipment(name="Chain Mail", type="chest", rating=12, job_id=jobs[4].id),
+        Equipment(name="Steel Sword", type="primary_hand", rating=10, job_id=jobs[4].id),
+        Equipment(name="Wooden Shield", type="secondary_hand", rating=3, job_id=jobs[4].id),
+        Equipment(name="Ring of Luck", type="accesory", rating=7, job_id=jobs[4].id),
 
-        # Sabin
-        Equipment(name="Alchemist Hood", type="head", rating=4),
-        Equipment(name="Mystic Robe", type="chest", rating=9),
-        Equipment(name="Crystal Staff", type="primary_hand", rating=11),
-        Equipment(name="Focus Orb", type="secondary_hand", rating=2),
-        Equipment(name="Amulet of Healing", type="accesory", rating=8),
+        # Sabin (alchemist)
+        Equipment(name="Alchemist Hood", type="head", rating=4, job_id=jobs[3].id),
+        Equipment(name="Mystic Robe", type="chest", rating=9, job_id=jobs[3].id),
+        Equipment(name="Crystal Staff", type="primary_hand", rating=11, job_id=jobs[3].id),
+        Equipment(name="Focus Orb", type="secondary_hand", rating=2, job_id=jobs[3].id),
+        Equipment(name="Amulet of Healing", type="accesory", rating=8, job_id=jobs[3].id),
 
-        # Balthier
-        Equipment(name="Engineer Goggles", type="head", rating=3),
-        Equipment(name="Utility Vest", type="chest", rating=7),
-        Equipment(name="Titan Wrench", type="primary_hand", rating=9),
-        Equipment(name="Reinforced Bracer", type="secondary_hand", rating=4),
-        Equipment(name="Pocket Compass", type="accesory", rating=5),
+        # Balthier (engineer)
+        Equipment(name="Engineer Goggles", type="head", rating=3, job_id=jobs[0].id),
+        Equipment(name="Utility Vest", type="chest", rating=7, job_id=jobs[0].id),
+        Equipment(name="Titan Wrench", type="primary_hand", rating=9, job_id=jobs[0].id),
+        Equipment(name="Reinforced Bracer", type="secondary_hand", rating=4, job_id=jobs[0].id),
+        Equipment(name="Pocket Compass", type="accesory", rating=5, job_id=jobs[0].id),
 
-        # Locke
-        Equipment(name="Straw Hat", type="head", rating=1),
-        Equipment(name="Work Tunic", type="chest", rating=2),
-        Equipment(name="Pitchfork", type="primary_hand", rating=6),
-        Equipment(name="Wooden Buckler", type="secondary_hand", rating=1),
-        Equipment(name="Lucky Clover", type="accesory", rating=3),
+        # Locke (adventurer)
+        Equipment(name="Straw Hat", type="head", rating=1, job_id=jobs[2].id),
+        Equipment(name="Work Tunic", type="chest", rating=2, job_id=jobs[2].id),
+        Equipment(name="Pitchfork", type="primary_hand", rating=6, job_id=jobs[2].id),
+        Equipment(name="Wooden Buckler", type="secondary_hand", rating=1, job_id=jobs[2].id),
+        Equipment(name="Lucky Clover", type="accesory", rating=3, job_id=jobs[2].id),
     ]
     db.session.add_all(equipments)
     db.session.commit()
