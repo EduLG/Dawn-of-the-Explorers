@@ -4,13 +4,11 @@ import loginImage from "../assets/resources/dawn_of_the_explorers.png";
 const LoginLayout = () => {
   return (
     <div
+      className="min-h-screen w-full"
       style={{
-        minHeight: "100vh",
-        backgroundImage: `url(${loginImage})`,
+        backgroundImage: `linear-gradient(rgba(10,6,2,0.65), rgba(10,6,2,0.65)), url(${loginImage})`,
         backgroundSize: "cover",
-        backgroundPositionX: "center",
-        backgroundPositionY: "30%",
-        margin: "0px",
+        backgroundPosition: "center 30%",
       }}
     >
       <Outlet />
