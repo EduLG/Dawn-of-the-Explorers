@@ -7,6 +7,7 @@ import TeamView from "../views/TeamView";
 import EquipmentView from "../views/EquipmentView";
 import QuestsView from "../views/QuestsView";
 import MarketView from "../views/MarketView";
+import InventoryView from "../views/InventoryView";
 
 export default function AppRouter() {
   return (
@@ -24,6 +25,7 @@ export default function AppRouter() {
             <Route path="equipment" element={<EquipmentView />} />
             <Route path="quests" element={<QuestsView />} />
             <Route path="market" element={<MarketView />} />
+            <Route path="inventory" element={<InventoryView />} />
           </Route>
         </Route>
       </Routes>

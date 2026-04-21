@@ -24,6 +24,9 @@ class Equipment(db.Model):
     # M:N with Character through CharacterEquipment
     equipped_by = db.relationship('CharacterEquipment', back_populates='equipment', cascade='all, delete-orphan')
 
+    # 1:N with PartyInventory
+    in_inventories = db.relationship('PartyInventory', back_populates='equipment', cascade='all, delete-orphan')
+
     # Constraint to ensure type is one of the allowed values
     __table_args__ = (
         db.CheckConstraint(

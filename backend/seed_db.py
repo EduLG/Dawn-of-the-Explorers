@@ -8,6 +8,7 @@ from app.models.party import Party
 from app.models.character import Character
 from app.models.equipment import Equipment
 from app.models.character_equipment import CharacterEquipment
+from app.models.party_inventory import PartyInventory
 
 app = create_app()
 
@@ -165,6 +166,21 @@ with app.app_context():
         CharacterEquipment(character_id=locke.id, equipment_id=equipments[19].id, slot="accesory"),
     ]
     db.session.add_all(char_equipments)
+    db.session.commit()
+
+    # -------------------------------
+    # Add items to party inventory (loot pool)
+    # -------------------------------
+    inventory_items = [
+        PartyInventory(party_id=party.id, equipment_id=equipments[20].id),  # Knight's Visor (warrior)
+        PartyInventory(party_id=party.id, equipment_id=equipments[21].id),  # Battle Plate (warrior)
+        PartyInventory(party_id=party.id, equipment_id=equipments[26].id),  # Golden Staff (alchemist)
+        PartyInventory(party_id=party.id, equipment_id=equipments[31].id),  # Gear Hammer (engineer)
+        PartyInventory(party_id=party.id, equipment_id=equipments[34].id),  # Clockwork Charm (engineer)
+        PartyInventory(party_id=party.id, equipment_id=equipments[36].id),  # Traveler's Coat (adventurer)
+        PartyInventory(party_id=party.id, equipment_id=equipments[37].id),  # Short Sword (adventurer)
+    ]
+    db.session.add_all(inventory_items)
     db.session.commit()
 
     print("Seeding data inserted successfully")
