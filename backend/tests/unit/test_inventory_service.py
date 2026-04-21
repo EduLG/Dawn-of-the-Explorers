@@ -7,7 +7,8 @@ class TestGetInventory:
     def test_user_without_party_raises_404(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party = None
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         with pytest.raises(ServiceError) as exc_info:
             get_inventory(user_id=1)
@@ -17,7 +18,8 @@ class TestGetInventory:
     def test_valid_user_returns_serialized_list(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         fake_items = [mocker.Mock(), mocker.Mock()]
         mocker.patch("app.services.inventory_service.get_party_inventory", return_value=fake_items)
@@ -37,7 +39,8 @@ class TestEquipFromInventory:
     def test_user_without_party_raises_404(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party = None
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         with pytest.raises(ServiceError) as exc_info:
             equip_from_inventory(user_id=1, inventory_id=1, character_id=1, slot="head")
@@ -47,7 +50,8 @@ class TestEquipFromInventory:
     def test_inventory_item_not_found_raises_404(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
         mocker.patch("app.services.inventory_service.get_inventory_item", return_value=None)
 
         with pytest.raises(ServiceError) as exc_info:
@@ -58,7 +62,8 @@ class TestEquipFromInventory:
     def test_item_from_other_party_raises_403(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         fake_item = mocker.Mock()
         fake_item.party_id = 2
@@ -72,7 +77,8 @@ class TestEquipFromInventory:
     def test_character_from_other_party_raises_404(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         fake_item = mocker.Mock()
         fake_item.party_id = 1
@@ -90,7 +96,8 @@ class TestEquipFromInventory:
     def test_incompatible_job_raises_400(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         fake_item = mocker.Mock()
         fake_item.party_id = 1
@@ -110,7 +117,8 @@ class TestEquipFromInventory:
     def test_valid_data_equips_and_removes_from_inventory(self, mocker):
         fake_user = mocker.Mock()
         fake_user.party.id = 1
-        mocker.patch("app.services.inventory_service.User.query.get", return_value=fake_user)
+        mock_user_class = mocker.patch("app.services.inventory_service.User")
+        mock_user_class.query.get.return_value = fake_user
 
         fake_item = mocker.Mock()
         fake_item.party_id = 1
