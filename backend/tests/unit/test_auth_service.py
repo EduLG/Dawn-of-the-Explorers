@@ -21,3 +21,9 @@ class TestRegisterUser:
         call_args = mock_create.call_args
         assert call_args[0][0] == "eduladron"
         assert call_args[0][1] == "edu@test.com"
+
+    def test_register_missing_data_raises_400(self):
+        with pytest.raises(ServiceError) as exc_info:
+            register_user("", "", "")
+
+        assert exc_info.value.status_code == 400
