@@ -4,6 +4,7 @@ from .character_equipment_schema import CharacterEquipmentSchema
 from .character_schema import CharacterSchema
 from .party_schema import PartySchema
 from .user_schema import UserSchema
+from .inventory_schema import PartyInventorySchema
 
 __all__ = [
     "JobSchema",
@@ -12,4 +13,5 @@ __all__ = [
     "CharacterSchema",
     "PartySchema",
     "UserSchema",
+    "PartyInventorySchema",
 ]

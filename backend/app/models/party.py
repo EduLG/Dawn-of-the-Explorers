@@ -13,3 +13,6 @@ class Party(db.Model):
 
     # 1:N with Character
     characters = db.relationship('Character', back_populates='party', cascade='all, delete-orphan')
+
+    # 1:N with PartyInventory
+    inventory = db.relationship('PartyInventory', back_populates='party', cascade='all, delete-orphan')

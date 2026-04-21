@@ -7,6 +7,7 @@ import headerlogo from "../assets/resources/header-logo.png";
 const navItems = [
   { label: "Team", mobileLabel: "Team", to: "/home/team" },
   { label: "Manage equipment", mobileLabel: "Equip", to: "/home/equipment" },
+  { label: "Inventory", mobileLabel: "Inventory", to: "/home/inventory" },
   { label: "Exploration quests", mobileLabel: "Quests", to: "/home/quests" },
   { label: "Market", mobileLabel: "Market", to: "/home/market" },
 ];
