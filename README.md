@@ -25,7 +25,7 @@ docker compose exec backend python seed_db.py
 ```
 
 | Service  | URL                   |
-|----------|-----------------------|
+| -------- | --------------------- |
 | Frontend | http://localhost:5173 |
 | Backend  | http://localhost:5000 |
 
@@ -41,6 +41,18 @@ docker compose down        # stop
 docker compose down -v     # stop and wipe the database volume
 ```
 
+## Tests
+
+Unit tests cover the backend service layer (32 tests). No database required.
+
+```bash
+cd backend
+source venv/bin/activate
+python -m pytest tests/unit/ -v
+```
+
+**Tools:** `pytest` + `pytest-mock`
+
 ## Manual setup (without Docker)
 
 <details>
@@ -50,12 +62,13 @@ docker compose down -v     # stop and wipe the database volume
 cd backend
 python -m venv venv
 source venv/bin/activate
-pip install flask flask-cors flask-jwt-extended flask-sqlalchemy psycopg2-binary python-dotenv
+pip install -r requirements.txt
 cp .env.example .env       # set DATABASE_URL and JWT_SECRET_KEY
 python init_db.py
 python seed_db.py
 flask run
 ```
+
 </details>
 
 <details>
@@ -66,4 +79,5 @@ cd frontend-react
 npm install
 npm run dev
 ```
+
 </details>
