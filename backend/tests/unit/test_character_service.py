@@ -19,3 +19,23 @@ class TestCalculateCharacterRating:
         result = calculate_character_rating(relations)
 
         assert result == 40
+
+    def test_ignores_relation_with_none_equipment(self):
+        relations = [
+            SimpleNamespace(equipment=SimpleNamespace(rating=10)),
+            SimpleNamespace(equipment=None),
+        ]
+
+        result = calculate_character_rating(relations)
+
+        assert result == 10
+
+    def test_ignores_equipment_with_none_rating(self):
+        relations = [
+            SimpleNamespace(equipment=SimpleNamespace(rating=10)),
+            SimpleNamespace(equipment=SimpleNamespace(rating=None)),
+        ]
+
+        result = calculate_character_rating(relations)
+
+        assert result == 10
