@@ -27,3 +27,21 @@ class TestRegisterUser:
             register_user("", "", "")
 
         assert exc_info.value.status_code == 400
+
+    def test_register_duplicate_username_raises_409(self, mocker):
+        mocker.patch("app.services.auth_service.get_user_by_username", return_value=mocker.Mock())
+        mocker.patch("app.services.auth_service.get_user_by_email", return_value=None)
+
+        with pytest.raises(ServiceError) as exc_info:
+            register_user("eduladron", "edu@test.com", "securepass")
+
+        assert exc_info.value.status_code == 409
+
+    def test_register_duplicate_email_raises_409(self, mocker):
+        mocker.patch("app.services.auth_service.get_user_by_username", return_value=None)
+        mocker.patch("app.services.auth_service.get_user_by_email", return_value=mocker.Mock())
+
+        with pytest.raises(ServiceError) as exc_info:
+            register_user("eduladron", "edu@test.com", "securepass")
+
+        assert exc_info.value.status_code == 409
