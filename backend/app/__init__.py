@@ -24,6 +24,7 @@ def create_app():
     from app.models.equipment import Equipment
     from app.models.character_equipment import CharacterEquipment
     from app.models.party_inventory import PartyInventory
+    from app.models.dungeon import Dungeon
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(user_bp, url_prefix="/api/v1/users")
