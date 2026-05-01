@@ -5,6 +5,7 @@ from .character_schema import CharacterSchema
 from .party_schema import PartySchema
 from .user_schema import UserSchema
 from .inventory_schema import PartyInventorySchema
+from .dungeon_schema import DungeonSchema
 
 __all__ = [
     "JobSchema",
@@ -14,4 +15,5 @@ __all__ = [
     "PartySchema",
     "UserSchema",
     "PartyInventorySchema",
+    "DungeonSchema",
 ]
