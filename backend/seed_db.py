@@ -7,6 +7,7 @@ from app.models.user import User
 from app.models.party import Party
 from app.models.character import Character
 from app.models.equipment import Equipment
+from app.models.dungeon import Dungeon
 
 app = create_app()
 
@@ -668,6 +669,99 @@ with app.app_context():
         Equipment(name="Apex Predator's Fang",  type="accesory", rating=82, job_id=jobs[9].id),
     ]
     db.session.add_all(equipments)
+    db.session.commit()
+
+    # -------------------------------
+    # Seed dungeons
+    # -------------------------------
+    # Loot index formula: type_base + (tier-1)*10 + job_index
+    # type_base → H=0  C=100  P=200  S=300  A=400
+    # job_index → eng=0 gun=1 adv=2 alc=3 war=4 fen=5 sag=6 ass=7 sch=8 bst=9
+    H, C, P, S, A = 0, 100, 200, 300, 400
+
+    def loot(*specs):
+        return [equipments[base + (tier - 1) * 10 + job].id for base, tier, job in specs]
+
+    dungeons = [
+        Dungeon(
+            name="Bosque Frondoso Primigenio",
+            description="Extensa masa forestal de árboles centenarios, ríos estrechos y claros cubiertos de niebla.",
+            image_path="/localizations/bosque_1.png",
+            min_rating=0, visibility_rating=0,
+            loot=loot((H,1,2), (C,1,4), (P,1,3), (S,1,0), (A,1,1)),
+        ),
+        Dungeon(
+            name="La Torre Infinita de Observación",
+            description="Colosal estructura vertical que atraviesa las nubes y se pierde en el cielo.",
+            image_path="/localizations/torre_2.png",
+            min_rating=50, visibility_rating=0,
+            loot=loot((H,2,4), (C,2,3), (P,2,1), (S,2,2), (A,2,6)),
+        ),
+        Dungeon(
+            name="Cañón de las Tormentas Eternas",
+            description="Profunda grieta rocosa con paredes escarpadas y corrientes de aire violentas.",
+            image_path="/localizations/cañon_3.png",
+            min_rating=80, visibility_rating=40,
+            loot=loot((H,3,1), (C,3,0), (P,3,4), (S,2,9), (A,3,7), (C,2,5)),
+        ),
+        Dungeon(
+            name="Archipiélago de Nubes Errantes",
+            description="Conjunto de islas flotantes suspendidas sobre un mar de nubes.",
+            image_path="/localizations/archipielago_4.png",
+            min_rating=120, visibility_rating=60,
+            loot=loot((H,3,6), (C,3,8), (P,3,1), (S,3,4), (A,3,9), (P,3,3)),
+        ),
+        Dungeon(
+            name="Fosa de Vapor Abisal",
+            description="Enorme grieta geotérmica que se adentra en la corteza terrestre.",
+            image_path="/localizations/Fosa_5.png",
+            min_rating=150, visibility_rating=75,
+            loot=loot((H,4,0), (C,4,4), (P,3,9), (S,4,5), (A,4,8), (H,3,7)),
+        ),
+        Dungeon(
+            name="Ciudad Sumergida de Bronce",
+            description="Ruinas de una antigua metrópolis tecnológica bajo aguas densas y oscuras.",
+            image_path="/localizations/sumergida_6.png",
+            min_rating=180, visibility_rating=90,
+            loot=loot((H,4,8), (C,4,7), (P,4,1), (S,4,2), (A,4,4), (C,4,6)),
+        ),
+        Dungeon(
+            name="Isla de los Ingenieros Caídos",
+            description="Isla rocosa plagada de fábricas abandonadas y laboratorios en ruinas.",
+            image_path="/localizations/ingenieros_7.png",
+            min_rating=220, visibility_rating=110,
+            loot=loot((H,5,0), (C,5,4), (P,5,1), (S,4,3), (A,5,7), (H,4,9)),
+        ),
+        Dungeon(
+            name="Desierto de Cristal Resonante",
+            description="Vasta extensión de dunas formadas por fragmentos de cristal translúcido.",
+            image_path="/localizations/desierto_8.png",
+            min_rating=260, visibility_rating=130,
+            loot=loot((H,5,8), (C,5,3), (P,5,4), (S,5,9), (A,5,5), (P,5,6)),
+        ),
+        Dungeon(
+            name="Cementerio de Aeronaves",
+            description="Llanura cubierta por restos de zeppelines y naves aéreas estrelladas.",
+            image_path="/localizations/cementerio_9.png",
+            min_rating=300, visibility_rating=150,
+            loot=loot((H,6,1), (C,6,0), (P,6,4), (S,5,2), (A,6,3), (P,5,7)),
+        ),
+        Dungeon(
+            name="Volcán de Caldera Eterizada",
+            description="Volcán activo con una amplia caldera rodeada de flujos de lava.",
+            image_path="/localizations/volcan_10.png",
+            min_rating=400, visibility_rating=200,
+            loot=loot((H,7,4), (C,7,5), (P,7,3), (S,6,6), (A,7,9), (H,6,7)),
+        ),
+        Dungeon(
+            name="Núcleo de Éter",
+            description="Cavidad colosal en el corazón del planeta donde converge la energía del mundo.",
+            image_path="/localizations/nucleo_11.png",
+            min_rating=600, visibility_rating=300,
+            loot=loot((H,9,4), (C,9,0), (P,8,3), (S,9,5), (A,9,8), (H,10,6)),
+        ),
+    ]
+    db.session.add_all(dungeons)
     db.session.commit()
 
     print("Seeding data inserted successfully")
