@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
-import { useEquipment } from "../hooks/useEquipment";
+import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
 
 const SLOT_LABELS = {
@@ -59,8 +59,7 @@ const buildInitialSelections = (character, equipmentBySlot) => {
     const equipped = character.equipped_items?.find((i) => i.slot === slot);
     const equippedId = equipped?.equipment?.id;
     const options = equipmentBySlot[slot] ?? [];
-    result[slot] =
-      options.find((o) => o.id === equippedId) ?? options[0] ?? null;
+    result[slot] = options.find((o) => o.id === equippedId) ?? null;
   });
   return result;
 };
@@ -76,16 +75,30 @@ const EquipmentView = () => {
     characters.find((c) => c.id === selectedCharId) ?? characters[0];
   const jobId = selectedChar?.current_job?.id;
 
-  const { data: equipment, loading } = useEquipment(jobId);
+  const { data: inventory, loading } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
 
   const equipmentBySlot = useMemo(() => {
-    return equipment.reduce((acc, item) => {
-      if (!acc[item.type]) acc[item.type] = [];
-      acc[item.type].push(item);
-      return acc;
-    }, {});
-  }, [equipment]);
+    const slots = {};
+
+    inventory
+      .filter((item) => item.equipment.job_id === jobId)
+      .forEach((item) => {
+        const eq = item.equipment;
+        if (!slots[eq.type]) slots[eq.type] = [];
+        slots[eq.type].push(eq);
+      });
+
+    selectedChar?.equipped_items?.forEach(({ slot, equipment }) => {
+      if (!equipment) return;
+      if (!slots[slot]) slots[slot] = [];
+      if (!slots[slot].find((e) => e.id === equipment.id)) {
+        slots[slot].push(equipment);
+      }
+    });
+
+    return slots;
+  }, [inventory, jobId, selectedChar]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) {
@@ -94,7 +107,7 @@ const EquipmentView = () => {
   }, [characters]);
 
   useEffect(() => {
-    if (selectedChar && equipment.length > 0) {
+    if (selectedChar && inventory.length > 0) {
       setSelections((prev) => ({
         ...prev,
         [selectedChar.id]: buildInitialSelections(
@@ -103,23 +116,44 @@ const EquipmentView = () => {
         ),
       }));
     }
-  }, [selectedChar?.id, equipment]);
+  }, [selectedChar?.id, inventory]);
 
-  const handleChange = async (slot, value) => {
-    const previous = selections[selectedChar.id]?.[slot];
+  const hasChanges = useMemo(() => {
+    if (!selectedChar) return false;
+    const charSelections = selections[selectedChar.id] ?? {};
+    return SLOTS.some((slot) => {
+      const selected = charSelections[slot];
+      const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
+      return selected?.id !== equipped?.equipment?.id;
+    });
+  }, [selections, selectedChar]);
 
+  const handleChange = (slot, value) => {
     setSelections((prev) => ({
       ...prev,
       [selectedChar.id]: { ...prev[selectedChar.id], [slot]: value },
     }));
+  };
+
+  const handleSave = async () => {
+    const charSelections = selections[selectedChar.id] ?? {};
+    const slotsToSave = SLOTS.filter((slot) => {
+      const selected = charSelections[slot];
+      const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
+      return selected?.id !== equipped?.equipment?.id;
+    });
 
     try {
-      await updateEquipment(selectedChar.id, slot, value.id);
+      await Promise.all(
+        slotsToSave.map((slot) =>
+          updateEquipment(selectedChar.id, slot, charSelections[slot].id),
+        ),
+      );
       refetch();
     } catch {
       setSelections((prev) => ({
         ...prev,
-        [selectedChar.id]: { ...prev[selectedChar.id], [slot]: previous },
+        [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
       }));
     }
   };
@@ -176,32 +210,48 @@ const EquipmentView = () => {
               )}
             </div>
 
-            {/* DROPDOWNS */}
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 content-start">
-              {loading ? (
-                <p className="text-sm text-[#a89070] col-span-2">
-                  Loading equipment...
-                </p>
-              ) : (
-                SLOTS.map((slot) => (
-                  <div key={slot} className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-widest text-[#a89070]">
-                      {SLOT_LABELS[slot]}
-                    </label>
-                    <Dropdown
-                      unstyled
-                      pt={dropdownPT}
-                      value={selections[selectedChar.id]?.[slot] ?? null}
-                      onChange={(e) => handleChange(slot, e.value)}
-                      options={equipmentBySlot[slot] ?? []}
-                      optionLabel="name"
-                      itemTemplate={itemTemplate}
-                      placeholder="No equipment available"
-                      disabled={saving}
-                    />
-                  </div>
-                ))
-              )}
+            {/* DROPDOWNS + SAVE */}
+            <div className="flex-1 flex flex-col gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {loading ? (
+                  <p className="text-sm text-[#a89070] col-span-2">
+                    Loading equipment...
+                  </p>
+                ) : (
+                  SLOTS.map((slot) => (
+                    <div key={slot} className="flex flex-col gap-1.5">
+                      <label className="text-[10px] uppercase tracking-widest text-[#a89070]">
+                        {SLOT_LABELS[slot]}
+                      </label>
+                      <Dropdown
+                        unstyled
+                        pt={dropdownPT}
+                        value={selections[selectedChar.id]?.[slot] ?? null}
+                        onChange={(e) => handleChange(slot, e.value)}
+                        options={equipmentBySlot[slot] ?? []}
+                        optionLabel="name"
+                        itemTemplate={itemTemplate}
+                        placeholder="No item equipped"
+                        disabled={saving}
+                      />
+                    </div>
+                  ))
+                )}
+              </div>
+
+              <div className="flex justify-end pt-1">
+                <button
+                  onClick={handleSave}
+                  disabled={!hasChanges || saving}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+                    hasChanges && !saving
+                      ? "bg-[#c9973b]/20 border-[#c9973b]/50 text-[#f3e5c8] hover:bg-[#c9973b]/30"
+                      : "bg-white/5 border-white/10 text-[#6b5a45] cursor-not-allowed"
+                  }`}
+                >
+                  {saving ? "Saving..." : "Save changes"}
+                </button>
+              </div>
             </div>
           </div>
         </div>
