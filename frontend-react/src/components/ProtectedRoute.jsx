@@ -15,12 +15,12 @@ const ProtectedRoute = () => {
 
     apiFetch("/api/v1/users/me", { method: "GET", signal: controller.signal })
       .then((res) => {
-        if (res.status === 401) {
+        if (res.ok) {
+          setStatus("ok");
+        } else {
           localStorage.removeItem("token");
           localStorage.removeItem("refresh_token");
           setStatus("unauthorized");
-        } else {
-          setStatus("ok");
         }
       })
       .catch((err) => {
