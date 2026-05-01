@@ -10,4 +10,5 @@ class Dungeon(db.Model):
     image_path        = db.Column(db.String)
     min_rating        = db.Column(db.Integer, default=0, nullable=False)
     visibility_rating = db.Column(db.Integer, default=0, nullable=False)
+    duration          = db.Column(db.Integer, default=60, nullable=False)
     loot              = db.Column(db.JSON)
