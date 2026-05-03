@@ -26,6 +26,7 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
     }
     try {
       await register(email, userName, password);
+      await login(userName, password);
       navigate("/home/team");
       setVisible(false);
     } catch (e) {
