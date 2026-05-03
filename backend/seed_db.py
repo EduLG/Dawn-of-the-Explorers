@@ -50,7 +50,7 @@ with app.app_context():
     # -------------------------------
     job_names = [
         "engineer", "gunslinger", "adventurer", "alchemist",
-        "warrior", "fender", "sage", "assasin", "scholar", "beastmaster"
+        "warrior", "fender", "sage", "thief", "scholar", "beastmaster"
     ]
 
     jobs = []
