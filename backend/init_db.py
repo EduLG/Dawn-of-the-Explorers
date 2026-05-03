@@ -7,6 +7,7 @@ from app.models.character import Character
 from app.models.job import Job
 from app.models.equipment import Equipment
 from app.models.character_equipment import CharacterEquipment
+from app.models.exploration import Exploration
 
 app = create_app()
 
