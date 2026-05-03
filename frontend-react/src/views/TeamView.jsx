@@ -20,6 +20,18 @@ const TeamView = () => {
           style={{ filter: "brightness(80%)" }}
         />
 
+        {/* PARTY HEADER OVERLAY */}
+        <div className="absolute top-0 left-0 right-0 flex items-start px-6 py-4 bg-gradient-to-b from-black/70 to-transparent">
+          <div className="flex flex-col gap-1 bg-black/20 border border-white/8 rounded-xl px-4 py-3 backdrop-blur-sm">
+            <p className="text-[10px] uppercase tracking-widest text-[#a89070]">Active Party</p>
+            <h2 className="text-xl sm:text-2xl font-bold text-[#f3e5c8]">{party?.name || "Your Party"}</h2>
+            <div className="flex items-center gap-2 mt-0.5">
+              <p className="text-[10px] uppercase tracking-widest text-[#a89070]">Party Strength</p>
+              <span className="text-sm font-bold text-[#c9973b]">{party?.rating ?? "—"}</span>
+            </div>
+          </div>
+        </div>
+
         {/* CHARACTER SPRITES */}
         <div className="absolute bottom-[6.25%] left-0 right-0 flex justify-center items-end gap-6 sm:gap-10 px-16 sm:px-24 md:px-32">
           {partyCharacters.map((character) => (
@@ -34,27 +46,7 @@ const TeamView = () => {
         </div>
       </div>
 
-      {/* PARTY HEADER */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white/5 border border-white/10 rounded-2xl px-6 py-4 backdrop-blur-sm">
-        <div>
-          <p className="text-[10px] uppercase tracking-widest text-[#a89070] mb-0.5">
-            Active Party
-          </p>
-          <h2 className="text-xl sm:text-2xl font-bold text-[#f3e5c8]">
-            {party?.name || "Your Party"}
-          </h2>
-        </div>
-        <div className="flex flex-col items-start sm:items-end gap-0.5">
-          <p className="text-[10px] uppercase tracking-widest text-[#a89070]">
-            Party Strength
-          </p>
-          <span className="text-2xl font-bold text-[#c9973b]">
-            {party?.rating ?? "—"}
-          </span>
-        </div>
-      </div>
-
-      {/* CHARACTERS GRID */}
+{/* CHARACTERS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {partyCharacters.map((character) => {
           const equippedItems = character.equipped_items || [];
