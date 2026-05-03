@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Avatar } from "@radix-ui/themes";
 import useUser from "../hooks/useUser";
+import OnboardingModal from "../components/OnboardingModal";
 import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
 
@@ -27,6 +28,7 @@ const mobileLinkClass = ({ isActive }) =>
 const Home = () => {
   const { data: user, refetch } = useUser();
   const party = user?.party;
+  const needsOnboarding = user && party && party.characters.length === 0;
 
   return (
     <div
@@ -78,6 +80,14 @@ const Home = () => {
           <Outlet context={{ user, party, refetch }} />
         </main>
       </div>
+
+      {/* ONBOARDING MODAL */}
+      {needsOnboarding && (
+        <OnboardingModal
+          username={user.username}
+          onComplete={refetch}
+        />
+      )}
 
       {/* MOBILE BOTTOM NAV */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0d0703]/90 backdrop-blur-xl border-t border-white/8 flex z-30">
