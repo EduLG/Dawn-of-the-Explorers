@@ -123,7 +123,7 @@ const OnboardingModal = ({ username, onComplete }) => {
 
         {/* Character cards */}
         <div className="space-y-2">
-          <p className="text-[10px] uppercase tracking-widest text-[#a89070]">Your heroes</p>
+          <p className="text-sm uppercase tracking-widest text-[#a89070]">Your heroes</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {characters.map((char, i) => (
               <div
