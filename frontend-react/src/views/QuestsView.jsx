@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import { apiFetch } from "../utils/apiFetch";
 import useDungeons from "../hooks/useDungeons";
@@ -9,29 +9,86 @@ function formatDuration(seconds) {
   return `${mins} min`;
 }
 
+function formatTimeLeft(seconds) {
+  if (seconds <= 0) return "0s";
+  if (seconds < 60) return `${seconds}s`;
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
+}
+
 const QuestsView = () => {
   const { party } = useOutletContext();
   const { dungeons, loading, error } = useDungeons();
   const partyRating = party?.rating ?? 0;
 
-  const [exploring, setExploring]       = useState(false);
+  const [activeExploration, setActiveExploration] = useState(null); // { ends_at: Date, dungeon_name: string }
+  const [timeLeft, setTimeLeft] = useState(0);
   const [exploreResult, setExploreResult] = useState(null);
+  const [sending, setSending] = useState(false);
+
+  const applyStatus = useCallback((data) => {
+    if (data.status === "in_progress") {
+      setActiveExploration((prev) => {
+        const newEndsAt = new Date(data.ends_at);
+        if (prev?.ends_at?.getTime() === newEndsAt.getTime()) return prev;
+        return { ends_at: newEndsAt, dungeon_name: data.dungeon_name };
+      });
+    } else if (data.status === "completed") {
+      setActiveExploration(null);
+      setExploreResult({ success: data.success, loot: data.loot, dungeonName: data.dungeon_name });
+    } else {
+      setActiveExploration(null);
+    }
+  }, []);
+
+  // Check for active exploration on mount
+  useEffect(() => {
+    apiFetch("/api/v1/dungeons/exploration/status")
+      .then((r) => r.json())
+      .then(applyStatus)
+      .catch(() => {});
+  }, [applyStatus]);
+
+  // Countdown while exploring; resolve when it hits 0
+  useEffect(() => {
+    if (!activeExploration) {
+      setTimeLeft(0);
+      return;
+    }
+
+    const tick = () => {
+      const diff = Math.ceil((activeExploration.ends_at.getTime() - Date.now()) / 1000);
+      const remaining = Math.max(0, diff);
+      setTimeLeft(remaining);
+
+      if (remaining === 0) {
+        apiFetch("/api/v1/dungeons/exploration/status")
+          .then((r) => r.json())
+          .then(applyStatus)
+          .catch(() => {});
+      }
+    };
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [activeExploration, applyStatus]);
 
   const handleSend = async (dungeon) => {
-    setExploring(true);
-    setExploreResult(null);
+    setSending(true);
     try {
-      const res = await apiFetch(`/api/v1/dungeons/${dungeon.id}/explore`, {
-        method: "POST",
-      });
+      const res = await apiFetch(`/api/v1/dungeons/${dungeon.id}/explore`, { method: "POST" });
       const data = await res.json();
-      setExploreResult({ ...data, dungeonName: dungeon.name });
+      applyStatus(data);
     } catch {
-      setExploreResult({ success: false, loot: [], dungeonName: dungeon.name });
+      // ignore
     } finally {
-      setExploring(false);
+      setSending(false);
     }
   };
+
+  const busy = !!activeExploration || sending;
 
   return (
     <>
@@ -46,6 +103,19 @@ const QuestsView = () => {
           <span className="text-2xl font-bold text-[#c9973b]">{partyRating}</span>
         </div>
       </div>
+
+      {/* Active exploration banner */}
+      {activeExploration && (
+        <div className="rounded-xl px-5 py-4 border flex items-center justify-between gap-4 bg-blue-400/10 border-blue-400/30">
+          <div>
+            <p className="text-[10px] uppercase tracking-widest mb-0.5 text-blue-400">Exploring</p>
+            <p className="text-sm font-semibold text-[#f3e5c8]">{activeExploration.dungeon_name}</p>
+          </div>
+          <span className="text-2xl font-bold text-[#c9973b] tabular-nums">
+            {formatTimeLeft(timeLeft)}
+          </span>
+        </div>
+      )}
 
       {/* Explore result banner */}
       {exploreResult && (
@@ -93,7 +163,7 @@ const QuestsView = () => {
 
       {/* Loading / error states */}
       {loading && (
-        <p className="text-sm text-[#a89070] text-center py-8">Loading dungeons…</p>
+        <p className="text-sm text-[#a89070] text-center py-8">Loading dungeons...</p>
       )}
       {error && (
         <p className="text-sm text-red-400 text-center py-8">Failed to load dungeons.</p>
@@ -104,12 +174,11 @@ const QuestsView = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
           {dungeons.map((dungeon) => {
             const ratingOk = partyRating >= dungeon.min_rating;
-            const busy     = exploring;
 
             let buttonLabel;
             let buttonClass;
             if (busy) {
-              buttonLabel = "Exploring…";
+              buttonLabel = activeExploration ? "Party is away" : "Sending...";
               buttonClass = "bg-white/5 border border-white/10 text-[#4a3a2a] cursor-not-allowed";
             } else if (!ratingOk) {
               buttonLabel = `Requires ${dungeon.min_rating} rating`;
