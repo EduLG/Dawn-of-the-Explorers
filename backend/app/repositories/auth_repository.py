@@ -13,7 +13,9 @@ def get_user_by_email(email):
 
 def create_user(username, email, password_hash):
     user = User(username=username, email=email, password=password_hash)
-    user.party = Party(name="Explorers party")
     db.session.add(user)
+    db.session.flush()  # get user.id before creating Party
+    party = Party(name="Explorers party", user_id=user.id)
+    db.session.add(party)
     db.session.commit()
     return user

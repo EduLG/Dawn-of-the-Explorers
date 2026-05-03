@@ -4,6 +4,8 @@ from app.routes.user_routes import user_bp
 from app.routes.equipment_routes import equipment_bp
 from app.routes.inventory_routes import inventory_bp
 from app.routes.dungeon_routes import dungeon_bp
+from app.routes.job_routes import job_bp
+from app.routes.party_routes import party_bp
 from flask_cors import CORS
 from .extensions import db
 from config import Config
@@ -33,5 +35,7 @@ def create_app():
     app.register_blueprint(equipment_bp, url_prefix="/api/v1/equipment")
     app.register_blueprint(inventory_bp, url_prefix="/api/v1/inventory")
     app.register_blueprint(dungeon_bp, url_prefix="/api/v1/dungeons")
+    app.register_blueprint(job_bp, url_prefix="/api/v1/jobs")
+    app.register_blueprint(party_bp, url_prefix="/api/v1/party")
 
     return app

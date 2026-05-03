@@ -6,7 +6,7 @@ const LoginLayout = () => {
     <div
       className="min-h-screen w-full"
       style={{
-        backgroundImage: `linear-gradient(rgba(10,6,2,0.65), rgba(10,6,2,0.65)), url(${loginImage})`,
+        backgroundImage: `url(${loginImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center 30%",
       }}

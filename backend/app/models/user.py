@@ -9,7 +9,5 @@ class User(db.Model):
     email = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
 
-    # 1:1 relationship with Party
-    party_id = db.Column(db.Integer, db.ForeignKey('party.id'), unique=True, nullable=False)
-    party = db.relationship('Party', back_populates='user', uselist=False)
-
+    # 1:1 with Party — Party owns the FK, User cascades deletion to Party
+    party = db.relationship('Party', back_populates='user', uselist=False, cascade='all, delete-orphan')

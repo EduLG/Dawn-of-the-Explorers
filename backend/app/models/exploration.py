@@ -6,7 +6,7 @@ class Exploration(db.Model):
     __tablename__ = 'exploration'
 
     id         = db.Column(db.Integer, primary_key=True)
-    party_id   = db.Column(db.Integer, db.ForeignKey('party.id'), nullable=False)
+    party_id   = db.Column(db.Integer, db.ForeignKey('party.id', ondelete='CASCADE'), nullable=False)
     dungeon_id = db.Column(db.Integer, db.ForeignKey('dungeon.id'), nullable=False)
     started_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     ends_at    = db.Column(db.DateTime, nullable=False)

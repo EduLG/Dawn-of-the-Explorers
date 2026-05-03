@@ -5,7 +5,7 @@ class PartyInventory(db.Model):
     __tablename__ = 'party_inventory'
 
     id = db.Column(db.Integer, primary_key=True)
-    party_id = db.Column(db.Integer, db.ForeignKey('party.id'), nullable=False)
+    party_id = db.Column(db.Integer, db.ForeignKey('party.id', ondelete='CASCADE'), nullable=False)
     equipment_id = db.Column(db.Integer, db.ForeignKey('equipment.id'), nullable=False)
 
     party = db.relationship('Party', back_populates='inventory')

@@ -14,15 +14,10 @@ const Login = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-md flex flex-col items-center gap-8">
-
-        <div className="flex flex-col items-center gap-4">
-          <img src={headerlogo} alt="Dawn of Explorers" className="h-24 drop-shadow-xl" />
-          <p className="text-[#a89070] text-sm tracking-widest uppercase">
-            Your adventure awaits
-          </p>
-        </div>
-
-        <div className="w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 flex flex-col gap-4 shadow-2xl">
+        <div
+          className="w-full backdrop-blur-xl border border-[#c9973b]/20 rounded-2xl p-8 flex flex-col gap-4 shadow-2xl"
+          style={{ background: "rgba(13,7,3,0.88)" }}
+        >
           <button
             onClick={() => openModal("login")}
             className="w-full py-3 rounded-xl bg-[#c9973b] hover:bg-[#b8862a] text-[#1a0f00] font-bold text-sm tracking-wide uppercase transition-colors shadow-lg"
@@ -31,15 +26,18 @@ const Login = () => {
           </button>
           <button
             onClick={() => openModal("register")}
-            className="w-full py-3 rounded-xl bg-white/8 hover:bg-white/12 border border-white/15 text-[#f3e5c8] font-semibold text-sm tracking-wide uppercase transition-colors"
+            className="w-full py-3 rounded-xl bg-[#c9973b]/10 hover:bg-[#c9973b]/20 border border-[#c9973b]/30 text-[#f3e5c8] font-semibold text-sm tracking-wide uppercase transition-colors"
           >
             Create Account
           </button>
         </div>
-
       </div>
 
-      <LogRegModal visible={logRegVisible} setVisible={setLogRegVisible} mode={mode} />
+      <LogRegModal
+        visible={logRegVisible}
+        setVisible={setLogRegVisible}
+        mode={mode}
+      />
     </div>
   );
 };
