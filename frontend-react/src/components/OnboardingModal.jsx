@@ -132,7 +132,7 @@ const OnboardingModal = ({ username, onComplete }) => {
               >
                 {/* Card header */}
                 <div className="bg-gradient-to-r from-[#1e1108]/90 to-[#150d05]/80 border-b border-white/8 px-4 py-3">
-                  <span className="text-[10px] uppercase tracking-widest text-[#a89070]">Hero {i + 1}</span>
+                  <span className="text-sm uppercase tracking-widest text-[#a89070]">Hero {i + 1}</span>
                 </div>
 
                 {/* Card body */}
@@ -158,7 +158,7 @@ const OnboardingModal = ({ username, onComplete }) => {
                     />
 
                     {jobsLoading ? (
-                      <p className="text-xs text-[#6b5a45]">Loading classes...</p>
+                      <p className="text-sm text-[#6b5a45]">Loading classes...</p>
                     ) : (
                       <Dropdown
                         unstyled
@@ -179,7 +179,7 @@ const OnboardingModal = ({ username, onComplete }) => {
         </div>
 
         {error && (
-          <p className="text-xs text-red-400 text-center">{error}</p>
+          <p className="text-sm text-red-400 text-center">{error}</p>
         )}
 
         <button
