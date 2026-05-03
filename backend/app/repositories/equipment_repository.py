@@ -23,3 +23,16 @@ def update_character_equipment(character_id, slot, equipment_id):
         record = CharacterEquipment(character_id=character_id, slot=slot, equipment_id=equipment_id)
         db.session.add(record)
     db.session.commit()
+
+
+def unequip_by_equipment_and_party(equipment_id, party_id):
+    from app.models.character import Character
+    records = (
+        CharacterEquipment.query
+        .join(Character, CharacterEquipment.character_id == Character.id)
+        .filter(Character.party_id == party_id, CharacterEquipment.equipment_id == equipment_id)
+        .all()
+    )
+    for record in records:
+        db.session.delete(record)
+    db.session.commit()

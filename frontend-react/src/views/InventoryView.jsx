@@ -47,10 +47,12 @@ const InventoryView = () => {
   } = useInventory();
 
   const [filter, setFilter] = useState("All");
-  const [equipping, setEquipping] = useState(null); // inventory_id being equipped
-  const [equipState, setEquipState] = useState({}); // { [invId]: { charId, slot } }
+  const [equipping, setEquipping] = useState(null);
+  const [equipState, setEquipState] = useState({});
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null); // { invId, equippedByName: string | null }
+  const [deleting, setDeleting] = useState(false);
 
   const characters = party?.characters || [];
 
@@ -60,6 +62,7 @@ const InventoryView = () => {
       : inventory.filter((i) => i.equipment.type === filter);
 
   const handleEquipToggle = (invId) => {
+    setPendingDelete(null);
     setEquipping((prev) => (prev === invId ? null : invId));
     setErrorMsg(null);
   };
@@ -101,6 +104,42 @@ const InventoryView = () => {
       setErrorMsg(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDeleteClick = (invItem) => {
+    setEquipping(null);
+    setErrorMsg(null);
+    const equippedByChar = characters.find((c) =>
+      c.equipped_items?.some((ei) => ei.equipment?.id === invItem.equipment.id)
+    );
+    setPendingDelete({
+      invId: invItem.id,
+      equippedByName: equippedByChar ? equippedByChar.name : null,
+    });
+  };
+
+  const handleCancelDelete = () => setPendingDelete(null);
+
+  const handleConfirmDelete = async (force = false) => {
+    if (!pendingDelete) return;
+    setDeleting(true);
+    try {
+      const res = await apiFetch(`/api/v1/inventory/${pendingDelete.invId}`, {
+        method: "DELETE",
+        body: JSON.stringify({ force }),
+      });
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error || "Failed to delete item");
+      }
+      setPendingDelete(null);
+      refetchInventory();
+      refetchParty();
+    } catch {
+      // ignore
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -152,6 +191,7 @@ const InventoryView = () => {
           {filtered.map((invItem) => {
             const eq = invItem.equipment;
             const isExpanded = equipping === invItem.id;
+            const isConfirmingDelete = pendingDelete?.invId === invItem.id;
             const state = equipState[invItem.id] || {};
             const compatibleChars = characters.filter(
               (c) => c.current_job?.id === eq.job_id,
@@ -179,14 +219,15 @@ const InventoryView = () => {
                     </p>
                   </div>
 
-                  {/* RATING */}
-                  <div className="text-right shrink-0">
-                    <p className="text-lg font-bold text-[#c9973b]">
-                      +{eq.rating}
-                    </p>
-                    <p className="text-[10px] uppercase tracking-wider text-[#6b5a45]">
-                      Rating
-                    </p>
+                  {/* RATING + DELETE */}
+                  <div className="flex flex-col items-end shrink-0 gap-1">
+                    <p className="text-lg font-bold text-[#c9973b]">+{eq.rating}</p>
+                    <button
+                      onClick={() => handleDeleteClick(invItem)}
+                      className="text-[10px] uppercase tracking-wider text-[#6b5a45] hover:text-red-400 transition-colors"
+                    >
+                      Remove
+                    </button>
                   </div>
                 </div>
 
@@ -203,6 +244,35 @@ const InventoryView = () => {
                     {isExpanded ? "Cancel" : "Equip"}
                   </button>
                 </div>
+
+                {/* DELETE CONFIRMATION PANEL */}
+                {isConfirmingDelete && (
+                  <div className="border-t border-white/8 bg-red-900/20 px-5 py-4 space-y-3">
+                    {pendingDelete.equippedByName ? (
+                      <p className="text-xs text-red-300">
+                        <span className="font-semibold">{pendingDelete.equippedByName}</span> currently has this item equipped. Delete and unequip?
+                      </p>
+                    ) : (
+                      <p className="text-xs text-[#a89070]">Remove this item from inventory?</p>
+                    )}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleConfirmDelete(!!pendingDelete.equippedByName)}
+                        disabled={deleting}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold bg-red-500/20 border border-red-500/40 text-red-300 hover:bg-red-500/30 transition-all duration-200 disabled:opacity-50"
+                      >
+                        {deleting ? "Deleting..." : "Confirm"}
+                      </button>
+                      <button
+                        onClick={handleCancelDelete}
+                        disabled={deleting}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold bg-white/5 border border-white/10 text-[#a89070] hover:bg-white/10 transition-all duration-200"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* EQUIP PANEL */}
                 {isExpanded && (
