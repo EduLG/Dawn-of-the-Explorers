@@ -17,22 +17,32 @@ with app.app_context():
     db.create_all()
 
     # -------------------------------
-    # Create party
-    # -------------------------------
-    party = Party(name="Heroes Party", level=1, experience=0)
-    db.session.add(party)
-    db.session.commit()
-
-    # -------------------------------
-    # Create user
+    # Create user + party
     # -------------------------------
     user = User(
         username="eduladron",
         email="edu@example.com",
         password=generate_password_hash("12345678"),
-        party_id=party.id
     )
     db.session.add(user)
+    db.session.flush()  # get user.id before creating Party
+
+    party = Party(name="Heroes Party", level=1, experience=0, user_id=user.id)
+    db.session.add(party)
+    db.session.commit()
+
+    # -------------------------------
+    # Create second user without characters (for onboarding testing)
+    # -------------------------------
+    user2 = User(
+        username="eduladron2",
+        email="edu2@gmail.com",
+        password=generate_password_hash("12345678"),
+    )
+    db.session.add(user2)
+    db.session.flush()
+    party2 = Party(name="Explorers party", level=1, experience=0, user_id=user2.id)
+    db.session.add(party2)
     db.session.commit()
 
     # -------------------------------
