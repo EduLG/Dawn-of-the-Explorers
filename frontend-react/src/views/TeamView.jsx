@@ -28,6 +28,7 @@ const TeamView = () => {
               src={character.current_job?.icon}
               alt={character.name}
               className="h-[82px] sm:h-[102px] md:h-[121px] object-contain drop-shadow-xl"
+              style={{ filter: "brightness(80%)" }}
             />
           ))}
         </div>
