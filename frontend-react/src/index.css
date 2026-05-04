@@ -1,6 +1,18 @@
+/* index.css actualizado para:
+   - Tailwind v4 (@tailwindcss/vite)
+   - Cinzel (display) + Crimson Pro (body)
+   - Clases Tailwind: font-display, font-body
+*/
+
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap");
 @import "tailwindcss";
 @import "../theme.css";
+
+/* ── Registro de fuentes en Tailwind v4 ── */
+@theme {
+  --font-display: "Cinzel", serif;
+  --font-body:    "Crimson Pro", serif;
+}
 
 html,
 body,
@@ -12,6 +24,7 @@ body,
   overflow-x: hidden;
 }
 
+/* Cinzel como fuente base de la UI */
 body {
   font-family: var(--font-display);
   font-size: 16px;

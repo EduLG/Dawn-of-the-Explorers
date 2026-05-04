@@ -1,8 +1,12 @@
+// src/views/MarketView.jsx
 const MarketView = () => {
   return (
-    <div className="bg-white/5 border border-white/6 rounded-xl p-6 backdrop-blur-sm">
-      <h2 className="text-xl font-bold text-[#f3e5c8]">Market</h2>
-      <p className="text-[#e6d3a3] mt-2 text-sm">Coming soon.</p>
+    <div
+      className="border rounded-xl p-6"
+      style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
+    >
+      <h2 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>Market</h2>
+      <p className="mt-2 text-sm" style={{ color: "var(--text-secondary)" }}>Coming soon.</p>
     </div>
   );
 };

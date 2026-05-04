@@ -1,3 +1,4 @@
+// src/components/CharacterCard.jsx
 import { Avatar } from "@radix-ui/themes";
 
 const equipmentSlots = [
@@ -22,18 +23,50 @@ const CharacterCard = ({
   const slots = { head, chest, primaryArm, secondaryArm, accesory };
 
   return (
-    <div className="rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md shadow-xl hover:border-[#c9973b]/40 hover:shadow-[#c9973b]/10 hover:shadow-lg transition-all duration-300">
-
+    <div
+      className="rounded-2xl overflow-hidden shadow-[var(--shadow-card)] border transition-all duration-300 hover:border-[--accent-border]"
+      style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
+    >
       {/* CARD HEADER */}
-      <div className="bg-gradient-to-r from-[#1e1108]/90 to-[#150d05]/80 border-b border-white/8 px-5 py-4 flex items-center justify-between gap-3">
+      <div
+        className="border-b px-5 py-4 flex items-center justify-between gap-3"
+        style={{ background: "var(--bg-card-header)", borderColor: "var(--border-faint)" }}
+      >
         <div className="flex flex-col gap-0.5">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#a89070]">Character</span>
-          <span className="text-lg font-bold text-[#f3e5c8] tracking-wide">{charName}</span>
-          <span className="text-sm text-[#c9973b] capitalize">{characterClass}</span>
+          <span
+            className="text-[10px] uppercase tracking-[0.2em]"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Character
+          </span>
+          <span
+            className="text-lg font-bold tracking-wide"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {charName}
+          </span>
+          <span
+            className="text-sm capitalize"
+            style={{ color: "var(--accent-text)" }}
+          >
+            {characterClass}
+          </span>
         </div>
         <div className="flex flex-col items-center gap-0.5">
-          <span className="text-[10px] uppercase tracking-widest text-[#a89070]">Rating</span>
-          <span className="min-w-[2.5rem] text-center rounded-full bg-[#c9973b]/20 border border-[#c9973b]/40 px-3 py-0.5 text-sm font-bold text-[#f3e5c8]">
+          <span
+            className="text-[10px] uppercase tracking-widest"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Rating
+          </span>
+          <span
+            className="min-w-[2.5rem] text-center rounded-full border px-3 py-0.5 text-sm font-bold"
+            style={{
+              background: "var(--accent-dim)",
+              borderColor: "var(--accent-border)",
+              color: "var(--text-primary)",
+            }}
+          >
             {rating}
           </span>
         </div>
@@ -41,24 +74,45 @@ const CharacterCard = ({
 
       {/* CARD BODY */}
       <div className="p-5 flex gap-4 items-stretch">
-
         {/* AVATAR */}
         <div className="flex-shrink-0">
-          <div className="w-40 h-full min-h-40 rounded-xl bg-[#c9973b]/10 border border-[#c9973b]/20 flex items-center justify-center overflow-hidden">
+          <div
+            className="w-40 h-full min-h-40 rounded-xl border flex items-center justify-center overflow-hidden"
+            style={{ background: "var(--accent-dim)", borderColor: "var(--accent-border)" }}
+          >
             <Avatar src={icon} size="9" fallback={charName?.[0] ?? "?"} />
           </div>
         </div>
 
         {/* EQUIPMENT PANEL */}
-        <div className="flex-1 min-w-0 rounded-xl border border-white/10 bg-white/4 overflow-hidden flex flex-col">
-          <div className="px-4 py-2 border-b border-white/8 bg-white/4">
-            <span className="text-xs uppercase tracking-widest font-semibold text-[#c9973b]">Equipment</span>
+        <div
+          className="flex-1 min-w-0 rounded-xl border overflow-hidden flex flex-col"
+          style={{ borderColor: "var(--border-faint)", background: "var(--bg-input)" }}
+        >
+          <div
+            className="px-4 py-2 border-b"
+            style={{ borderColor: "var(--border-faint)", background: "var(--bg-card-header)" }}
+          >
+            <span
+              className="text-xs uppercase tracking-widest font-semibold"
+              style={{ color: "var(--accent-text)" }}
+            >
+              Equipment
+            </span>
           </div>
           <ul className="flex-1 px-4 py-3 space-y-2">
             {equipmentSlots.map(({ key, label }) => (
-              <li key={key} className="flex items-center justify-between gap-2 text-sm">
-                <span className="text-[#a89070] w-20 shrink-0">{label}</span>
-                <span className="text-[#f3e5c8] truncate text-right">{slots[key] || "—"}</span>
+              <li
+                key={key}
+                className="flex items-center justify-between gap-2 text-sm border-b last:border-b-0 pb-1 last:pb-0"
+                style={{ borderColor: "var(--border-faint)" }}
+              >
+                <span className="w-20 shrink-0" style={{ color: "var(--text-secondary)" }}>
+                  {label}
+                </span>
+                <span className="truncate text-right" style={{ color: "var(--text-primary)" }}>
+                  {slots[key] || "—"}
+                </span>
               </li>
             ))}
           </ul>

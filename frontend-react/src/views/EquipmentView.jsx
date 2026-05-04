@@ -1,3 +1,4 @@
+// src/views/EquipmentView.jsx
 import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
@@ -17,7 +18,7 @@ const SLOTS = Object.keys(SLOT_LABELS);
 const itemTemplate = (option) => (
   <div className="flex items-center justify-between gap-4">
     <span>{option.name}</span>
-    <span className="text-xs text-[#c9973b] font-semibold shrink-0">
+    <span className="text-xs font-semibold shrink-0" style={{ color: "var(--accent-text)" }}>
       +{option.rating}
     </span>
   </div>
@@ -25,32 +26,37 @@ const itemTemplate = (option) => (
 
 const dropdownPT = {
   root: {
-    className:
-      "relative w-full flex items-center bg-white/8 border border-white/15 rounded-xl " +
-      "cursor-pointer hover:border-[#c9973b]/40 focus-within:border-[#c9973b]/60 transition-colors duration-200",
+    className: "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border",
+    style: { background: "var(--bg-input)", borderColor: "var(--border-input)" },
   },
   input: {
-    className:
-      "flex-1 px-4 py-2.5 text-sm text-[#f3e5c8] bg-transparent outline-none cursor-pointer truncate",
+    className: "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate",
+    style: { color: "var(--text-primary)" },
   },
   trigger: {
-    className: "flex items-center justify-center w-10 text-[#a89070] shrink-0",
+    className: "flex items-center justify-center w-10 shrink-0",
+    style: { color: "var(--text-muted)" },
   },
   panel: {
-    className:
-      "border border-white/12 rounded-xl shadow-2xl overflow-hidden z-50",
-    style: { background: "rgba(18, 9, 3, 0.97)", backdropFilter: "blur(12px)" },
+    className: "border rounded-xl shadow-2xl overflow-hidden z-50",
+    style: {
+      background: "var(--bg-modal)",
+      borderColor: "var(--border-soft)",
+      backdropFilter: "blur(12px)",
+    },
   },
   wrapper: { className: "overflow-auto max-h-56" },
   list: { className: "p-1 m-0 list-none" },
   item: ({ context }) => ({
-    className:
-      "px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1 " +
-      (context.selected
-        ? "bg-[#c9973b]/20 text-[#f3e5c8] font-semibold"
-        : "text-[#e6d3a3] hover:bg-white/8 hover:text-[#f3e5c8]"),
+    className: "px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1",
+    style: context.selected
+      ? { background: "var(--accent-dim)", color: "var(--text-primary)", fontWeight: 600 }
+      : { color: "var(--text-secondary)" },
   }),
-  emptyMessage: { className: "px-4 py-3 text-sm text-[#6b5a45] text-center" },
+  emptyMessage: {
+    className: "px-4 py-3 text-sm text-center",
+    style: { color: "var(--text-muted)" },
+  },
 };
 
 const buildInitialSelections = (character, equipmentBySlot) => {
@@ -71,8 +77,7 @@ const EquipmentView = () => {
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [selections, setSelections] = useState({});
 
-  const selectedChar =
-    characters.find((c) => c.id === selectedCharId) ?? characters[0];
+  const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
   const jobId = selectedChar?.current_job?.id;
 
   const { data: inventory, loading } = useInventory();
@@ -80,7 +85,6 @@ const EquipmentView = () => {
 
   const equipmentBySlot = useMemo(() => {
     const slots = {};
-
     inventory
       .filter((item) => item.equipment.job_id === jobId)
       .forEach((item) => {
@@ -88,32 +92,23 @@ const EquipmentView = () => {
         if (!slots[eq.type]) slots[eq.type] = [];
         slots[eq.type].push(eq);
       });
-
     selectedChar?.equipped_items?.forEach(({ slot, equipment }) => {
       if (!equipment) return;
       if (!slots[slot]) slots[slot] = [];
-      if (!slots[slot].find((e) => e.id === equipment.id)) {
-        slots[slot].push(equipment);
-      }
+      if (!slots[slot].find((e) => e.id === equipment.id)) slots[slot].push(equipment);
     });
-
     return slots;
   }, [inventory, jobId, selectedChar]);
 
   useEffect(() => {
-    if (characters.length > 0 && !selectedCharId) {
-      setSelectedCharId(characters[0].id);
-    }
+    if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
   }, [characters]);
 
   useEffect(() => {
     if (selectedChar && inventory.length > 0) {
       setSelections((prev) => ({
         ...prev,
-        [selectedChar.id]: buildInitialSelections(
-          selectedChar,
-          equipmentBySlot,
-        ),
+        [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
       }));
     }
   }, [selectedChar?.id, inventory]);
@@ -142,12 +137,11 @@ const EquipmentView = () => {
       const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
       return selected?.id !== equipped?.equipment?.id;
     });
-
     try {
       await Promise.all(
         slotsToSave.map((slot) =>
-          updateEquipment(selectedChar.id, slot, charSelections[slot].id),
-        ),
+          updateEquipment(selectedChar.id, slot, charSelections[slot].id)
+        )
       );
       refetch();
     } catch {
@@ -166,11 +160,12 @@ const EquipmentView = () => {
           <button
             key={char.id}
             onClick={() => setSelectedCharId(char.id)}
-            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+            className="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border"
+            style={
               (selectedCharId ?? characters[0]?.id) === char.id
-                ? "bg-[#c9973b]/20 border-[#c9973b]/50 text-[#f3e5c8]"
-                : "bg-white/5 border-white/10 text-[#a89070] hover:bg-white/10 hover:text-[#f3e5c8]"
-            }`}
+                ? { background: "var(--accent-dim)", borderColor: "var(--accent-border)", color: "var(--text-primary)" }
+                : { background: "var(--bg-input)", borderColor: "var(--border-soft)", color: "var(--text-secondary)" }
+            }
           >
             {char.name}
           </button>
@@ -179,16 +174,22 @@ const EquipmentView = () => {
 
       {/* EQUIPMENT CARD */}
       {selectedChar && (
-        <div className="w-full rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md shadow-xl">
+        <div
+          className="w-full rounded-2xl overflow-hidden border shadow-[var(--shadow-card)]"
+          style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
+        >
           {/* CARD HEADER */}
-          <div className="bg-gradient-to-r from-[#1e1108]/90 to-[#150d05]/80 border-b border-white/8 px-6 py-4">
-            <p className="text-[10px] uppercase tracking-widest text-[#a89070]">
+          <div
+            className="border-b px-6 py-4"
+            style={{ background: "var(--bg-card-header)", borderColor: "var(--border-faint)" }}
+          >
+            <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
               Managing equipment
             </p>
-            <h3 className="text-xl font-bold text-[#f3e5c8]">
+            <h3 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
               {selectedChar.name}
             </h3>
-            <p className="text-sm text-[#c9973b] capitalize">
+            <p className="text-sm capitalize" style={{ color: "var(--accent-text)" }}>
               {selectedChar.current_job?.name}
             </p>
           </div>
@@ -196,7 +197,10 @@ const EquipmentView = () => {
           {/* SLOTS */}
           <div className="p-6 flex gap-5 items-stretch">
             {/* CHARACTER AVATAR */}
-            <div className="w-48 h-56 shrink-0 self-start rounded-xl bg-[#c9973b]/10 border border-[#c9973b]/20 flex items-center justify-center overflow-hidden">
+            <div
+              className="w-48 h-56 shrink-0 self-start rounded-xl border flex items-center justify-center overflow-hidden"
+              style={{ background: "var(--accent-dim)", borderColor: "var(--accent-border)" }}
+            >
               {selectedChar.current_job?.icon ? (
                 <img
                   src={selectedChar.current_job.icon}
@@ -204,7 +208,7 @@ const EquipmentView = () => {
                   className="w-full h-full object-contain p-3"
                 />
               ) : (
-                <span className="text-5xl font-bold text-[#c9973b]/60">
+                <span className="text-5xl font-bold" style={{ color: "var(--accent)", opacity: 0.6 }}>
                   {selectedChar.name?.[0] ?? "?"}
                 </span>
               )}
@@ -214,13 +218,13 @@ const EquipmentView = () => {
             <div className="flex-1 flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {loading ? (
-                  <p className="text-sm text-[#a89070] col-span-2">
+                  <p className="text-sm col-span-2" style={{ color: "var(--text-muted)" }}>
                     Loading equipment...
                   </p>
                 ) : (
                   SLOTS.map((slot) => (
                     <div key={slot} className="flex flex-col gap-1.5">
-                      <label className="text-[10px] uppercase tracking-widest text-[#a89070]">
+                      <label className="text-[10px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
                         {SLOT_LABELS[slot]}
                       </label>
                       <Dropdown
@@ -243,11 +247,12 @@ const EquipmentView = () => {
                 <button
                   onClick={handleSave}
                   disabled={!hasChanges || saving}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+                  className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border"
+                  style={
                     hasChanges && !saving
-                      ? "bg-[#c9973b]/20 border-[#c9973b]/50 text-[#f3e5c8] hover:bg-[#c9973b]/30"
-                      : "bg-white/5 border-white/10 text-[#6b5a45] cursor-not-allowed"
-                  }`}
+                      ? { background: "var(--accent-dim)", borderColor: "var(--accent-border)", color: "var(--text-primary)", cursor: "pointer" }
+                      : { background: "var(--bg-input)", borderColor: "var(--border-faint)", color: "var(--text-disabled)", cursor: "not-allowed" }
+                  }
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>
