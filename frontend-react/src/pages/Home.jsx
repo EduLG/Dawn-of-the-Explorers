@@ -61,7 +61,10 @@ const Home = () => {
 
         {/* SIDEBAR DESKTOP */}
         <aside className="hidden lg:block">
-          <nav className="bg-white/4 backdrop-blur-md border border-white/8 rounded-2xl p-3 sticky top-24">
+          <nav
+            className="rounded-2xl p-3 sticky top-24 border"
+            style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
+          >
             <p className="text-[10px] uppercase tracking-widest text-[#6b5a45] px-3 mb-2">Navigation</p>
             <ul className="flex flex-col gap-1">
               {navItems.map((item) => (
