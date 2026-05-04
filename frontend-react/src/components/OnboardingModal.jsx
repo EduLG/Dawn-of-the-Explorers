@@ -6,32 +6,31 @@ import useJobs from "../hooks/useJobs";
 
 const dropdownPT = {
   root: {
-    className: "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border",
-    style: { background: "var(--bg-input)", borderColor: "var(--border-input)" },
+    className:
+      "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border bg-input border-field",
   },
   input: {
-    className: "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate capitalize",
-    style: { color: "var(--text-primary)" },
+    className:
+      "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate capitalize text-primary",
   },
   trigger: {
-    className: "flex items-center justify-center w-10 shrink-0",
-    style: { color: "var(--text-muted)" },
+    className: "flex items-center justify-center w-10 shrink-0 text-muted",
   },
   panel: {
-    className: "border rounded-xl shadow-2xl overflow-hidden z-50",
-    style: { background: "var(--bg-modal)", borderColor: "var(--border-soft)", backdropFilter: "blur(12px)" },
+    className:
+      "border rounded-xl shadow-2xl overflow-hidden z-50 bg-modal border-soft backdrop-blur-md",
   },
   wrapper: { className: "overflow-auto max-h-56" },
   list: { className: "p-1 m-0 list-none" },
   item: ({ context }) => ({
-    className: "px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1",
-    style: context.selected
-      ? { background: "var(--accent-dim)", color: "var(--text-primary)", fontWeight: 600 }
-      : { color: "var(--text-secondary)" },
+    className: `px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1 ${
+      context.selected
+        ? "bg-accent-dim text-primary font-semibold"
+        : "text-secondary"
+    }`,
   }),
   emptyMessage: {
-    className: "px-4 py-3 text-sm text-center",
-    style: { color: "var(--text-muted)" },
+    className: "px-4 py-3 text-sm text-center text-muted",
   },
 };
 
@@ -82,41 +81,23 @@ const OnboardingModal = ({ username, onComplete }) => {
     }
   };
 
-  const inputStyle = {
-    width: "100%",
-    padding: "10px 16px",
-    borderRadius: "12px",
-    fontSize: "14px",
-    border: "1px solid var(--border-input)",
-    background: "var(--bg-input)",
-    color: "var(--text-primary)",
-    outline: "none",
-  };
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm px-4 py-8 overflow-y-auto"
-      style={{ background: "oklch(0 0 0 / 0.65)" }}
-    >
-      <div
-        className="w-full max-w-4xl rounded-3xl shadow-[var(--shadow-modal)] p-6 sm:p-10 space-y-7 my-auto border"
-        style={{ background: "var(--bg-modal)", borderColor: "var(--border-soft)" }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm px-4 py-8 overflow-y-auto bg-overlay">
+      <div className="w-full max-w-4xl rounded-3xl shadow-modal p-6 sm:p-10 space-y-7 my-auto border border-soft bg-modal">
         {/* Header */}
         <div className="text-center space-y-1">
-          <p className="text-sm uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <p className="text-sm uppercase tracking-widest text-muted">
             Welcome, {username}
           </p>
-          <h2 className="text-2xl font-bold" style={{ color: "var(--text-primary)" }}>
-            Set up your party
-          </h2>
-          <p className="text-sm" style={{ color: "var(--text-secondary)" }}>
+          <h2 className="text-2xl font-bold text-primary">Set up your party</h2>
+          <p className="text-sm text-secondary">
             Name your party and choose a class for each of your four heroes.
           </p>
         </div>
 
         {/* Party name */}
         <div className="space-y-1.5">
-          <label className="text-sm uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <label className="text-sm uppercase tracking-widest text-muted">
             Party name
           </label>
           <input
@@ -125,42 +106,33 @@ const OnboardingModal = ({ username, onComplete }) => {
             onChange={(e) => setPartyName(e.target.value)}
             placeholder="e.g. Heroes of Light"
             maxLength={40}
-            style={{ ...inputStyle, "::placeholder": { color: "var(--text-placeholder)" } }}
+            className="field-input"
           />
         </div>
 
         {/* Character cards */}
         <div className="space-y-2">
-          <p className="text-sm uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
-            Your heroes
-          </p>
+          <p className="text-sm uppercase tracking-widest text-muted">Your heroes</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {characters.map((char, i) => (
               <div
                 key={i}
-                className="rounded-2xl border overflow-hidden"
-                style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
+                className="rounded-2xl border border-soft bg-card overflow-hidden"
               >
                 {/* Card header */}
-                <div
-                  className="border-b px-4 py-3"
-                  style={{ background: "var(--bg-card-header)", borderColor: "var(--border-faint)" }}
-                >
-                  <span className="text-sm uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                <div className="border-b border-faint px-4 py-3 bg-card-header">
+                  <span className="text-sm uppercase tracking-widest text-muted">
                     Hero {i + 1}
                   </span>
                 </div>
 
                 {/* Card body */}
                 <div className="p-4 flex gap-3 items-stretch">
-                  <div
-                    className="w-40 min-h-40 shrink-0 rounded-xl border flex items-center justify-center overflow-hidden"
-                    style={{ background: "var(--accent-dim)", borderColor: "var(--accent-border)" }}
-                  >
+                  <div className="w-40 min-h-40 shrink-0 rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
                     {char.job ? (
                       <img src={char.job.icon} alt={char.job.name} className="w-full h-full object-contain p-3" />
                     ) : (
-                      <span className="text-4xl font-bold" style={{ color: "var(--accent)", opacity: 0.4 }}>?</span>
+                      <span className="text-4xl font-bold text-accent opacity-40">?</span>
                     )}
                   </div>
 
@@ -171,10 +143,10 @@ const OnboardingModal = ({ username, onComplete }) => {
                       onChange={(e) => updateChar(i, "name", e.target.value)}
                       placeholder="Character name"
                       maxLength={30}
-                      style={inputStyle}
+                      className="field-input"
                     />
                     {jobsLoading ? (
-                      <p className="text-sm" style={{ color: "var(--text-muted)" }}>Loading classes...</p>
+                      <p className="text-sm text-muted">Loading classes...</p>
                     ) : (
                       <Dropdown
                         unstyled
@@ -195,14 +167,13 @@ const OnboardingModal = ({ username, onComplete }) => {
         </div>
 
         {error && (
-          <p className="text-sm text-center" style={{ color: "var(--status-red-text)" }}>{error}</p>
+          <p className="text-sm text-center text-status-red">{error}</p>
         )}
 
         <button
           onClick={handleSubmit}
           disabled={!isValid || submitting}
-          className="w-full py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed border"
-          style={{ background: "var(--accent-dim)", borderColor: "var(--accent-border)", color: "var(--text-primary)" }}
+          className="w-full py-3 rounded-xl text-sm font-bold uppercase tracking-wider transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed border border-accent bg-accent-dim text-primary"
         >
           {submitting ? "Setting up..." : "Begin Adventure"}
         </button>

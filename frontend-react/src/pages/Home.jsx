@@ -16,13 +16,13 @@ const navItems = [
 const sidebarLinkClass = ({ isActive }) =>
   `flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm transition-all duration-200 ${
     isActive
-      ? "bg-[#c9973b]/15 border border-[#c9973b]/30 text-[#f3e5c8] font-semibold"
-      : "text-[#a89070] hover:bg-white/8 hover:text-[#f3e5c8] border border-transparent"
+      ? "bg-accent-dim border border-accent text-primary font-semibold"
+      : "text-muted hover:bg-white/8 hover:text-primary border border-transparent"
   }`;
 
 const mobileLinkClass = ({ isActive }) =>
   `flex-1 flex flex-col items-center justify-center py-1.5 text-[10px] uppercase tracking-wider transition-colors ${
-    isActive ? "text-[#c9973b] font-bold" : "text-[#6b5a45]"
+    isActive ? "text-accent font-bold" : "text-muted"
   }`;
 
 const Home = () => {
@@ -40,17 +40,17 @@ const Home = () => {
       }}
     >
       {/* HEADER */}
-      <header className="sticky top-0 z-20 backdrop-blur-md bg-black/30 border-b border-white/8">
+      <header className="sticky top-0 z-20 backdrop-blur-md bg-header border-b border-faint">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <img src={headerlogo} alt="Logo" className="h-10 sm:h-12" />
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-[10px] uppercase tracking-widest text-[#a89070]">Explorer</p>
-              <p className="text-sm font-semibold text-[#f3e5c8]">{user?.username || "Guest"}</p>
+              <p className="text-[10px] uppercase tracking-widest text-muted">Explorer</p>
+              <p className="text-sm font-semibold text-primary">{user?.username || "Guest"}</p>
             </div>
             <Avatar
               fallback={user?.username?.[0]?.toUpperCase() ?? "?"}
-              className="border-2 border-[#c9973b]/30"
+              className="border-2 border-accent"
             />
           </div>
         </div>
@@ -61,11 +61,8 @@ const Home = () => {
 
         {/* SIDEBAR DESKTOP */}
         <aside className="hidden lg:block">
-          <nav
-            className="rounded-2xl p-3 sticky top-24 border"
-            style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
-          >
-            <p className="text-[10px] uppercase tracking-widest text-[#6b5a45] px-3 mb-2">Navigation</p>
+          <nav className="rounded-2xl p-3 sticky top-24 border border-soft bg-card">
+            <p className="text-[10px] uppercase tracking-widest text-muted px-3 mb-2">Navigation</p>
             <ul className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <li key={item.to}>
@@ -93,7 +90,7 @@ const Home = () => {
       )}
 
       {/* MOBILE BOTTOM NAV */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-[#0d0703]/90 backdrop-blur-xl border-t border-white/8 flex z-30">
+      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-mobile-nav backdrop-blur-xl border-t border-faint flex z-30">
         {navItems.map((item) => (
           <NavLink key={item.to} to={item.to} className={mobileLinkClass}>
             {item.mobileLabel}

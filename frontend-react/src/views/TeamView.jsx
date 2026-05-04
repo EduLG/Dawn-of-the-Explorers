@@ -16,21 +16,20 @@ const TeamView = () => {
         <img
           src={hangarImg}
           alt="Party Hangar"
-          className="w-full object-cover"
-          style={{ filter: "brightness(80%)" }}
+          className="w-full object-cover brightness-80"
         />
 
         {/* PARTY HEADER OVERLAY */}
         <div className="absolute top-0 left-0 right-0 flex items-start px-6 py-4 bg-gradient-to-b from-black/70 to-transparent">
           <div className="flex flex-col gap-1 bg-black/20 border border-white/8 rounded-xl px-4 py-3 backdrop-blur-sm">
-            <h2 className="text-xl sm:text-2xl font-bold text-[#f3e5c8]">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary">
               {party?.name || "Your Party"}
             </h2>
             <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-[10px] uppercase tracking-widest text-[#a89070]">
+              <p className="text-[10px] uppercase tracking-widest text-muted">
                 Party Strength
               </p>
-              <span className="text-sm font-bold text-[#c9973b]">
+              <span className="text-sm font-bold text-accent">
                 {party?.rating ?? "—"}
               </span>
             </div>
@@ -44,8 +43,7 @@ const TeamView = () => {
               key={character.id}
               src={character.current_job?.icon}
               alt={character.name}
-              className="h-[82px] sm:h-[102px] md:h-[121px] object-contain drop-shadow-xl"
-              style={{ filter: "brightness(80%)" }}
+              className="h-[82px] sm:h-[102px] md:h-[121px] object-contain drop-shadow-xl brightness-80"
             />
           ))}
         </div>
@@ -63,10 +61,7 @@ const TeamView = () => {
               rating={character.rating || 0}
               icon={character.current_job?.icon}
               primaryArm={getEquippedItemName(equippedItems, "primary_hand")}
-              secondaryArm={getEquippedItemName(
-                equippedItems,
-                "secondary_hand",
-              )}
+              secondaryArm={getEquippedItemName(equippedItems, "secondary_hand")}
               head={getEquippedItemName(equippedItems, "head")}
               chest={getEquippedItemName(equippedItems, "chest")}
               accesory={getEquippedItemName(equippedItems, "accesory")}

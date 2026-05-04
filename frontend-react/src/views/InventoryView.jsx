@@ -39,17 +39,6 @@ const SlotIcon = ({ type }) => {
   );
 };
 
-const selectStyle = {
-  width: "100%",
-  padding: "8px 12px",
-  borderRadius: "12px",
-  fontSize: "14px",
-  border: "1px solid var(--border-input)",
-  background: "var(--bg-input)",
-  color: "var(--text-primary)",
-  outline: "none",
-};
-
 const InventoryView = () => {
   const { party, refetch: refetchParty } = useOutletContext();
   const {
@@ -156,22 +145,11 @@ const InventoryView = () => {
   return (
     <div className="space-y-5">
       {/* HEADER */}
-      <div
-        className="border rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-        style={{
-          background: "var(--bg-card)",
-          borderColor: "var(--border-soft)",
-        }}
-      >
+      <div className="border border-soft rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-card">
         <div>
-          <h2
-            className="text-2xl font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
-            Inventory
-          </h2>
+          <h2 className="text-2xl font-bold text-primary">Inventory</h2>
         </div>
-        <span className="text-sm" style={{ color: "var(--text-muted)" }}>
+        <span className="text-sm text-muted">
           {inventory.length} item{inventory.length !== 1 ? "s" : ""}
         </span>
       </div>
@@ -182,20 +160,11 @@ const InventoryView = () => {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className="px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border"
-            style={
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border ${
               filter === f
-                ? {
-                    background: "var(--accent-dim)",
-                    borderColor: "var(--accent-border)",
-                    color: "var(--text-primary)",
-                  }
-                : {
-                    background: "var(--bg-input)",
-                    borderColor: "var(--border-soft)",
-                    color: "var(--text-secondary)",
-                  }
-            }
+                ? "bg-accent-dim border-accent text-primary"
+                : "bg-input border-soft text-secondary"
+            }`}
           >
             {f === "All" ? "All" : SLOT_LABELS[f]}
           </button>
@@ -204,18 +173,10 @@ const InventoryView = () => {
 
       {/* CONTENT */}
       {loading ? (
-        <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-          Loading inventory...
-        </p>
+        <p className="text-sm text-muted">Loading inventory...</p>
       ) : filtered.length === 0 ? (
-        <div
-          className="rounded-2xl border p-10 text-center"
-          style={{
-            borderColor: "var(--border-soft)",
-            background: "var(--bg-card)",
-          }}
-        >
-          <p className="text-sm" style={{ color: "var(--text-muted)" }}>
+        <div className="rounded-2xl border border-soft bg-card p-10 text-center">
+          <p className="text-sm text-muted">
             {filter === "All"
               ? "Your inventory is empty. Complete quests to earn loot!"
               : "No items of this type in inventory."}
@@ -235,48 +196,26 @@ const InventoryView = () => {
             return (
               <div
                 key={invItem.id}
-                className="rounded-2xl border overflow-hidden shadow-[var(--shadow-card)]"
-                style={{
-                  background: "var(--bg-card)",
-                  borderColor: "var(--border-soft)",
-                }}
+                className="rounded-2xl border border-soft bg-card overflow-hidden shadow-card"
               >
                 {/* ITEM ROW */}
                 <div className="flex items-center gap-4 px-5 py-4">
-                  <div
-                    className="w-12 h-12 shrink-0 rounded-xl border flex items-center justify-center"
-                    style={{
-                      background: "var(--accent-dim)",
-                      borderColor: "var(--accent-border)",
-                    }}
-                  >
+                  <div className="w-12 h-12 shrink-0 rounded-xl border border-accent bg-accent-dim flex items-center justify-center">
                     <SlotIcon type={eq.type} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p
-                      className="text-sm font-semibold truncate"
-                      style={{ color: "var(--text-primary)" }}
-                    >
+                    <p className="text-sm font-semibold truncate text-primary">
                       {eq.name}
                     </p>
-                    <p
-                      className="text-xs capitalize"
-                      style={{ color: "var(--text-muted)" }}
-                    >
+                    <p className="text-xs capitalize text-muted">
                       {SLOT_LABELS[eq.type] ?? eq.type} · {eq.job_name}
                     </p>
                   </div>
                   <div className="flex flex-col items-end shrink-0 gap-1">
-                    <p
-                      className="text-lg font-bold"
-                      style={{ color: "var(--accent)" }}
-                    >
-                      +{eq.rating}
-                    </p>
+                    <p className="text-lg font-bold text-accent">+{eq.rating}</p>
                     <button
                       onClick={() => handleDeleteClick(invItem)}
-                      className="text-[10px] uppercase tracking-wider transition-colors hover:[color:var(--status-red-text)]"
-                      style={{ color: "var(--text-disabled)" }}
+                      className="text-[10px] uppercase tracking-wider transition-colors text-disabled hover:text-status-red"
                     >
                       Remove
                     </button>
@@ -287,20 +226,11 @@ const InventoryView = () => {
                 <div className="px-5 pb-4">
                   <button
                     onClick={() => handleEquipToggle(invItem.id)}
-                    className="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 border"
-                    style={
+                    className={`w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                       isExpanded
-                        ? {
-                            background: "var(--accent-dim)",
-                            borderColor: "var(--accent-border)",
-                            color: "var(--text-primary)",
-                          }
-                        : {
-                            background: "var(--bg-input)",
-                            borderColor: "var(--border-soft)",
-                            color: "var(--text-secondary)",
-                          }
-                    }
+                        ? "bg-accent-dim border-accent text-primary"
+                        : "bg-input border-soft text-secondary"
+                    }`}
                   >
                     {isExpanded ? "Cancel" : "Equip"}
                   </button>
@@ -308,28 +238,16 @@ const InventoryView = () => {
 
                 {/* DELETE CONFIRMATION PANEL */}
                 {isConfirmingDelete && (
-                  <div
-                    className="border-t px-5 py-4 space-y-3"
-                    style={{
-                      borderColor: "var(--border-faint)",
-                      background: "var(--bg-delete)",
-                    }}
-                  >
+                  <div className="border-t border-faint px-5 py-4 space-y-3 bg-delete-zone">
                     {pendingDelete.equippedByName ? (
-                      <p
-                        className="text-xs"
-                        style={{ color: "var(--status-red-text)" }}
-                      >
+                      <p className="text-xs text-status-red">
                         <span className="font-semibold">
                           {pendingDelete.equippedByName}
                         </span>{" "}
                         currently has this item equipped. Delete and unequip?
                       </p>
                     ) : (
-                      <p
-                        className="text-xs"
-                        style={{ color: "var(--text-muted)" }}
-                      >
+                      <p className="text-xs text-muted">
                         Remove this item from inventory?
                       </p>
                     )}
@@ -339,24 +257,14 @@ const InventoryView = () => {
                           handleConfirmDelete(!!pendingDelete.equippedByName)
                         }
                         disabled={deleting}
-                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50 border"
-                        style={{
-                          background: "var(--status-red-bg)",
-                          borderColor: "var(--status-red-border)",
-                          color: "var(--status-red-text)",
-                        }}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50 border border-status-red bg-status-red text-status-red"
                       >
                         {deleting ? "Deleting..." : "Confirm"}
                       </button>
                       <button
                         onClick={handleCancelDelete}
                         disabled={deleting}
-                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border"
-                        style={{
-                          background: "var(--bg-input)",
-                          borderColor: "var(--border-soft)",
-                          color: "var(--text-secondary)",
-                        }}
+                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border border-soft bg-input text-secondary"
                       >
                         Cancel
                       </button>
@@ -366,39 +274,23 @@ const InventoryView = () => {
 
                 {/* EQUIP PANEL */}
                 {isExpanded && (
-                  <div
-                    className="border-t px-5 py-4 space-y-3"
-                    style={{
-                      borderColor: "var(--border-faint)",
-                      background: "var(--bg-card-header)",
-                    }}
-                  >
+                  <div className="border-t border-faint px-5 py-4 space-y-3 bg-card-header">
                     {compatibleChars.length === 0 ? (
-                      <p
-                        className="text-xs text-center"
-                        style={{ color: "var(--text-muted)" }}
-                      >
+                      <p className="text-xs text-center text-muted">
                         No characters with the required job ({eq.job_name}).
                       </p>
                     ) : (
                       <>
                         <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-[10px] uppercase tracking-widest"
-                            style={{ color: "var(--text-muted)" }}
-                          >
+                          <label className="text-[10px] uppercase tracking-widest text-muted">
                             Character
                           </label>
                           <select
                             value={state.charId || ""}
                             onChange={(e) =>
-                              handleEquipStateChange(
-                                invItem.id,
-                                "charId",
-                                e.target.value,
-                              )
+                              handleEquipStateChange(invItem.id, "charId", e.target.value)
                             }
-                            style={selectStyle}
+                            className="field-select"
                           >
                             <option value="">Select character...</option>
                             {compatibleChars.map((c) => (
@@ -409,22 +301,15 @@ const InventoryView = () => {
                           </select>
                         </div>
                         <div className="flex flex-col gap-1.5">
-                          <label
-                            className="text-[10px] uppercase tracking-widest"
-                            style={{ color: "var(--text-muted)" }}
-                          >
+                          <label className="text-[10px] uppercase tracking-widest text-muted">
                             Slot
                           </label>
                           <select
                             value={state.slot || ""}
                             onChange={(e) =>
-                              handleEquipStateChange(
-                                invItem.id,
-                                "slot",
-                                e.target.value,
-                              )
+                              handleEquipStateChange(invItem.id, "slot", e.target.value)
                             }
-                            style={selectStyle}
+                            className="field-select"
                           >
                             <option value="">Select slot...</option>
                             <option value={eq.type}>
@@ -433,22 +318,12 @@ const InventoryView = () => {
                           </select>
                         </div>
                         {errorMsg && (
-                          <p
-                            className="text-xs"
-                            style={{ color: "var(--status-red-text)" }}
-                          >
-                            {errorMsg}
-                          </p>
+                          <p className="text-xs text-status-red">{errorMsg}</p>
                         )}
                         <button
                           onClick={() => handleConfirmEquip(invItem.id)}
                           disabled={saving}
-                          className="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 border"
-                          style={{
-                            background: "var(--accent-dim)",
-                            borderColor: "var(--accent-border)",
-                            color: "var(--text-primary)",
-                          }}
+                          className="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 border border-accent bg-accent-dim text-primary"
                         >
                           {saving ? "Equipping..." : "Confirm"}
                         </button>

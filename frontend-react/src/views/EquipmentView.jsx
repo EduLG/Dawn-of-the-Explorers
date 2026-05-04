@@ -18,7 +18,7 @@ const SLOTS = Object.keys(SLOT_LABELS);
 const itemTemplate = (option) => (
   <div className="flex items-center justify-between gap-4">
     <span>{option.name}</span>
-    <span className="text-xs font-semibold shrink-0" style={{ color: "var(--accent-text)" }}>
+    <span className="text-xs font-semibold shrink-0 text-accent-sub">
       +{option.rating}
     </span>
   </div>
@@ -26,36 +26,31 @@ const itemTemplate = (option) => (
 
 const dropdownPT = {
   root: {
-    className: "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border",
-    style: { background: "var(--bg-input)", borderColor: "var(--border-input)" },
+    className:
+      "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border bg-input border-field",
   },
   input: {
-    className: "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate",
-    style: { color: "var(--text-primary)" },
+    className:
+      "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate text-primary",
   },
   trigger: {
-    className: "flex items-center justify-center w-10 shrink-0",
-    style: { color: "var(--text-muted)" },
+    className: "flex items-center justify-center w-10 shrink-0 text-muted",
   },
   panel: {
-    className: "border rounded-xl shadow-2xl overflow-hidden z-50",
-    style: {
-      background: "var(--bg-modal)",
-      borderColor: "var(--border-soft)",
-      backdropFilter: "blur(12px)",
-    },
+    className:
+      "border rounded-xl shadow-2xl overflow-hidden z-50 bg-modal border-soft backdrop-blur-md",
   },
   wrapper: { className: "overflow-auto max-h-56" },
   list: { className: "p-1 m-0 list-none" },
   item: ({ context }) => ({
-    className: "px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1",
-    style: context.selected
-      ? { background: "var(--accent-dim)", color: "var(--text-primary)", fontWeight: 600 }
-      : { color: "var(--text-secondary)" },
+    className: `px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1 ${
+      context.selected
+        ? "bg-accent-dim text-primary font-semibold"
+        : "text-secondary"
+    }`,
   }),
   emptyMessage: {
-    className: "px-4 py-3 text-sm text-center",
-    style: { color: "var(--text-muted)" },
+    className: "px-4 py-3 text-sm text-center text-muted",
   },
 };
 
@@ -160,12 +155,11 @@ const EquipmentView = () => {
           <button
             key={char.id}
             onClick={() => setSelectedCharId(char.id)}
-            className="px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border"
-            style={
+            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
               (selectedCharId ?? characters[0]?.id) === char.id
-                ? { background: "var(--accent-dim)", borderColor: "var(--accent-border)", color: "var(--text-primary)" }
-                : { background: "var(--bg-input)", borderColor: "var(--border-soft)", color: "var(--text-secondary)" }
-            }
+                ? "bg-accent-dim border-accent text-primary"
+                : "bg-input border-soft text-secondary"
+            }`}
           >
             {char.name}
           </button>
@@ -174,22 +168,14 @@ const EquipmentView = () => {
 
       {/* EQUIPMENT CARD */}
       {selectedChar && (
-        <div
-          className="w-full rounded-2xl overflow-hidden border shadow-[var(--shadow-card)]"
-          style={{ background: "var(--bg-card)", borderColor: "var(--border-soft)" }}
-        >
+        <div className="w-full rounded-2xl overflow-hidden border border-soft bg-card shadow-card">
           {/* CARD HEADER */}
-          <div
-            className="border-b px-6 py-4"
-            style={{ background: "var(--bg-card-header)", borderColor: "var(--border-faint)" }}
-          >
-            <p className="text-[10px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+          <div className="border-b border-faint px-6 py-4 bg-card-header">
+            <p className="text-[10px] uppercase tracking-widest text-muted">
               Managing equipment
             </p>
-            <h3 className="text-xl font-bold" style={{ color: "var(--text-primary)" }}>
-              {selectedChar.name}
-            </h3>
-            <p className="text-sm capitalize" style={{ color: "var(--accent-text)" }}>
+            <h3 className="text-xl font-bold text-primary">{selectedChar.name}</h3>
+            <p className="text-sm capitalize text-accent-sub">
               {selectedChar.current_job?.name}
             </p>
           </div>
@@ -197,10 +183,7 @@ const EquipmentView = () => {
           {/* SLOTS */}
           <div className="p-6 flex gap-5 items-stretch">
             {/* CHARACTER AVATAR */}
-            <div
-              className="w-48 h-56 shrink-0 self-start rounded-xl border flex items-center justify-center overflow-hidden"
-              style={{ background: "var(--accent-dim)", borderColor: "var(--accent-border)" }}
-            >
+            <div className="w-48 h-56 shrink-0 self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
               {selectedChar.current_job?.icon ? (
                 <img
                   src={selectedChar.current_job.icon}
@@ -208,7 +191,7 @@ const EquipmentView = () => {
                   className="w-full h-full object-contain p-3"
                 />
               ) : (
-                <span className="text-5xl font-bold" style={{ color: "var(--accent)", opacity: 0.6 }}>
+                <span className="text-5xl font-bold text-accent opacity-60">
                   {selectedChar.name?.[0] ?? "?"}
                 </span>
               )}
@@ -218,13 +201,13 @@ const EquipmentView = () => {
             <div className="flex-1 flex flex-col gap-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {loading ? (
-                  <p className="text-sm col-span-2" style={{ color: "var(--text-muted)" }}>
+                  <p className="text-sm col-span-2 text-muted">
                     Loading equipment...
                   </p>
                 ) : (
                   SLOTS.map((slot) => (
                     <div key={slot} className="flex flex-col gap-1.5">
-                      <label className="text-[10px] uppercase tracking-widest" style={{ color: "var(--text-muted)" }}>
+                      <label className="text-[10px] uppercase tracking-widest text-muted">
                         {SLOT_LABELS[slot]}
                       </label>
                       <Dropdown
@@ -247,12 +230,11 @@ const EquipmentView = () => {
                 <button
                   onClick={handleSave}
                   disabled={!hasChanges || saving}
-                  className="px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border"
-                  style={
+                  className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
                     hasChanges && !saving
-                      ? { background: "var(--accent-dim)", borderColor: "var(--accent-border)", color: "var(--text-primary)", cursor: "pointer" }
-                      : { background: "var(--bg-input)", borderColor: "var(--border-faint)", color: "var(--text-disabled)", cursor: "not-allowed" }
-                  }
+                      ? "bg-accent-dim border-accent text-primary cursor-pointer"
+                      : "bg-input border-faint text-disabled cursor-not-allowed"
+                  }`}
                 >
                   {saving ? "Saving..." : "Save changes"}
                 </button>

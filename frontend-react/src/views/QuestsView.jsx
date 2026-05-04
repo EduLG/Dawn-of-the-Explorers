@@ -97,64 +97,32 @@ const QuestsView = () => {
   return (
     <>
       {/* Header */}
-      <div
-        className="border rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-        style={{
-          background: "var(--bg-card)",
-          borderColor: "var(--border-soft)",
-        }}
-      >
+      <div className="border border-soft rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-card">
         <div>
-          <h2
-            className="text-xl sm:text-2xl font-bold"
-            style={{ color: "var(--text-primary)" }}
-          >
+          <h2 className="text-xl sm:text-2xl font-bold text-primary">
             Exploration Quests
           </h2>
         </div>
         <div className="flex flex-col items-start sm:items-end gap-0.5">
-          <span
-            className="text-xs uppercase tracking-widest"
-            style={{ color: "var(--text-muted)" }}
-          >
+          <span className="text-xs uppercase tracking-widest text-muted">
             Party Rating
           </span>
-          <span
-            className="text-2xl font-bold"
-            style={{ color: "var(--accent)" }}
-          >
-            {partyRating}
-          </span>
+          <span className="text-2xl font-bold text-accent">{partyRating}</span>
         </div>
       </div>
 
       {/* Active exploration banner */}
       {activeExploration && (
-        <div
-          className="rounded-xl px-5 py-4 border flex items-center justify-between gap-4"
-          style={{
-            background: "var(--status-blue-bg)",
-            borderColor: "var(--status-blue-border)",
-          }}
-        >
+        <div className="rounded-xl px-5 py-4 border border-status-blue bg-status-blue flex items-center justify-between gap-4">
           <div>
-            <p
-              className="text-[10px] uppercase tracking-widest mb-0.5"
-              style={{ color: "var(--status-blue-text)" }}
-            >
+            <p className="text-[10px] uppercase tracking-widest mb-0.5 text-status-blue">
               Exploring
             </p>
-            <p
-              className="text-sm font-semibold"
-              style={{ color: "var(--text-primary)" }}
-            >
+            <p className="text-sm font-semibold text-primary">
               {activeExploration.dungeon_name}
             </p>
           </div>
-          <span
-            className="text-2xl font-bold tabular-nums"
-            style={{ color: "var(--accent)" }}
-          >
+          <span className="text-2xl font-bold tabular-nums text-accent">
             {formatTimeLeft(timeLeft)}
           </span>
         </div>
@@ -163,44 +131,30 @@ const QuestsView = () => {
       {/* Explore result banner */}
       {exploreResult && (
         <div
-          className="rounded-xl px-5 py-4 border flex flex-col gap-3"
-          style={
+          className={`rounded-xl px-5 py-4 border flex flex-col gap-3 ${
             exploreResult.success
-              ? {
-                  background: "var(--status-green-bg)",
-                  borderColor: "var(--status-green-border)",
-                }
-              : {
-                  background: "var(--status-red-bg)",
-                  borderColor: "var(--status-red-border)",
-                }
-          }
+              ? "bg-status-green border-status-green"
+              : "bg-status-red border-status-red"
+          }`}
         >
           <div className="flex items-center justify-between gap-4">
             <div>
               <p
-                className="text-[10px] uppercase tracking-widest mb-0.5"
-                style={{
-                  color: exploreResult.success
-                    ? "var(--status-green-text)"
-                    : "var(--status-red-text)",
-                }}
+                className={`text-[10px] uppercase tracking-widest mb-0.5 ${
+                  exploreResult.success ? "text-status-green" : "text-status-red"
+                }`}
               >
                 {exploreResult.success
                   ? "Exploration successful"
                   : "Exploration failed"}
               </p>
-              <p
-                className="text-sm font-semibold"
-                style={{ color: "var(--text-primary)" }}
-              >
+              <p className="text-sm font-semibold text-primary">
                 {exploreResult.dungeonName}
               </p>
             </div>
             <button
               onClick={() => setExploreResult(null)}
-              className="text-xs transition-colors shrink-0"
-              style={{ color: "var(--text-muted)" }}
+              className="text-xs transition-colors shrink-0 text-muted"
             >
               Dismiss
             </button>
@@ -210,17 +164,10 @@ const QuestsView = () => {
               {exploreResult.loot.map((item) => (
                 <span
                   key={item.id}
-                  className="text-[11px] rounded-lg px-3 py-1 border"
-                  style={{
-                    background: "var(--bg-tag)",
-                    borderColor: "var(--border-soft)",
-                    color: "var(--text-primary)",
-                  }}
+                  className="text-[11px] rounded-lg px-3 py-1 border border-soft bg-tag text-primary"
                 >
                   {item.name}
-                  <span className="ml-1.5" style={{ color: "var(--accent)" }}>
-                    +{item.rating}
-                  </span>
+                  <span className="ml-1.5 text-accent">+{item.rating}</span>
                 </span>
               ))}
             </div>
@@ -230,18 +177,12 @@ const QuestsView = () => {
 
       {/* Loading / error */}
       {loading && (
-        <p
-          className="text-sm text-center py-8"
-          style={{ color: "var(--text-muted)" }}
-        >
+        <p className="text-sm text-center py-8 text-muted">
           Loading dungeons...
         </p>
       )}
       {error && (
-        <p
-          className="text-sm text-center py-8"
-          style={{ color: "var(--status-red-text)" }}
-        >
+        <p className="text-sm text-center py-8 text-status-red">
           Failed to load dungeons.
         </p>
       )}
@@ -251,42 +192,25 @@ const QuestsView = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
           {dungeons.map((dungeon) => {
             const ratingOk = partyRating >= dungeon.min_rating;
+            let buttonClass;
+            if (busy || !ratingOk) {
+              buttonClass = "bg-input border-faint text-disabled cursor-not-allowed";
+            } else {
+              buttonClass = "bg-accent-dim border-accent text-primary cursor-pointer";
+            }
             let buttonLabel;
-            let buttonStyle;
             if (busy) {
               buttonLabel = activeExploration ? "Party is away" : "Sending...";
-              buttonStyle = {
-                background: "var(--bg-input)",
-                borderColor: "var(--border-faint)",
-                color: "var(--text-disabled)",
-                cursor: "not-allowed",
-              };
             } else if (!ratingOk) {
               buttonLabel = `Requires ${dungeon.min_rating} rating`;
-              buttonStyle = {
-                background: "var(--bg-input)",
-                borderColor: "var(--border-faint)",
-                color: "var(--text-disabled)",
-                cursor: "not-allowed",
-              };
             } else {
               buttonLabel = "Send Party";
-              buttonStyle = {
-                background: "var(--accent-dim)",
-                borderColor: "var(--accent-border)",
-                color: "var(--text-primary)",
-                cursor: "pointer",
-              };
             }
 
             return (
               <div
                 key={dungeon.id}
-                className="flex flex-col rounded-2xl overflow-hidden border transition-all duration-200"
-                style={{
-                  background: "var(--bg-card)",
-                  borderColor: "var(--border-soft)",
-                }}
+                className="flex flex-col rounded-2xl overflow-hidden border border-soft bg-card transition-all duration-200"
               >
                 {/* Cover image */}
                 <div className="relative h-44 overflow-hidden shrink-0">
@@ -296,17 +220,11 @@ const QuestsView = () => {
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                  <span
-                    className="absolute top-2.5 right-2.5 text-[10px] bg-black/60 px-2 py-0.5 rounded-full"
-                    style={{ color: "var(--text-muted)" }}
-                  >
+                  <span className="absolute top-2.5 right-2.5 text-[10px] bg-black/60 px-2 py-0.5 rounded-full text-muted">
                     {formatDuration(dungeon.duration)}
                   </span>
                   {dungeon.min_rating > 0 && (
-                    <span
-                      className="absolute bottom-2.5 right-2.5 text-[10px] bg-black/60 px-2 py-0.5 rounded-full"
-                      style={{ color: "var(--text-muted)" }}
-                    >
+                    <span className="absolute bottom-2.5 right-2.5 text-[10px] bg-black/60 px-2 py-0.5 rounded-full text-muted">
                       Min. {dungeon.min_rating}
                     </span>
                   )}
@@ -314,23 +232,16 @@ const QuestsView = () => {
 
                 {/* Card body */}
                 <div className="flex flex-col flex-1 p-4 gap-3">
-                  <h3
-                    className="text-sm font-bold leading-snug"
-                    style={{ color: "var(--text-primary)" }}
-                  >
+                  <h3 className="text-sm font-bold leading-snug text-primary">
                     {dungeon.name}
                   </h3>
-                  <p
-                    className="text-xs leading-relaxed flex-1"
-                    style={{ color: "var(--text-secondary)" }}
-                  >
+                  <p className="text-xs leading-relaxed flex-1 text-secondary">
                     {dungeon.description}
                   </p>
                   <button
                     onClick={() => handleSend(dungeon)}
                     disabled={busy || !ratingOk}
-                    className="mt-2 w-full py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 border"
-                    style={buttonStyle}
+                    className={`mt-2 w-full py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all duration-200 border ${buttonClass}`}
                   >
                     {buttonLabel}
                   </button>

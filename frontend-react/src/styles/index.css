@@ -32,3 +32,67 @@ p, li, blockquote, .font-body {
   font-family: var(--font-body);
   font-size: 16px;
 }
+
+/* ── Background utilities ── */
+@utility bg-page         { background: var(--bg-page); }
+@utility bg-header       { background: var(--bg-header); }
+@utility bg-sidebar      { background: var(--bg-sidebar); }
+@utility bg-card         { background: var(--bg-card); }
+@utility bg-card-header  { background: var(--bg-card-header); }
+@utility bg-input        { background: var(--bg-input); }
+@utility bg-modal        { background: var(--bg-modal); }
+@utility bg-overlay      { background: var(--bg-overlay); }
+@utility bg-mobile-nav   { background: var(--bg-mobile-nav); }
+@utility bg-accent-dim   { background: var(--accent-dim); }
+@utility bg-tag          { background: var(--bg-tag); }
+@utility bg-delete-zone  { background: var(--bg-delete); }
+@utility bg-status-blue  { background: var(--status-blue-bg); }
+@utility bg-status-green { background: var(--status-green-bg); }
+@utility bg-status-red   { background: var(--status-red-bg); }
+
+/* ── Border-color utilities ── */
+@utility border-soft         { border-color: var(--border-soft); }
+@utility border-faint        { border-color: var(--border-faint); }
+@utility border-field        { border-color: var(--border-input); }
+@utility border-accent       { border-color: var(--accent-border); }
+@utility border-status-blue  { border-color: var(--status-blue-border); }
+@utility border-status-green { border-color: var(--status-green-border); }
+@utility border-status-red   { border-color: var(--status-red-border); }
+
+/* ── Text-color utilities ── */
+@utility text-primary      { color: var(--text-primary); }
+@utility text-secondary    { color: var(--text-secondary); }
+@utility text-muted        { color: var(--text-muted); }
+@utility text-disabled     { color: var(--text-disabled); }
+@utility text-accent       { color: var(--accent); }
+@utility text-accent-sub   { color: var(--accent-text); }
+@utility text-status-blue  { color: var(--status-blue-text); }
+@utility text-status-green { color: var(--status-green-text); }
+@utility text-status-red   { color: var(--status-red-text); }
+
+/* ── Shadow utilities ── */
+@utility shadow-card  { box-shadow: var(--shadow-card); }
+@utility shadow-modal { box-shadow: var(--shadow-modal); }
+
+/* ── Compound field classes ── */
+.field-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.field-select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+}
