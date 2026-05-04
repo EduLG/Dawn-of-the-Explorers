@@ -4,6 +4,8 @@ import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
+import useJobs from "../hooks/useJobs";
+import { apiFetch } from "../utils/apiFetch";
 
 const SLOT_LABELS = {
   head: "Head",
@@ -21,6 +23,13 @@ const itemTemplate = (option) => (
     <span className="text-xs font-semibold shrink-0 text-accent-sub">
       +{option.rating}
     </span>
+  </div>
+);
+
+const jobTemplate = (option) => (
+  <div className="flex items-center gap-3">
+    <img src={option.icon} alt={option.name} className="w-5 h-5 object-contain" />
+    <span className="capitalize">{option.name}</span>
   </div>
 );
 
@@ -67,16 +76,27 @@ const buildInitialSelections = (character, equipmentBySlot) => {
 
 const EquipmentView = () => {
   const { party, refetch } = useOutletContext();
-  const characters = party?.characters || [];
+  const characters = useMemo(
+    () => [...(party?.characters || [])].sort((a, b) => a.id - b.id),
+    [party?.characters],
+  );
 
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [selections, setSelections] = useState({});
 
+  const [changingJob, setChangingJob] = useState(false);
+  const [pendingJob, setPendingJob] = useState(null);
+  const [jobSaving, setJobSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+
   const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
-  const jobId = selectedChar?.current_job?.id;
+
+  // While a job is being previewed, show that job's equipment in the dropdowns
+  const jobId = pendingJob?.id ?? selectedChar?.current_job?.id;
 
   const { data: inventory, loading } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
+  const { jobs } = useJobs();
 
   const equipmentBySlot = useMemo(() => {
     const slots = {};
@@ -87,36 +107,49 @@ const EquipmentView = () => {
         if (!slots[eq.type]) slots[eq.type] = [];
         slots[eq.type].push(eq);
       });
-    selectedChar?.equipped_items?.forEach(({ slot, equipment }) => {
-      if (!equipment) return;
-      if (!slots[slot]) slots[slot] = [];
-      if (!slots[slot].find((e) => e.id === equipment.id)) slots[slot].push(equipment);
-    });
+    // Only include currently equipped items if we haven't changed the job
+    if (!pendingJob) {
+      selectedChar?.equipped_items?.forEach(({ slot, equipment }) => {
+        if (!equipment) return;
+        if (!slots[slot]) slots[slot] = [];
+        if (!slots[slot].find((e) => e.id === equipment.id)) slots[slot].push(equipment);
+      });
+    }
     return slots;
-  }, [inventory, jobId, selectedChar]);
+  }, [inventory, jobId, selectedChar, pendingJob]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
   }, [characters]);
 
+  // Rebuild selections whenever the relevant axes change:
+  // - character switch, confirmed job change, inventory reload → restore from equipped items
+  // - pending job chosen → blank slate for the new job
+  // - pending job cancelled (null) → restore from equipped items
   useEffect(() => {
-    if (selectedChar && inventory.length > 0) {
+    if (!selectedChar || !inventory.length) return;
+    if (pendingJob) {
+      setSelections((prev) => ({ ...prev, [selectedChar.id]: {} }));
+    } else {
       setSelections((prev) => ({
         ...prev,
         [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
       }));
     }
-  }, [selectedChar?.id, inventory]);
+  }, [selectedChar?.id, selectedChar?.current_job?.id, inventory, pendingJob?.id]);
+
+  const jobChanged = !!(pendingJob && pendingJob.id !== selectedChar?.current_job?.id);
 
   const hasChanges = useMemo(() => {
     if (!selectedChar) return false;
+    if (jobChanged) return true;
     const charSelections = selections[selectedChar.id] ?? {};
     return SLOTS.some((slot) => {
       const selected = charSelections[slot];
       const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
       return selected?.id !== equipped?.equipment?.id;
     });
-  }, [selections, selectedChar]);
+  }, [selections, selectedChar, jobChanged]);
 
   const handleChange = (slot, value) => {
     setSelections((prev) => ({
@@ -126,26 +159,57 @@ const EquipmentView = () => {
   };
 
   const handleSave = async () => {
-    const charSelections = selections[selectedChar.id] ?? {};
-    const slotsToSave = SLOTS.filter((slot) => {
-      const selected = charSelections[slot];
-      const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
-      return selected?.id !== equipped?.equipment?.id;
-    });
+    setSaveError(null);
     try {
-      await Promise.all(
-        slotsToSave.map((slot) =>
-          updateEquipment(selectedChar.id, slot, charSelections[slot].id)
-        )
-      );
+      // 1. Apply job change first if one is pending
+      if (jobChanged) {
+        setJobSaving(true);
+        const res = await apiFetch(`/api/v1/characters/${selectedChar.id}/job`, {
+          method: "PATCH",
+          body: JSON.stringify({ job_id: pendingJob.id }),
+        });
+        if (!res.ok) {
+          const body = await res.json();
+          throw new Error(body.error || "Failed to change job");
+        }
+        setJobSaving(false);
+      }
+
+      // 2. Apply equipment changes for the (new) job
+      const charSelections = selections[selectedChar.id] ?? {};
+      const slotsToSave = SLOTS.filter((slot) => {
+        const selected = charSelections[slot];
+        if (!selected) return false;
+        if (jobChanged) return true; // backend cleared all, save anything selected
+        const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
+        return selected?.id !== equipped?.equipment?.id;
+      });
+
+      if (slotsToSave.length > 0) {
+        await Promise.all(
+          slotsToSave.map((slot) =>
+            updateEquipment(selectedChar.id, slot, charSelections[slot].id)
+          )
+        );
+      }
+
+      setChangingJob(false);
+      setPendingJob(null);
       refetch();
-    } catch {
-      setSelections((prev) => ({
-        ...prev,
-        [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
-      }));
+    } catch (err) {
+      setSaveError(err.message);
+      setJobSaving(false);
     }
   };
+
+  const handleCharSelect = (charId) => {
+    setSelectedCharId(charId);
+    setChangingJob(false);
+    setPendingJob(null);
+    setSaveError(null);
+  };
+
+  const isSaving = saving || jobSaving;
 
   return (
     <div className="space-y-5">
@@ -154,7 +218,7 @@ const EquipmentView = () => {
         {characters.map((char) => (
           <button
             key={char.id}
-            onClick={() => setSelectedCharId(char.id)}
+            onClick={() => handleCharSelect(char.id)}
             className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
               (selectedCharId ?? characters[0]?.id) === char.id
                 ? "bg-accent-dim border-accent text-primary"
@@ -166,27 +230,71 @@ const EquipmentView = () => {
         ))}
       </div>
 
-      {/* EQUIPMENT CARD */}
+      {/* CHARACTER CARD */}
       {selectedChar && (
         <div className="w-full rounded-2xl overflow-hidden border border-soft bg-card shadow-card">
           {/* CARD HEADER */}
-          <div className="border-b border-faint px-6 py-4 bg-card-header">
-            <p className="text-[10px] uppercase tracking-widest text-muted">
-              Managing equipment
-            </p>
-            <h3 className="text-xl font-bold text-primary">{selectedChar.name}</h3>
-            <p className="text-sm capitalize text-accent-sub">
-              {selectedChar.current_job?.name}
-            </p>
+          <div className="border-b border-faint px-6 py-4 bg-card-header flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest text-muted">
+                Character
+              </p>
+              <h3 className="text-xl font-bold text-primary">{selectedChar.name}</h3>
+              <p className={`text-sm capitalize ${pendingJob ? "line-through text-muted" : "text-accent-sub"}`}>
+                {selectedChar.current_job?.name}
+              </p>
+              {pendingJob && (
+                <p className="text-sm capitalize text-accent-sub">{pendingJob.name}</p>
+              )}
+            </div>
+            <button
+              onClick={() => {
+                setChangingJob((v) => !v);
+                setPendingJob(null);
+                setSaveError(null);
+              }}
+              className={`mt-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border shrink-0 ${
+                changingJob
+                  ? "bg-accent-dim border-accent text-primary"
+                  : "bg-input border-soft text-secondary"
+              }`}
+            >
+              {changingJob ? "Cancel" : "Change Job"}
+            </button>
           </div>
 
-          {/* SLOTS */}
+          {/* JOB CHANGE PANEL — selection only, applied via Save changes */}
+          {changingJob && (
+            <div className="border-b border-faint px-6 py-4 space-y-2 bg-card-header">
+              <label className="text-[10px] uppercase tracking-widest text-muted">
+                New Job
+              </label>
+              <Dropdown
+                unstyled
+                pt={dropdownPT}
+                value={pendingJob}
+                onChange={(e) => setPendingJob(e.value)}
+                options={jobs}
+                optionLabel="name"
+                itemTemplate={jobTemplate}
+                valueTemplate={pendingJob ? jobTemplate : undefined}
+                placeholder="Select a job..."
+              />
+              {pendingJob && (
+                <p className="text-[11px] text-status-red">
+                  Changing job will unequip all currently equipped items.
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* EQUIPMENT SLOTS */}
           <div className="p-6 flex gap-5 items-stretch">
             {/* CHARACTER AVATAR */}
             <div className="w-48 h-56 shrink-0 self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
-              {selectedChar.current_job?.icon ? (
+              {(pendingJob ?? selectedChar.current_job)?.icon ? (
                 <img
-                  src={selectedChar.current_job.icon}
+                  src={(pendingJob ?? selectedChar.current_job).icon}
                   alt={selectedChar.name}
                   className="w-full h-full object-contain p-3"
                 />
@@ -219,24 +327,28 @@ const EquipmentView = () => {
                         optionLabel="name"
                         itemTemplate={itemTemplate}
                         placeholder="No item equipped"
-                        disabled={saving}
+                        disabled={isSaving}
                       />
                     </div>
                   ))
                 )}
               </div>
 
+              {saveError && (
+                <p className="text-xs text-status-red">{saveError}</p>
+              )}
+
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleSave}
-                  disabled={!hasChanges || saving}
+                  disabled={!hasChanges || isSaving}
                   className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-                    hasChanges && !saving
+                    hasChanges && !isSaving
                       ? "bg-accent-dim border-accent text-primary cursor-pointer"
                       : "bg-input border-faint text-disabled cursor-not-allowed"
                   }`}
                 >
-                  {saving ? "Saving..." : "Save changes"}
+                  {isSaving ? "Saving..." : "Save changes"}
                 </button>
               </div>
             </div>
