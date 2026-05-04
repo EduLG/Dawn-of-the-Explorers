@@ -1,9 +1,8 @@
 Table user {
-  id varchar(36) [pk]
+  id varchar(36) [pk, note: "UUID"]
   username varchar [not null, unique]
   email varchar [not null, unique]
   password varchar [not null]
-  party_id int [ref: > party.id, unique] // 1:1
 }
 
 Table party {
@@ -11,56 +10,66 @@ Table party {
   name varchar [not null]
   level int [default: 1]
   experience int [default: 0]
-  rating int [default: 0]
-}
-
-Table party_character {
-  id int [pk, increment]
-  party_id int [not null, ref: > party.id]
-  character_id int [not null, ref: > character.id]
-  party_slot int [not null] // 1-4
-
-  Indexes {
-    (party_id, party_slot) [unique]
-  }
+  user_id varchar(36) [not null, unique, ref: > user.id] // 1:1 — Party owns the FK
+  // rating is computed: sum of all character ratings (not stored)
 }
 
 Table character {
   id int [pk, increment]
   name varchar [not null]
-  current_job_id int [ref: > job.id]
+  party_id int [not null, ref: > party.id]
+  current_job_id int [not null, ref: > job.id]
+  // rating is computed: sum of equipped items' rating (not stored)
 }
 
 Table job {
   id int [pk, increment]
   name varchar [not null]
-  icon varchar [not null] //route or path to icon image
+  icon varchar [not null] // path to icon image
 }
 
 Table equipment {
   id int [pk, increment]
   name varchar [not null]
-  type enum('head', 'chest', 'primary hand', 'secondary hand', 'accesory') [not null]
+  type varchar [not null, note: "head | chest | primary_hand | secondary_hand | accesory"]
   rating int [default: 0]
-}
-
-Table job_equipment {
-  id int [pk, increment]
-  job_id int [ref: > job.id]
-  equipment_id int [ref: > equipment.id]
-
-  Indexes {
-    (job_id, equipment_id) [unique]
-  }
+  job_id int [not null, ref: > job.id] // only characters with this job can equip it
 }
 
 Table character_equipment {
   id int [pk, increment]
   character_id int [not null, ref: > character.id]
   equipment_id int [not null, ref: > equipment.id]
-  slot varchar [not null]
+  slot varchar [not null, note: "head | chest | primary_hand | secondary_hand | accesory"]
 
   Indexes {
-    (character_id, slot) [unique]
+    (character_id, slot) [unique] // one item per slot per character
   }
+}
+
+Table party_inventory {
+  id int [pk, increment]
+  party_id int [not null, ref: > party.id]
+  equipment_id int [not null, ref: > equipment.id] // loot earned from explorations
+}
+
+Table dungeon {
+  id int [pk, increment]
+  name varchar [not null]
+  description varchar
+  image_path varchar
+  min_rating int [not null, default: 0] // minimum party rating to attempt
+  visibility_rating int [not null, default: 0] // minimum rating to see the dungeon
+  duration int [not null, default: 60, note: "seconds the exploration takes"]
+  loot json [note: "array of equipment drop rules"]
+}
+
+Table exploration {
+  id int [pk, increment]
+  party_id int [not null, ref: > party.id]
+  dungeon_id int [not null, ref: > dungeon.id]
+  started_at timestamp [not null]
+  ends_at timestamp [not null]
+  status varchar [not null, default: "in_progress", note: "in_progress | completed"]
+  result json [note: "{ success: bool, loot: [...] } — populated on completion"]
 }
