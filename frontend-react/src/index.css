@@ -6,7 +6,7 @@
 
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap");
 @import "tailwindcss";
-@import "../theme.css";
+@import "./styles/theme.css";
 
 /* ── Registro de fuentes en Tailwind v4 ── */
 @theme {

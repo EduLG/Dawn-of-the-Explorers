@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap");
 @import "tailwindcss";
-@import "../theme.css";
+@import "./theme.css";
 
 html,
 body,
@@ -14,10 +14,13 @@ body,
 
 body {
   font-family: var(--font-display);
-  font-size: 16px;
 }
 
-/* Crimson Pro para textos de contenido largo */
-p, li, blockquote, .font-body {
+/* Crimson Pro: fijado a 16px para no escalar con el rem de Cinzel */
+p,
+li,
+blockquote,
+.font-body {
   font-family: var(--font-body);
+  font-size: 16px;
 }
