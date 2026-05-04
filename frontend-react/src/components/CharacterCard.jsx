@@ -34,7 +34,7 @@ const CharacterCard = ({
       >
         <div className="flex flex-col gap-0.5">
           <span
-            className="text-[10px] uppercase tracking-[0.2em]"
+            className="text-xs uppercase tracking-[0.2em]"
             style={{ color: "var(--text-muted)" }}
           >
             Character
@@ -54,7 +54,7 @@ const CharacterCard = ({
         </div>
         <div className="flex flex-col items-center gap-0.5">
           <span
-            className="text-[10px] uppercase tracking-widest"
+            className="text-xs uppercase tracking-widest"
             style={{ color: "var(--text-muted)" }}
           >
             Rating
