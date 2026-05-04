@@ -1,5 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { Avatar } from "@radix-ui/themes";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { Avatar, DropdownMenu } from "@radix-ui/themes";
 import useUser from "../hooks/useUser";
 import OnboardingModal from "../components/OnboardingModal";
 import bgImage from "../assets/resources/bgImage.png";
@@ -25,10 +25,19 @@ const mobileLinkClass = ({ isActive }) =>
     isActive ? "text-accent font-bold" : "text-muted"
   }`;
 
+
 const Home = () => {
   const { data: user, refetch } = useUser();
   const party = user?.party;
   const needsOnboarding = user && party && party.characters.length === 0;
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("refresh_token");
+    navigate("/login");
+  };
 
   return (
     <div
@@ -48,10 +57,28 @@ const Home = () => {
               <p className="text-[10px] uppercase tracking-widest text-muted">Explorer</p>
               <p className="text-sm font-semibold text-primary">{user?.username || "Guest"}</p>
             </div>
-            <Avatar
-              fallback={user?.username?.[0]?.toUpperCase() ?? "?"}
-              className="border-2 border-accent"
-            />
+
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <button className="cursor-pointer">
+                  <Avatar
+                    fallback={user?.username?.[0]?.toUpperCase() ?? "?"}
+                    className="border-2 border-accent"
+                  />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content
+                align="end"
+                className="min-w-[180px] rounded-xl border border-soft shadow-modal bg-card p-2"
+              >
+                <DropdownMenu.Item
+                  onSelect={handleLogout}
+                  className="px-4 py-3 rounded-lg text-base font-semibold cursor-pointer text-status-red hover:bg-delete-zone outline-none"
+                >
+                  Logout
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
           </div>
         </div>
       </header>
