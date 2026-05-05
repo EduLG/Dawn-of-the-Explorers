@@ -155,12 +155,12 @@ const InventoryView = () => {
       </div>
 
       {/* SLOT FILTER TABS */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="grid grid-cols-2 gap-2">
         {SLOT_FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border ${
+            className={`w-full px-4 py-1.5 rounded-xl text-xs font-semibold text-center transition-all duration-200 border ${
               filter === f
                 ? "bg-accent-dim border-accent text-primary"
                 : "bg-input border-soft text-secondary"
