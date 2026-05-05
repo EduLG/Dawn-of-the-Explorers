@@ -12,7 +12,7 @@ const TeamView = () => {
   return (
     <>
       {/* HANGAR IMAGE */}
-      <div className="relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
+      <div className="hidden sm:block relative bg-white/5 border border-white/10 rounded-2xl overflow-hidden backdrop-blur-sm">
         <img
           src={hangarImg}
           alt="Party Hangar"
@@ -37,13 +37,13 @@ const TeamView = () => {
         </div>
 
         {/* CHARACTER SPRITES */}
-        <div className="absolute bottom-[6.25%] left-0 right-0 flex justify-center items-end gap-6 sm:gap-10 px-16 sm:px-24 md:px-32">
+        <div className="absolute bottom-[6.25%] left-0 right-0 flex justify-center items-end gap-2 sm:gap-10 px-4 sm:px-24 md:px-32">
           {partyCharacters.map((character) => (
             <img
               key={character.id}
               src={character.current_job?.icon}
               alt={character.name}
-              className="h-[82px] sm:h-[102px] md:h-[121px] object-contain drop-shadow-xl brightness-80"
+              className="h-[64px] sm:h-[102px] md:h-[121px] object-contain drop-shadow-xl brightness-80"
             />
           ))}
         </div>
