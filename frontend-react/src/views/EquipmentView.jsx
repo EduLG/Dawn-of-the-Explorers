@@ -214,12 +214,12 @@ const EquipmentView = () => {
   return (
     <div className="space-y-5">
       {/* CHARACTER TABS */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="grid grid-cols-2 gap-2">
         {characters.map((char) => (
           <button
             key={char.id}
             onClick={() => handleCharSelect(char.id)}
-            className={`px-5 py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
+            className={`w-full px-5 py-2 rounded-xl text-sm font-semibold text-center transition-all duration-200 border ${
               (selectedCharId ?? characters[0]?.id) === char.id
                 ? "bg-accent-dim border-accent text-primary"
                 : "bg-input border-soft text-secondary"
@@ -289,9 +289,9 @@ const EquipmentView = () => {
           )}
 
           {/* EQUIPMENT SLOTS */}
-          <div className="p-6 flex gap-5 items-stretch">
+          <div className="p-6 flex flex-col sm:flex-row gap-5 items-stretch">
             {/* CHARACTER AVATAR */}
-            <div className="w-48 h-56 shrink-0 self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
+            <div className="w-full h-48 sm:w-48 sm:h-56 sm:shrink-0 sm:self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
               {(pendingJob ?? selectedChar.current_job)?.icon ? (
                 <img
                   src={(pendingJob ?? selectedChar.current_job).icon}
