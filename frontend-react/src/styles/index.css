@@ -34,6 +34,7 @@ p, li, blockquote, .font-body {
 }
 
 /* ── Background utilities ── */
+@utility bg-primary      { background: var(--text-primary); }
 @utility bg-page         { background: var(--bg-page); }
 @utility bg-header       { background: var(--bg-header); }
 @utility bg-sidebar      { background: var(--bg-sidebar); }
