@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from app.routes.auth_routes import auth_bp
 from app.routes.user_routes import user_bp
@@ -18,7 +19,8 @@ def create_app():
 
     jwt = JWTManager(app)
 
-    CORS(app)
+    frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
+    CORS(app, origins=[frontend_url])
     db.init_app(app)
 
     from app.models.user import User
