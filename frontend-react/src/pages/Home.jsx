@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Avatar, DropdownMenu } from "@radix-ui/themes";
 import useUser from "../hooks/useUser";
@@ -20,18 +21,13 @@ const sidebarLinkClass = ({ isActive }) =>
       : "text-muted hover:bg-white/8 hover:text-primary border border-transparent"
   }`;
 
-const mobileLinkClass = ({ isActive }) =>
-  `flex-1 flex flex-col items-center justify-center py-1.5 text-[10px] uppercase tracking-wider transition-colors ${
-    isActive ? "text-accent font-bold" : "text-muted"
-  }`;
-
-
 const Home = () => {
   const { data: user, refetch } = useUser();
   const party = user?.party;
   const needsOnboarding = user && party && party.characters.length === 0;
 
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -51,11 +47,34 @@ const Home = () => {
       {/* HEADER */}
       <header className="sticky top-0 z-20 backdrop-blur-md bg-header border-b border-faint">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <img src={headerlogo} alt="Logo" className="h-10 sm:h-12" />
+          <div className="flex items-center gap-3">
+            {/* Hamburger */}
+            <button
+              className="lg:hidden flex flex-col justify-center gap-1.5 w-8 h-8 cursor-pointer"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label="Toggle navigation"
+            >
+              <span
+                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
+              />
+              <span
+                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "opacity-0" : ""}`}
+              />
+              <span
+                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
+              />
+            </button>
+            <img src={headerlogo} alt="Logo" className="h-10 sm:h-12" />
+          </div>
+
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
-              <p className="text-[10px] uppercase tracking-widest text-muted">Explorer</p>
-              <p className="text-sm font-semibold text-primary">{user?.username || "Guest"}</p>
+              <p className="text-[10px] uppercase tracking-widest text-muted">
+                Explorer
+              </p>
+              <p className="text-sm font-semibold text-primary">
+                {user?.username || "Guest"}
+              </p>
             </div>
 
             <DropdownMenu.Root>
@@ -81,15 +100,35 @@ const Home = () => {
             </DropdownMenu.Root>
           </div>
         </div>
+
+        {/* Menu desplegable movil */}
+        {menuOpen && (
+          <nav className="lg:hidden border-t border-faint bg-header px-4 py-3">
+            <ul className="flex flex-col gap-1">
+              {navItems.map((item) => (
+                <li key={item.to}>
+                  <NavLink
+                    to={item.to}
+                    className={sidebarLinkClass}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </header>
 
       {/* LAYOUT */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
-
         {/* SIDEBAR DESKTOP */}
         <aside className="hidden lg:block">
           <nav className="rounded-2xl p-3 sticky top-24 border border-soft bg-card">
-            <p className="text-[10px] uppercase tracking-widest text-muted px-3 mb-2">Navigation</p>
+            <p className="text-[10px] uppercase tracking-widest text-muted px-3 mb-2">
+              Navigation
+            </p>
             <ul className="flex flex-col gap-1">
               {navItems.map((item) => (
                 <li key={item.to}>
@@ -103,27 +142,15 @@ const Home = () => {
         </aside>
 
         {/* MAIN CONTENT */}
-        <main className="space-y-5 pb-24 lg:pb-0">
+        <main className="space-y-5">
           <Outlet context={{ user, party, refetch }} />
         </main>
       </div>
 
       {/* ONBOARDING MODAL */}
       {needsOnboarding && (
-        <OnboardingModal
-          username={user.username}
-          onComplete={refetch}
-        />
+        <OnboardingModal username={user.username} onComplete={refetch} />
       )}
-
-      {/* MOBILE BOTTOM NAV */}
-      <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-mobile-nav backdrop-blur-xl border-t border-faint flex z-30">
-        {navItems.map((item) => (
-          <NavLink key={item.to} to={item.to} className={mobileLinkClass}>
-            {item.mobileLabel}
-          </NavLink>
-        ))}
-      </nav>
     </div>
   );
 };

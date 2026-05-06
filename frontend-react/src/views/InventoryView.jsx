@@ -33,7 +33,7 @@ const SlotIcon = ({ type }) => {
     <img
       src={icon.src}
       alt={type}
-      className="w-7 h-7"
+      className="w-12 h-12"
       style={icon.flip ? { transform: "scaleX(-1)" } : undefined}
     />
   );
@@ -155,12 +155,12 @@ const InventoryView = () => {
       </div>
 
       {/* SLOT FILTER TABS */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="grid grid-cols-2 gap-2">
         {SLOT_FILTERS.map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border ${
+            className={`w-full px-4 py-1.5 rounded-xl text-xs font-semibold text-center transition-all duration-200 border ${
               filter === f
                 ? "bg-accent-dim border-accent text-primary"
                 : "bg-input border-soft text-secondary"
@@ -200,9 +200,7 @@ const InventoryView = () => {
               >
                 {/* ITEM ROW */}
                 <div className="flex items-center gap-4 px-5 py-4">
-                  <div className="w-12 h-12 shrink-0 rounded-xl border border-accent bg-accent-dim flex items-center justify-center">
-                    <SlotIcon type={eq.type} />
-                  </div>
+                  <SlotIcon type={eq.type} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate text-primary">
                       {eq.name}
