@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const API_URL = "/api/v1/auth";
+const API_URL = `${import.meta.env.VITE_API_URL ?? ""}/api/v1/auth`;
 
 export function useAuth() {
   const [loading, setLoading] = useState(false);
