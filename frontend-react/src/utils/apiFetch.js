@@ -1,4 +1,5 @@
-const REFRESH_URL = "/api/v1/auth/refresh";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "";
+const REFRESH_URL = `${BASE_URL}/api/v1/auth/refresh`;
 
 async function refreshAccessToken() {
   const refreshToken = localStorage.getItem("refresh_token");
@@ -25,6 +26,7 @@ function clearSessionAndRedirect() {
 }
 
 export async function apiFetch(url, options = {}) {
+  url = `${BASE_URL}${url}`;
   const token = localStorage.getItem("token");
 
   const headers = {
