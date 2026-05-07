@@ -127,8 +127,8 @@ const OnboardingModal = ({ username, onComplete }) => {
                 </div>
 
                 {/* Card body */}
-                <div className="p-4 flex gap-3 items-stretch">
-                  <div className="w-40 min-h-40 shrink-0 rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
+                <div className="p-4 flex flex-col sm:flex-row gap-3 items-center sm:items-stretch">
+                  <div className="w-40 h-40 shrink-0 rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
                     {char.job ? (
                       <img src={char.job.icon} alt={char.job.name} className="w-full h-full object-contain p-3" />
                     ) : (
