@@ -18,6 +18,9 @@ def register_user(username, email, password):
     if not username or not email or not password:
         raise ServiceError("Missing data", 400)
 
+    username = username.strip().lower()
+    email = email.strip().lower()
+
     if get_user_by_username(username):
         raise ServiceError("The user already exists", 409)
 
@@ -33,6 +36,7 @@ def authenticate_user(username, password):
     if not username or not password:
         raise ServiceError("Missing data", 400)
 
+    username = username.strip().lower()
     user = get_user_by_username(username)
     if not user:
         raise ServiceError("Invalid user", 401)
