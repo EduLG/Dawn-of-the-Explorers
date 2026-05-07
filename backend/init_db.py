@@ -1,0 +1,16 @@
+from app import create_app
+from app.extensions import db
+
+from app.models.user import User
+from app.models.party import Party
+from app.models.character import Character
+from app.models.job import Job
+from app.models.equipment import Equipment
+from app.models.character_equipment import CharacterEquipment
+from app.models.exploration import Exploration
+
+app = create_app()
+
+with app.app_context():
+    db.create_all()
+    print("Tables created successfully")

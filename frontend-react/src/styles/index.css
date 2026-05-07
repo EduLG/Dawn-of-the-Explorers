@@ -1,0 +1,99 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,400&display=swap");
+@import "tailwindcss";
+@import "./theme.css";
+
+@theme {
+  --text-xs:   0.9375rem;  /* 15px  (era 12px) */
+  --text-sm:   1.0625rem;  /* 17px  (era 14px) */
+  --text-base: 1.25rem;    /* 20px  (era 16px) */
+  --text-lg:   1.5rem;     /* 24px  (era 18px) */
+  --text-xl:   1.75rem;    /* 28px  (era 20px) */
+  --text-2xl:  2.125rem;   /* 34px  (era 24px) */
+  --text-3xl:  2.5rem;     /* 40px  (era 30px) */
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: var(--font-display);
+  font-size: 17px; /* sube las etiquetas con px fijo */
+}
+
+/* Crimson Pro para textos de contenido largo */
+p, li, blockquote, .font-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+
+/* ── Background utilities ── */
+@utility bg-primary      { background: var(--text-primary); }
+@utility bg-page         { background: var(--bg-page); }
+@utility bg-header       { background: var(--bg-header); }
+@utility bg-sidebar      { background: var(--bg-sidebar); }
+@utility bg-card         { background: var(--bg-card); }
+@utility bg-card-header  { background: var(--bg-card-header); }
+@utility bg-input        { background: var(--bg-input); }
+@utility bg-modal        { background: var(--bg-modal); }
+@utility bg-overlay      { background: var(--bg-overlay); }
+@utility bg-mobile-nav   { background: var(--bg-mobile-nav); }
+@utility bg-accent-dim   { background: var(--accent-dim); }
+@utility bg-tag          { background: var(--bg-tag); }
+@utility bg-delete-zone  { background: var(--bg-delete); }
+@utility bg-status-blue  { background: var(--status-blue-bg); }
+@utility bg-status-green { background: var(--status-green-bg); }
+@utility bg-status-red   { background: var(--status-red-bg); }
+
+/* ── Border-color utilities ── */
+@utility border-soft         { border-color: var(--border-soft); }
+@utility border-faint        { border-color: var(--border-faint); }
+@utility border-field        { border-color: var(--border-input); }
+@utility border-accent       { border-color: var(--accent-border); }
+@utility border-status-blue  { border-color: var(--status-blue-border); }
+@utility border-status-green { border-color: var(--status-green-border); }
+@utility border-status-red   { border-color: var(--status-red-border); }
+
+/* ── Text-color utilities ── */
+@utility text-primary      { color: var(--text-primary); }
+@utility text-secondary    { color: var(--text-secondary); }
+@utility text-muted        { color: var(--text-muted); }
+@utility text-disabled     { color: var(--text-disabled); }
+@utility text-accent       { color: var(--accent); }
+@utility text-accent-sub   { color: var(--accent-text); }
+@utility text-status-blue  { color: var(--status-blue-text); }
+@utility text-status-green { color: var(--status-green-text); }
+@utility text-status-red   { color: var(--status-red-text); }
+
+/* ── Shadow utilities ── */
+@utility shadow-card  { box-shadow: var(--shadow-card); }
+@utility shadow-modal { box-shadow: var(--shadow-modal); }
+
+/* ── Compound field classes ── */
+.field-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+}
+
+.field-select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  border: 1px solid var(--border-input);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  outline: none;
+}

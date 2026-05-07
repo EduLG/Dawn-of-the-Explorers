@@ -1,0 +1,88 @@
+/* ═══════════════════════════════════════════════════════
+   DAWN OF THE EXPLORERS — Design System Tokens
+   ═══════════════════════════════════════════════════════ */
+
+:root {
+  /* Typography */
+  --font-display: "Cinzel", serif;
+  --font-body:    "Crimson Pro", serif;
+
+  /* Backgrounds */
+  --bg-page:          oklch(0.12 0.015 55);
+  --bg-header:        oklch(0.11 0.014 54 / 0.88);
+  --bg-sidebar:       oklch(0.13 0.014 55 / 0.85);
+  --bg-card:          oklch(0.16 0.018 56);
+  --bg-card-header:   oklch(0.13 0.016 54);
+  --bg-input:         oklch(0.18 0.016 56);
+  --bg-input-hover:   oklch(0.20 0.018 57);
+  --bg-tag:           oklch(0.19 0.016 56);
+  --bg-overlay:       oklch(0.10 0.015 52 / 0.80);
+  --bg-mobile-nav:    oklch(0.11 0.014 54 / 0.96);
+  --bg-modal:         oklch(0.13 0.016 54);
+  --bg-delete:        oklch(0.55 0.12 25 / 0.15);
+
+  /* Borders */
+  --border-strong:    oklch(0.28 0.022 58);
+  --border-soft:      oklch(0.22 0.018 56);
+  --border-faint:     oklch(0.18 0.014 54);
+  --border-input:     oklch(0.26 0.018 57);
+
+  /* Text */
+  --text-primary:     oklch(0.92 0.015 75);
+  --text-secondary:   oklch(0.72 0.018 68);
+  --text-muted:       oklch(0.55 0.015 64);
+  --text-placeholder: oklch(0.38 0.012 60);
+  --text-disabled:    oklch(0.35 0.010 58);
+
+  /* Accent */
+  --accent:           oklch(0.70 0.12 62);
+  --accent-dim:       oklch(0.70 0.12 62 / 0.15);
+  --accent-border:    oklch(0.70 0.12 62 / 0.35);
+  --accent-text:      oklch(0.72 0.12 62);
+  --accent-hover-dim: oklch(0.70 0.12 62 / 0.25);
+
+  /* Nav */
+  --nav-active-bg:    oklch(0.70 0.12 62 / 0.12);
+  --nav-active-text:  var(--text-primary);
+  --nav-hover-bg:     oklch(1 0 0 / 0.05);
+
+  /* Status */
+  --status-blue-bg:     oklch(0.65 0.10 250 / 0.12);
+  --status-blue-border: oklch(0.65 0.10 250 / 0.35);
+  --status-blue-text:   oklch(0.72 0.10 250);
+  --status-green-bg:    oklch(0.65 0.10 145 / 0.12);
+  --status-green-border:oklch(0.65 0.10 145 / 0.35);
+  --status-green-text:  oklch(0.70 0.10 145);
+  --status-red-bg:      oklch(0.60 0.12 25 / 0.15);
+  --status-red-border:  oklch(0.60 0.12 25 / 0.40);
+  --status-red-text:    oklch(0.72 0.12 25);
+
+  /* Shadows */
+  --shadow-card:  0 2px 16px oklch(0 0 0 / 0.35);
+  --shadow-modal: 0 8px 48px oklch(0 0 0 / 0.55);
+}
+
+/* ── RADIX UI FONT OVERRIDE ── */
+.radix-themes {
+  --default-font-family:  var(--font-display);
+  --heading-font-family:  var(--font-display);
+  --strong-font-family:   var(--font-display);
+  --code-font-family:     var(--font-display);
+}
+
+/* ── TRANSITIONS ── */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border-soft);
+  border-radius: 99px;
+}

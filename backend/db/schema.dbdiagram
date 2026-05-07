@@ -1,0 +1,150 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": false,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "user",
+      "schemaName": "public",
+      "x": 14.003066797994332,
+      "y": -322.29890647385395
+    },
+    {
+      "name": "party",
+      "schemaName": "public",
+      "x": 263.25650295487105,
+      "y": -322.29890647385395
+    },
+    {
+      "name": "party_character",
+      "schemaName": "public",
+      "x": 500.4175378313039,
+      "y": -313.7817368821634
+    },
+    {
+      "name": "character",
+      "schemaName": "public",
+      "x": 740.0917744896133,
+      "y": -302.61602345988535
+    },
+    {
+      "name": "job",
+      "schemaName": "public",
+      "x": 993.6037954423354,
+      "y": -258.29890647385395
+    },
+    {
+      "name": "equipment",
+      "schemaName": "public",
+      "x": 936.1129006984241,
+      "y": -78.51300590974233
+    },
+    {
+      "name": "job_equipment",
+      "schemaName": "public",
+      "x": 1211.287932037966,
+      "y": -254.24427493732077
+    },
+    {
+      "name": "character_equipment",
+      "schemaName": "public",
+      "x": 983.7669121597422,
+      "y": -446.33922815186236
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Party",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "party_id"
+      ],
+      "secondTableName": "User",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Party",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "party_id"
+      ],
+      "secondTableName": "PartyCharacter",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Character",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "character_id"
+      ],
+      "secondTableName": "PartyCharacter",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Job",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "current_job_id"
+      ],
+      "secondTableName": "Character",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Character",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "character_id"
+      ],
+      "secondTableName": "CharacterEquipment",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "Equipment",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "equipment_id"
+      ],
+      "secondTableName": "CharacterEquipment",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    }
+  ]
+}
