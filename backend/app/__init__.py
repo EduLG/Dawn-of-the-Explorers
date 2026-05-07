@@ -20,7 +20,7 @@ def create_app():
     jwt = JWTManager(app)
 
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
-    CORS(app, origins=[frontend_url])
+    CORS(app, origins=[frontend_url], allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
     db.init_app(app)
 
     from app.models.user import User
