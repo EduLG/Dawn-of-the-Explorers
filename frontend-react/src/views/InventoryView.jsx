@@ -1,22 +1,12 @@
-// src/views/InventoryView.jsx
 import { useState } from "react";
 import { useOutletContext } from "react-router-dom";
+import { Table, Select, Dialog, Button, Text, Flex } from "@radix-ui/themes";
 import { useInventory } from "../hooks/useInventory";
 import { apiFetch } from "../utils/apiFetch";
 import headIcon from "../assets/resources/eq_icons/head.svg";
 import chestIcon from "../assets/resources/eq_icons/chest.svg";
 import handIcon from "../assets/resources/eq_icons/hand.svg";
 import accesoryIcon from "../assets/resources/eq_icons/accesory.svg";
-
-const SLOT_LABELS = {
-  head: "Head",
-  chest: "Chest",
-  primary_hand: "Primary Hand",
-  secondary_hand: "Secondary Hand",
-  accesory: "Accessory",
-};
-
-const SLOT_FILTERS = ["All", ...Object.keys(SLOT_LABELS)];
 
 const SLOT_ICON_MAP = {
   head: { src: headIcon },
@@ -33,7 +23,7 @@ const SlotIcon = ({ type }) => {
     <img
       src={icon.src}
       alt={type}
-      className="w-12 h-12"
+      className="w-8 h-8 shrink-0"
       style={icon.flip ? { transform: "scaleX(-1)" } : undefined}
     />
   );
@@ -41,92 +31,41 @@ const SlotIcon = ({ type }) => {
 
 const InventoryView = () => {
   const { party, refetch: refetchParty } = useOutletContext();
-  const {
-    data: inventory,
-    loading,
-    refetch: refetchInventory,
-  } = useInventory();
+  const { data: inventory, loading, refetch: refetchInventory } = useInventory();
 
-  const [filter, setFilter] = useState("All");
-  const [equipping, setEquipping] = useState(null);
-  const [equipState, setEquipState] = useState({});
-  const [saving, setSaving] = useState(false);
-  const [errorMsg, setErrorMsg] = useState(null);
+  const [jobFilter, setJobFilter] = useState("all");
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
   const characters = party?.characters || [];
+
+  const jobNames = [
+    ...new Set(inventory.map((i) => i.equipment.job_name).filter(Boolean)),
+  ];
+
   const filtered =
-    filter === "All"
+    jobFilter === "all"
       ? inventory
-      : inventory.filter((i) => i.equipment.type === filter);
-
-  const handleEquipToggle = (invId) => {
-    setPendingDelete(null);
-    setEquipping((prev) => (prev === invId ? null : invId));
-    setErrorMsg(null);
-  };
-
-  const handleEquipStateChange = (invId, field, value) => {
-    setEquipState((prev) => ({
-      ...prev,
-      [invId]: { ...(prev[invId] || {}), [field]: value },
-    }));
-  };
-
-  const handleConfirmEquip = async (invId) => {
-    const { charId, slot } = equipState[invId] || {};
-    if (!charId || !slot) {
-      setErrorMsg("Select a character and a slot.");
-      return;
-    }
-    setSaving(true);
-    setErrorMsg(null);
-    try {
-      const res = await apiFetch(`/api/v1/inventory/${invId}/equip`, {
-        method: "POST",
-        body: JSON.stringify({ character_id: parseInt(charId), slot }),
-      });
-      if (!res.ok) {
-        const body = await res.json();
-        throw new Error(body.error || "Failed to equip item");
-      }
-      setEquipping(null);
-      setEquipState((prev) => {
-        const next = { ...prev };
-        delete next[invId];
-        return next;
-      });
-      refetchInventory();
-      refetchParty();
-    } catch (err) {
-      setErrorMsg(err.message);
-    } finally {
-      setSaving(false);
-    }
-  };
+      : inventory.filter((i) => i.equipment.job_name === jobFilter);
 
   const handleDeleteClick = (invItem) => {
-    setEquipping(null);
-    setErrorMsg(null);
     const equippedByChar = characters.find((c) =>
       c.equipped_items?.some((ei) => ei.equipment?.id === invItem.equipment.id),
     );
     setPendingDelete({
       invId: invItem.id,
+      name: invItem.equipment.name,
       equippedByName: equippedByChar ? equippedByChar.name : null,
     });
   };
 
-  const handleCancelDelete = () => setPendingDelete(null);
-
-  const handleConfirmDelete = async (force = false) => {
+  const handleConfirmDelete = async () => {
     if (!pendingDelete) return;
     setDeleting(true);
     try {
       const res = await apiFetch(`/api/v1/inventory/${pendingDelete.invId}`, {
         method: "DELETE",
-        body: JSON.stringify({ force }),
+        body: JSON.stringify({ force: !!pendingDelete.equippedByName }),
       });
       if (!res.ok) {
         const body = await res.json();
@@ -146,194 +85,126 @@ const InventoryView = () => {
     <div className="space-y-5">
       {/* HEADER */}
       <div className="border border-soft rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-card">
-        <div>
-          <h2 className="text-2xl font-bold text-primary">Inventory</h2>
-        </div>
+        <h2 className="text-2xl font-bold text-primary">Inventory</h2>
         <span className="text-sm text-muted">
           {inventory.length} item{inventory.length !== 1 ? "s" : ""}
         </span>
       </div>
 
-      {/* SLOT FILTER TABS */}
-      <div className="grid grid-cols-2 gap-2">
-        {SLOT_FILTERS.map((f) => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`w-full px-4 py-1.5 rounded-xl text-xs font-semibold text-center transition-all duration-200 border ${
-              filter === f
-                ? "bg-accent-dim border-accent text-primary"
-                : "bg-input border-soft text-secondary"
-            }`}
-          >
-            {f === "All" ? "All" : SLOT_LABELS[f]}
-          </button>
-        ))}
-      </div>
+      {/* JOB FILTER */}
+      <Flex align="center" gap="3">
+        <Text size="1" color="gray" className="uppercase tracking-widest shrink-0">
+          Filter by class
+        </Text>
+        <Select.Root value={jobFilter} onValueChange={setJobFilter}>
+          <Select.Trigger placeholder="No filter" />
+          <Select.Content>
+            <Select.Item value="all">No filter</Select.Item>
+            <Select.Separator />
+            {jobNames.map((job) => (
+              <Select.Item key={job} value={job}>
+                {job}
+              </Select.Item>
+            ))}
+          </Select.Content>
+        </Select.Root>
+      </Flex>
 
-      {/* CONTENT */}
+      {/* TABLE */}
       {loading ? (
         <p className="text-sm text-muted">Loading inventory...</p>
       ) : filtered.length === 0 ? (
         <div className="rounded-2xl border border-soft bg-card p-10 text-center">
           <p className="text-sm text-muted">
-            {filter === "All"
+            {jobFilter === "all"
               ? "Your inventory is empty. Complete quests to earn loot!"
-              : "No items of this type in inventory."}
+              : `No items for "${jobFilter}" in inventory.`}
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filtered.map((invItem) => {
-            const eq = invItem.equipment;
-            const isExpanded = equipping === invItem.id;
-            const isConfirmingDelete = pendingDelete?.invId === invItem.id;
-            const state = equipState[invItem.id] || {};
-            const compatibleChars = characters.filter(
-              (c) => c.current_job?.id === eq.job_id,
-            );
+        <div className="rounded-xl border border-soft bg-card overflow-x-auto">
+        <Table.Root variant="ghost">
+          <Table.Header>
+            <Table.Row>
+              <Table.ColumnHeaderCell style={{ width: "3rem", minWidth: "3rem" }} />
+              <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="hidden sm:table-cell">Class</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell justify="end">Rating</Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell style={{ width: "4.5rem" }} />
+            </Table.Row>
+          </Table.Header>
 
-            return (
-              <div
-                key={invItem.id}
-                className="rounded-2xl border border-soft bg-card overflow-hidden shadow-card"
-              >
-                {/* ITEM ROW */}
-                <div className="flex items-center gap-4 px-5 py-4">
-                  <SlotIcon type={eq.type} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate text-primary">
-                      {eq.name}
-                    </p>
-                    <p className="text-xs capitalize text-muted">
-                      {SLOT_LABELS[eq.type] ?? eq.type} · {eq.job_name}
-                    </p>
-                  </div>
-                  <div className="flex flex-col items-end shrink-0 gap-1">
-                    <p className="text-lg font-bold text-accent">+{eq.rating}</p>
+          <Table.Body>
+            {filtered.map((invItem) => {
+              const eq = invItem.equipment;
+              return (
+                <Table.Row key={invItem.id} align="center">
+                  <Table.Cell style={{ minWidth: "3rem" }}>
+                    <SlotIcon type={eq.type} />
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Text weight="bold">{eq.name}</Text>
+                  </Table.Cell>
+                  <Table.Cell className="hidden sm:table-cell">
+                    <Text color="gray">{eq.job_name}</Text>
+                  </Table.Cell>
+                  <Table.Cell justify="end">
+                    <Text weight="bold" color="bronze">+{eq.rating}</Text>
+                  </Table.Cell>
+                  <Table.Cell justify="end">
                     <button
                       onClick={() => handleDeleteClick(invItem)}
-                      className="text-[10px] uppercase tracking-wider transition-colors text-disabled hover:text-status-red"
+                      className="text-[10px] uppercase tracking-wider text-disabled hover:text-status-red transition-colors"
                     >
                       Remove
                     </button>
-                  </div>
-                </div>
-
-                {/* EQUIP BUTTON */}
-                <div className="px-5 pb-4">
-                  <button
-                    onClick={() => handleEquipToggle(invItem.id)}
-                    className={`w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-                      isExpanded
-                        ? "bg-accent-dim border-accent text-primary"
-                        : "bg-input border-soft text-secondary"
-                    }`}
-                  >
-                    {isExpanded ? "Cancel" : "Equip"}
-                  </button>
-                </div>
-
-                {/* DELETE CONFIRMATION PANEL */}
-                {isConfirmingDelete && (
-                  <div className="border-t border-faint px-5 py-4 space-y-3 bg-delete-zone">
-                    {pendingDelete.equippedByName ? (
-                      <p className="text-xs text-status-red">
-                        <span className="font-semibold">
-                          {pendingDelete.equippedByName}
-                        </span>{" "}
-                        currently has this item equipped. Delete and unequip?
-                      </p>
-                    ) : (
-                      <p className="text-xs text-muted">
-                        Remove this item from inventory?
-                      </p>
-                    )}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          handleConfirmDelete(!!pendingDelete.equippedByName)
-                        }
-                        disabled={deleting}
-                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50 border border-status-red bg-status-red text-status-red"
-                      >
-                        {deleting ? "Deleting..." : "Confirm"}
-                      </button>
-                      <button
-                        onClick={handleCancelDelete}
-                        disabled={deleting}
-                        className="flex-1 py-2 rounded-xl text-xs font-semibold transition-all duration-200 border border-soft bg-input text-secondary"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* EQUIP PANEL */}
-                {isExpanded && (
-                  <div className="border-t border-faint px-5 py-4 space-y-3 bg-card-header">
-                    {compatibleChars.length === 0 ? (
-                      <p className="text-xs text-center text-muted">
-                        No characters with the required job ({eq.job_name}).
-                      </p>
-                    ) : (
-                      <>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] uppercase tracking-widest text-muted">
-                            Character
-                          </label>
-                          <select
-                            value={state.charId || ""}
-                            onChange={(e) =>
-                              handleEquipStateChange(invItem.id, "charId", e.target.value)
-                            }
-                            className="field-select"
-                          >
-                            <option value="">Select character...</option>
-                            {compatibleChars.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                          <label className="text-[10px] uppercase tracking-widest text-muted">
-                            Slot
-                          </label>
-                          <select
-                            value={state.slot || ""}
-                            onChange={(e) =>
-                              handleEquipStateChange(invItem.id, "slot", e.target.value)
-                            }
-                            className="field-select"
-                          >
-                            <option value="">Select slot...</option>
-                            <option value={eq.type}>
-                              {SLOT_LABELS[eq.type] ?? eq.type}
-                            </option>
-                          </select>
-                        </div>
-                        {errorMsg && (
-                          <p className="text-xs text-status-red">{errorMsg}</p>
-                        )}
-                        <button
-                          onClick={() => handleConfirmEquip(invItem.id)}
-                          disabled={saving}
-                          className="w-full py-2 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 border border-accent bg-accent-dim text-primary"
-                        >
-                          {saving ? "Equipping..." : "Confirm"}
-                        </button>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            );
-          })}
+                  </Table.Cell>
+                </Table.Row>
+              );
+            })}
+          </Table.Body>
+        </Table.Root>
         </div>
       )}
+
+      {/* DELETE CONFIRMATION DIALOG */}
+      <Dialog.Root
+        open={!!pendingDelete}
+        onOpenChange={(open) => !open && !deleting && setPendingDelete(null)}
+      >
+        <Dialog.Content maxWidth="360px">
+          <Dialog.Title>Remove item</Dialog.Title>
+          <Dialog.Description size="2" color={pendingDelete?.equippedByName ? "red" : "gray"}>
+            {pendingDelete?.equippedByName ? (
+              <>
+                <Text weight="bold">{pendingDelete.equippedByName}</Text> currently has{" "}
+                <Text weight="bold">{pendingDelete.name}</Text> equipped. Removing it will
+                also unequip it.
+              </>
+            ) : (
+              <>
+                Remove <Text weight="bold">{pendingDelete?.name}</Text> from your inventory?
+              </>
+            )}
+          </Dialog.Description>
+
+          <Flex gap="3" justify="end" mt="4">
+            <Dialog.Close>
+              <Button variant="soft" color="gray" disabled={deleting}>
+                Cancel
+              </Button>
+            </Dialog.Close>
+            <Button
+              variant="soft"
+              color="red"
+              disabled={deleting}
+              onClick={handleConfirmDelete}
+            >
+              {deleting ? "Removing..." : "Confirm"}
+            </Button>
+          </Flex>
+        </Dialog.Content>
+      </Dialog.Root>
     </div>
   );
 };
