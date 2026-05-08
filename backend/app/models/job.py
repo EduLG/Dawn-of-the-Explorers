@@ -10,5 +10,3 @@ class Job(db.Model):
     # 1:N with Character
     characters = db.relationship('Character', back_populates='current_job')
 
-    # 1:N with Equipment
-    equipments = db.relationship('Equipment', back_populates='job')
