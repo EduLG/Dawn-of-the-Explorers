@@ -689,8 +689,13 @@ with app.app_context():
     # job_index → eng=0 gun=1 adv=2 alc=3 war=4 fen=5 sag=6 ass=7 sch=8 bst=9
     H, C, P, S, A = 0, 100, 200, 300, 400
 
-    def loot(*specs):
-        return [equipments[base + (tier - 1) * 10 + job].id for base, tier, job in specs]
+    def tier_loot(t):
+        """Returns all 50 item IDs (5 slots × 10 jobs) for the given tier."""
+        return [
+            equipments[base + (t - 1) * 10 + job].id
+            for base in [H, C, P, S, A]
+            for job in range(10)
+        ]
 
     dungeons = [
         Dungeon(
@@ -698,77 +703,77 @@ with app.app_context():
             description="Vast woodland of ancient trees, narrow rivers and mist-covered clearings.",
             image_path="/localizations/forest_1.png",
             min_rating=0, visibility_rating=0, duration=60,
-            loot=loot((H,1,2), (C,1,4), (P,1,3), (S,1,0), (A,1,1)),
+            loot=tier_loot(1),
         ),
         Dungeon(
             name="The Infinite Observation Tower",
             description="Colossal vertical structure that pierces the clouds and vanishes into the sky.",
             image_path="/localizations/tower_2.png",
             min_rating=50, visibility_rating=0, duration=120,
-            loot=loot((H,2,4), (C,2,3), (P,2,1), (S,2,2), (A,2,6)),
+            loot=tier_loot(2),
         ),
         Dungeon(
             name="Canyon of Eternal Storms",
             description="Deep rocky rift with sheer walls and violent air currents.",
             image_path="/localizations/canyon_3.png",
             min_rating=80, visibility_rating=40, duration=180,
-            loot=loot((H,3,1), (C,3,0), (P,3,4), (S,2,9), (A,3,7), (C,2,5)),
+            loot=tier_loot(3),
         ),
         Dungeon(
             name="Archipelago of Wandering Clouds",
             description="Collection of floating islands suspended above a sea of clouds.",
             image_path="/localizations/archipelago_4.png",
             min_rating=120, visibility_rating=60, duration=300,
-            loot=loot((H,3,6), (C,3,8), (P,3,1), (S,3,4), (A,3,9), (P,3,3)),
+            loot=tier_loot(4),
         ),
         Dungeon(
             name="Abyssal Steam Pit",
             description="Enormous geothermal rift descending into the earth's crust.",
             image_path="/localizations/pit_5.png",
             min_rating=150, visibility_rating=75, duration=420,
-            loot=loot((H,4,0), (C,4,4), (P,3,9), (S,4,5), (A,4,8), (H,3,7)),
+            loot=tier_loot(5),
         ),
         Dungeon(
             name="Sunken Bronze City",
             description="Ruins of an ancient technological metropolis beneath dense, dark waters.",
             image_path="/localizations/sunken_6.png",
             min_rating=180, visibility_rating=90, duration=600,
-            loot=loot((H,4,8), (C,4,7), (P,4,1), (S,4,2), (A,4,4), (C,4,6)),
+            loot=tier_loot(6),
         ),
         Dungeon(
             name="Isle of the Fallen Engineers",
             description="Rocky island overrun by abandoned factories and ruined laboratories.",
             image_path="/localizations/engineers_7.png",
             min_rating=220, visibility_rating=110, duration=900,
-            loot=loot((H,5,0), (C,5,4), (P,5,1), (S,4,3), (A,5,7), (H,4,9)),
+            loot=tier_loot(7),
         ),
         Dungeon(
             name="Resonant Crystal Desert",
             description="Vast expanse of dunes formed by fragments of translucent crystal.",
             image_path="/localizations/desert_8.png",
             min_rating=260, visibility_rating=130, duration=1200,
-            loot=loot((H,5,8), (C,5,3), (P,5,4), (S,5,9), (A,5,5), (P,5,6)),
+            loot=tier_loot(8),
         ),
         Dungeon(
             name="Airship Graveyard",
             description="Plains covered by the wreckage of crashed zeppelins and airships.",
             image_path="/localizations/graveyard_9.png",
             min_rating=300, visibility_rating=150, duration=1800,
-            loot=loot((H,6,1), (C,6,0), (P,6,4), (S,5,2), (A,6,3), (P,5,7)),
+            loot=tier_loot(9),
         ),
         Dungeon(
             name="Etherized Caldera Volcano",
             description="Active volcano with a wide caldera surrounded by lava flows.",
             image_path="/localizations/volcano_10.png",
             min_rating=400, visibility_rating=200, duration=3600,
-            loot=loot((H,7,4), (C,7,5), (P,7,3), (S,6,6), (A,7,9), (H,6,7)),
+            loot=tier_loot(10),
         ),
         Dungeon(
             name="Ether Core",
             description="Colossal cavity at the planet's core where the world's energy converges.",
             image_path="/localizations/core_11.png",
             min_rating=600, visibility_rating=300, duration=7200,
-            loot=loot((H,9,4), (C,9,0), (P,8,3), (S,9,5), (A,9,8), (H,10,6)),
+            loot=[],
         ),
     ]
     db.session.add_all(dungeons)
