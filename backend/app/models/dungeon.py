@@ -8,6 +8,7 @@ class Dungeon(db.Model):
     name              = db.Column(db.String, nullable=False)
     description       = db.Column(db.String)
     image_path        = db.Column(db.String)
+    rating            = db.Column(db.Integer, default=0, nullable=False)
     min_rating        = db.Column(db.Integer, default=0, nullable=False)
     visibility_rating = db.Column(db.Integer, default=0, nullable=False)
     duration          = db.Column(db.Integer, default=60, nullable=False)
