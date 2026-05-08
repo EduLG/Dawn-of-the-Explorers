@@ -6,6 +6,7 @@ class DungeonSchema(Schema):
     name              = fields.Str()
     description       = fields.Str()
     image_path        = fields.Str()
+    rating            = fields.Int()
     min_rating        = fields.Int()
     visibility_rating = fields.Int()
     duration          = fields.Int()

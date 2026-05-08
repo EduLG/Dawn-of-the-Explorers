@@ -98,10 +98,16 @@ const EquipmentView = () => {
   const { updateEquipment, saving } = useUpdateEquipment();
   const { jobs } = useJobs();
 
+  const equippedByOthers = useMemo(() => new Set(
+    characters
+      .filter((c) => c.id !== selectedChar?.id)
+      .flatMap((c) => (c.equipped_items ?? []).map((ei) => ei.equipment?.id).filter(Boolean))
+  ), [characters, selectedChar?.id]);
+
   const equipmentBySlot = useMemo(() => {
     const slots = {};
     inventory
-      .filter((item) => item.equipment.job_id === jobId)
+      .filter((item) => item.equipment.job_id === jobId && !equippedByOthers.has(item.equipment.id))
       .forEach((item) => {
         const eq = item.equipment;
         if (!slots[eq.type]) slots[eq.type] = [];
@@ -116,7 +122,7 @@ const EquipmentView = () => {
       });
     }
     return slots;
-  }, [inventory, jobId, selectedChar, pendingJob]);
+  }, [inventory, jobId, selectedChar, pendingJob, equippedByOthers]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);

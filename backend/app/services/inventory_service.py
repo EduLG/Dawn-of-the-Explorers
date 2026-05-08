@@ -7,6 +7,7 @@ from app.repositories.inventory_repository import (
 from app.repositories.equipment_repository import (
     update_character_equipment as update_char_equip_repo,
     unequip_by_equipment_and_party,
+    is_equipment_on_other_character,
 )
 from app.models.character_equipment import CharacterEquipment
 from app.models.character import Character
@@ -43,6 +44,9 @@ def equip_from_inventory(user_id, inventory_id, character_id, slot):
     equipment = inventory_item.equipment
     if equipment.job_id != character.current_job_id:
         raise ServiceError("Equipment is not compatible with this character's job", 400)
+
+    if is_equipment_on_other_character(equipment.id, user.party.id, int(character_id)):
+        raise ServiceError("This item is already equipped by another character", 409)
 
     update_char_equip_repo(character_id, slot, equipment.id)
     remove_from_inventory(inventory_id)

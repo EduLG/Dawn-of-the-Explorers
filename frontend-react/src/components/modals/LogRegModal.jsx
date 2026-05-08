@@ -48,7 +48,7 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ background: "rgba(8,4,2,0.75)", backdropFilter: "blur(4px)" }}
+      style={{ background: "rgba(8,4,2,0.75)", backdropFilter: "blur(4px)", fontFamily: "var(--font-body)" }}
       onClick={() => setVisible(false)}
     >
       <div

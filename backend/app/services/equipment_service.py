@@ -2,6 +2,7 @@ from app.repositories.equipment_repository import (
     get_equipment_by_job as get_equipment_by_job_repo,
     get_equipment_by_id,
     update_character_equipment as update_character_equipment_repo,
+    is_equipment_on_other_character,
 )
 from app.repositories.character_repository import get_character_by_id
 from app.services.auth_service import ServiceError
@@ -30,5 +31,8 @@ def update_character_equipment(user_id, character_id, slot, equipment_id):
 
     if equipment.job_id != character.current_job_id:
         raise ServiceError("Equipment is not compatible with this character's job", 400)
+
+    if is_equipment_on_other_character(equipment_id, character.party_id, int(character_id)):
+        raise ServiceError("This item is already equipped by another character", 409)
 
     update_character_equipment_repo(character_id, slot, equipment_id)

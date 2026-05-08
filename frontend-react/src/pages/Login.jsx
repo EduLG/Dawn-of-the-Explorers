@@ -12,7 +12,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ fontFamily: "var(--font-body)" }}>
       <div className="w-full max-w-md flex flex-col items-center gap-8">
         <div
           className="w-full backdrop-blur-xl border border-[#c9973b]/20 rounded-2xl p-8 flex flex-col gap-4 shadow-2xl"

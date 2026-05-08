@@ -82,7 +82,7 @@ def get_exploration_status(user_id):
 def _resolve_exploration(exploration, user):
     dungeon = exploration.dungeon
     party_rating = calculate_party_rating(user.party.characters)
-    success, n_items = _resolve(party_rating, dungeon.min_rating)
+    success, n_items = _resolve(party_rating, dungeon.min_rating, dungeon.rating)
 
     loot = []
     if success:
@@ -105,21 +105,25 @@ def _resolve_exploration(exploration, user):
     }
 
 
-def _resolve(party_rating, min_rating):
+def _resolve(party_rating, min_rating, dungeon_rating):
+    # Entry dungeon (min_rating=0): never fails, scale from ratio
     if min_rating == 0:
-        return True, 5
+        if dungeon_rating == 0:
+            return True, 1
+        ratio = party_rating / dungeon_rating
+        if ratio < 1.17: return True, 1
+        if ratio < 1.34: return True, 2
+        if ratio < 1.50: return True, 3
+        return True, 4
 
-    ratio = party_rating / min_rating
+    if dungeon_rating == 0:
+        return True, 1
 
-    if ratio < 0.5:
-        prob, n_items = 0.10, 1
-    elif ratio < 0.8:
-        prob, n_items = 0.40, 2
-    elif ratio < 1.0:
-        prob, n_items = 0.70, 3
-    elif ratio <= 1.3:
-        prob, n_items = 0.90, 4
-    else:
-        prob, n_items = 0.99, 6
+    ratio = party_rating / dungeon_rating
 
-    return random.random() < prob, n_items
+    if ratio < 0.70: return False, 0
+    if ratio < 1.00: return True, 1
+    if ratio < 1.17: return True, 2
+    if ratio < 1.34: return True, 3
+    if ratio < 1.50: return True, 4
+    return True, 5
