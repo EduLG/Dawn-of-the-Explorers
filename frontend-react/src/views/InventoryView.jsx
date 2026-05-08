@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Table, Select, Dialog, Button, Text, Flex } from "@radix-ui/themes";
 import { useInventory } from "../hooks/useInventory";
@@ -29,24 +29,60 @@ const SlotIcon = ({ type }) => {
   );
 };
 
+const SortIndicator = ({ active, dir }) => (
+  <span className={`ml-1 text-[10px] ${active ? "text-primary" : "text-muted opacity-40"}`}>
+    {active && dir === "desc" ? "▼" : "▲"}
+  </span>
+);
+
+const SORTABLE_COLS = [
+  { key: "name",           label: "Name",   justify: undefined,  className: "" },
+  { key: "equipment_type", label: "Type",   justify: undefined,  className: "hidden sm:table-cell" },
+  { key: "rating",         label: "Rating", justify: undefined,  className: "" },
+];
+
 const InventoryView = () => {
   const { party, refetch: refetchParty } = useOutletContext();
   const { data: inventory, loading, refetch: refetchInventory } = useInventory();
 
-  const [jobFilter, setJobFilter] = useState("all");
+  const [armorFilter, setArmorFilter] = useState("all");
+  const [sortConfig, setSortConfig] = useState({ key: "rating", dir: "asc" });
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
   const characters = party?.characters || [];
 
-  const jobNames = [
-    ...new Set(inventory.map((i) => i.equipment.job_name).filter(Boolean)),
-  ];
+  const armorTypes = useMemo(
+    () => [...new Set(inventory.map((i) => i.equipment.equipment_type).filter(Boolean))],
+    [inventory]
+  );
 
-  const filtered =
-    jobFilter === "all"
-      ? inventory
-      : inventory.filter((i) => i.equipment.job_name === jobFilter);
+  const handleSort = (key) => {
+    setSortConfig((prev) =>
+      prev.key === key
+        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
+        : { key, dir: "asc" }
+    );
+  };
+
+  const sorted = useMemo(() => {
+    const base =
+      armorFilter === "all"
+        ? inventory
+        : inventory.filter((i) => i.equipment.equipment_type === armorFilter);
+
+    return [...base].sort((a, b) => {
+      const eq1 = a.equipment;
+      const eq2 = b.equipment;
+      let cmp = 0;
+      if (sortConfig.key === "rating") {
+        cmp = eq1.rating - eq2.rating;
+      } else {
+        cmp = (eq1[sortConfig.key] ?? "").localeCompare(eq2[sortConfig.key] ?? "");
+      }
+      return sortConfig.dir === "asc" ? cmp : -cmp;
+    });
+  }, [inventory, armorFilter, sortConfig]);
 
   const handleDeleteClick = (invItem) => {
     const equippedByChar = characters.find((c) =>
@@ -91,19 +127,19 @@ const InventoryView = () => {
         </span>
       </div>
 
-      {/* JOB FILTER */}
+      {/* FILTER */}
       <Flex align="center" gap="3">
         <Text size="1" color="gray" className="uppercase tracking-widest shrink-0">
-          Filter by class
+          Filter by type
         </Text>
-        <Select.Root value={jobFilter} onValueChange={setJobFilter}>
+        <Select.Root value={armorFilter} onValueChange={setArmorFilter}>
           <Select.Trigger placeholder="No filter" />
           <Select.Content>
             <Select.Item value="all">No filter</Select.Item>
             <Select.Separator />
-            {jobNames.map((job) => (
-              <Select.Item key={job} value={job}>
-                {job}
+            {armorTypes.map((type) => (
+              <Select.Item key={type} value={type}>
+                {type}
               </Select.Item>
             ))}
           </Select.Content>
@@ -113,57 +149,65 @@ const InventoryView = () => {
       {/* TABLE */}
       {loading ? (
         <p className="text-sm text-muted">Loading inventory...</p>
-      ) : filtered.length === 0 ? (
+      ) : sorted.length === 0 ? (
         <div className="rounded-2xl border border-soft bg-card p-10 text-center">
           <p className="text-sm text-muted">
-            {jobFilter === "all"
+            {armorFilter === "all"
               ? "Your inventory is empty. Complete quests to earn loot!"
-              : `No items for "${jobFilter}" in inventory.`}
+              : `No items for "${armorFilter}" in inventory.`}
           </p>
         </div>
       ) : (
         <div className="rounded-xl border border-soft bg-card overflow-x-auto">
-        <Table.Root variant="ghost">
-          <Table.Header>
-            <Table.Row>
-              <Table.ColumnHeaderCell style={{ width: "3rem", minWidth: "3rem" }} />
-              <Table.ColumnHeaderCell>Name</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="hidden sm:table-cell">Class</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell justify="end">Rating</Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell style={{ width: "4.5rem" }} />
-            </Table.Row>
-          </Table.Header>
-
-          <Table.Body>
-            {filtered.map((invItem) => {
-              const eq = invItem.equipment;
-              return (
-                <Table.Row key={invItem.id} align="center">
-                  <Table.Cell style={{ minWidth: "3rem" }}>
-                    <SlotIcon type={eq.type} />
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Text weight="bold">{eq.name}</Text>
-                  </Table.Cell>
-                  <Table.Cell className="hidden sm:table-cell">
-                    <Text color="gray">{eq.job_name}</Text>
-                  </Table.Cell>
-                  <Table.Cell justify="end">
-                    <Text weight="bold" color="bronze">+{eq.rating}</Text>
-                  </Table.Cell>
-                  <Table.Cell justify="end">
+          <Table.Root variant="ghost">
+            <Table.Header>
+              <Table.Row>
+                <Table.ColumnHeaderCell style={{ width: "3rem", minWidth: "3rem" }} />
+                {SORTABLE_COLS.map(({ key, label, justify, className }) => (
+                  <Table.ColumnHeaderCell key={key} justify={justify} className={className}>
                     <button
-                      onClick={() => handleDeleteClick(invItem)}
-                      className="text-[10px] uppercase tracking-wider text-disabled hover:text-status-red transition-colors"
+                      onClick={() => handleSort(key)}
+                      className="flex items-center gap-0.5 cursor-pointer select-none hover:text-primary transition-colors"
                     >
-                      Remove
+                      {label}
+                      <SortIndicator active={sortConfig.key === key} dir={sortConfig.dir} />
                     </button>
-                  </Table.Cell>
-                </Table.Row>
-              );
-            })}
-          </Table.Body>
-        </Table.Root>
+                  </Table.ColumnHeaderCell>
+                ))}
+                <Table.ColumnHeaderCell style={{ width: "4.5rem" }} />
+              </Table.Row>
+            </Table.Header>
+
+            <Table.Body>
+              {sorted.map((invItem) => {
+                const eq = invItem.equipment;
+                return (
+                  <Table.Row key={invItem.id} align="center">
+                    <Table.Cell style={{ minWidth: "3rem" }}>
+                      <SlotIcon type={eq.slot} />
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Text weight="bold">{eq.name}</Text>
+                    </Table.Cell>
+                    <Table.Cell className="hidden sm:table-cell">
+                      <Text color="gray" className="capitalize">{eq.equipment_type}</Text>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Text weight="bold" color="bronze">+{eq.rating}</Text>
+                    </Table.Cell>
+                    <Table.Cell justify="end">
+                      <button
+                        onClick={() => handleDeleteClick(invItem)}
+                        className="text-[10px] uppercase tracking-wider text-disabled hover:text-status-red transition-colors"
+                      >
+                        Discard
+                      </button>
+                    </Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table.Root>
         </div>
       )}
 

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { apiFetch } from "../utils/apiFetch";
 
-export function useEquipment(jobId) {
+export function useEquipment(equipmentType) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!jobId) return;
+    if (!equipmentType) return;
 
     const controller = new AbortController();
 
@@ -15,7 +15,7 @@ export function useEquipment(jobId) {
       setLoading(true);
       setError(null);
       try {
-        const res = await apiFetch(`/api/v1/equipment?job_id=${jobId}`, {
+        const res = await apiFetch(`/api/v1/equipment?equipment_type=${equipmentType}`, {
           method: "GET",
           signal: controller.signal,
         });
@@ -32,7 +32,7 @@ export function useEquipment(jobId) {
 
     fetchEquipment();
     return () => controller.abort();
-  }, [jobId]);
+  }, [equipmentType]);
 
   return { data, loading, error };
 }
