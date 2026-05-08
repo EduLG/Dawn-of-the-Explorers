@@ -2,6 +2,7 @@ flask
 flask-cors
 flask-jwt-extended
 flask-sqlalchemy
+flask-migrate
 psycopg2-binary
 python-dotenv
 marshmallow
