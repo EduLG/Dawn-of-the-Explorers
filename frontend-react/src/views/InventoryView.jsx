@@ -85,7 +85,7 @@ const InventoryView = () => {
     <div className="space-y-5">
       {/* HEADER */}
       <div className="border border-soft rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-card">
-        <h2 className="text-2xl font-bold text-primary">Inventory</h2>
+        <h2 className="text-base font-semibold text-primary">Inventory</h2>
         <span className="text-sm text-muted">
           {inventory.length} item{inventory.length !== 1 ? "s" : ""}
         </span>
