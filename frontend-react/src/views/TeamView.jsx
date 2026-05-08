@@ -49,6 +49,21 @@ const TeamView = () => {
         </div>
       </div>
 
+      {/* PARTY HEADER — mobile only */}
+      <div className="sm:hidden flex flex-col gap-1 bg-card border border-soft rounded-xl px-4 py-3">
+        <h2 className="text-base font-bold text-primary">
+          {party?.name || "Your Party"}
+        </h2>
+        <div className="flex items-center gap-2">
+          <p className="text-[10px] uppercase tracking-widest text-muted">
+            Party Strength
+          </p>
+          <span className="text-sm font-bold text-accent">
+            {party?.rating ?? "—"}
+          </span>
+        </div>
+      </div>
+
       {/* CHARACTERS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
         {partyCharacters.map((character) => {

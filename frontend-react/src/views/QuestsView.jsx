@@ -99,7 +99,7 @@ const QuestsView = () => {
       {/* Header */}
       <div className="border border-soft rounded-2xl px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-card">
         <div>
-          <h2 className="text-xl sm:text-2xl font-bold text-primary">
+          <h2 className="text-base font-semibold text-primary">
             Exploration Quests
           </h2>
         </div>
