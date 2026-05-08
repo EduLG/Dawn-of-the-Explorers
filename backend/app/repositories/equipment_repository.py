@@ -25,6 +25,20 @@ def update_character_equipment(character_id, slot, equipment_id):
     db.session.commit()
 
 
+def is_equipment_on_other_character(equipment_id, party_id, exclude_character_id):
+    from app.models.character import Character
+    return (
+        CharacterEquipment.query
+        .join(Character, CharacterEquipment.character_id == Character.id)
+        .filter(
+            Character.party_id == party_id,
+            CharacterEquipment.equipment_id == equipment_id,
+            CharacterEquipment.character_id != exclude_character_id,
+        )
+        .first()
+    ) is not None
+
+
 def unequip_by_equipment_and_party(equipment_id, party_id):
     from app.models.character import Character
     records = (
