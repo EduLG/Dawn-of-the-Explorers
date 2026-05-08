@@ -141,7 +141,9 @@ const QuestsView = () => {
             <div>
               <p
                 className={`text-[10px] uppercase tracking-widest mb-0.5 ${
-                  exploreResult.success ? "text-status-green" : "text-status-red"
+                  exploreResult.success
+                    ? "text-status-green"
+                    : "text-status-red"
                 }`}
               >
                 {exploreResult.success
@@ -167,7 +169,6 @@ const QuestsView = () => {
                   className="text-[11px] rounded-lg px-3 py-1 border border-soft bg-tag text-primary"
                 >
                   {item.name}
-                  <span className="ml-1.5 text-accent">+{item.rating}</span>
                 </span>
               ))}
             </div>
@@ -194,9 +195,11 @@ const QuestsView = () => {
             const ratingOk = partyRating >= dungeon.min_rating;
             let buttonClass;
             if (busy || !ratingOk) {
-              buttonClass = "bg-input border-faint text-disabled cursor-not-allowed";
+              buttonClass =
+                "bg-input border-faint text-disabled cursor-not-allowed";
             } else {
-              buttonClass = "bg-accent-dim border-accent text-primary cursor-pointer";
+              buttonClass =
+                "bg-accent-dim border-accent text-primary cursor-pointer";
             }
             let buttonLabel;
             if (busy) {
