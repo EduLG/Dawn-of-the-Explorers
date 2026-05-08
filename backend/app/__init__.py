@@ -9,6 +9,7 @@ from app.routes.job_routes import job_bp
 from app.routes.party_routes import party_bp
 from app.routes.character_routes import character_bp
 from flask_cors import CORS
+from flask_migrate import Migrate
 from .extensions import db
 from config import Config
 from flask_jwt_extended import JWTManager
@@ -22,6 +23,7 @@ def create_app():
     frontend_url = os.getenv("FRONTEND_URL", "http://localhost:5173")
     CORS(app, origins=[frontend_url], allow_headers=["Content-Type", "Authorization"], methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"])
     db.init_app(app)
+    Migrate(app, db)
 
     from app.models.user import User
     from app.models.party import Party
