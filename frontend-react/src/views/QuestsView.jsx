@@ -3,6 +3,39 @@ import { useState, useEffect, useCallback } from "react";
 import { useOutletContext } from "react-router-dom";
 import { apiFetch } from "../utils/apiFetch";
 import useDungeons from "../hooks/useDungeons";
+import headIcon from "../assets/resources/eq_icons/head.svg";
+import chestIcon from "../assets/resources/eq_icons/chest.svg";
+import handIcon from "../assets/resources/eq_icons/hand.svg";
+import accesoryIcon from "../assets/resources/eq_icons/accesory.svg";
+
+const SLOT_ICON_MAP = {
+  head:           { src: headIcon },
+  chest:          { src: chestIcon },
+  primary_hand:   { src: handIcon },
+  secondary_hand: { src: handIcon, flip: true },
+  accesory:       { src: accesoryIcon },
+};
+
+const SLOT_LABELS = {
+  head:           "Head",
+  chest:          "Chest",
+  primary_hand:   "Primary Hand",
+  secondary_hand: "Secondary Hand",
+  accesory:       "Accessory",
+};
+
+const SlotIcon = ({ slot }) => {
+  const icon = SLOT_ICON_MAP[slot];
+  if (!icon) return null;
+  return (
+    <img
+      src={icon.src}
+      alt={slot}
+      className="w-6 h-6 shrink-0 opacity-80"
+      style={icon.flip ? { transform: "scaleX(-1)" } : undefined}
+    />
+  );
+};
 
 function formatDuration(seconds) {
   if (seconds < 60) return `${seconds}s`;
@@ -141,7 +174,9 @@ const QuestsView = () => {
             <div>
               <p
                 className={`text-[10px] uppercase tracking-widest mb-0.5 ${
-                  exploreResult.success ? "text-status-green" : "text-status-red"
+                  exploreResult.success
+                    ? "text-status-green"
+                    : "text-status-red"
                 }`}
               >
                 {exploreResult.success
@@ -164,10 +199,16 @@ const QuestsView = () => {
               {exploreResult.loot.map((item) => (
                 <span
                   key={item.id}
-                  className="text-[11px] rounded-lg px-3 py-1 border border-soft bg-tag text-primary"
+                  className="flex flex-col gap-0.5 text-[11px] rounded-lg px-2.5 py-1.5 border border-soft bg-tag"
                 >
-                  {item.name}
-                  <span className="ml-1.5 text-accent">+{item.rating}</span>
+                  <span className="text-[10px] uppercase tracking-widest text-muted">
+                    {SLOT_LABELS[item.slot] ?? item.slot}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-primary">
+                    <SlotIcon slot={item.slot} />
+                    {item.name}
+                    <span className="text-muted capitalize">· {item.equipment_type}</span>
+                  </span>
                 </span>
               ))}
             </div>
@@ -194,9 +235,11 @@ const QuestsView = () => {
             const ratingOk = partyRating >= dungeon.min_rating;
             let buttonClass;
             if (busy || !ratingOk) {
-              buttonClass = "bg-input border-faint text-disabled cursor-not-allowed";
+              buttonClass =
+                "bg-input border-faint text-disabled cursor-not-allowed";
             } else {
-              buttonClass = "bg-accent-dim border-accent text-primary cursor-pointer";
+              buttonClass =
+                "bg-accent-dim border-accent text-primary cursor-pointer";
             }
             let buttonLabel;
             if (busy) {

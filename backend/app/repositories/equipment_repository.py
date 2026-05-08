@@ -3,8 +3,8 @@ from app.models.equipment import Equipment
 from app.models.character_equipment import CharacterEquipment
 
 
-def get_equipment_by_job(job_id):
-    return Equipment.query.filter_by(job_id=job_id).all()
+def get_equipment_by_type(equipment_type):
+    return Equipment.query.filter_by(equipment_type=equipment_type).all()
 
 
 def get_equipment_by_id(equipment_id):

@@ -7,6 +7,14 @@ import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
 import useJobs from "../hooks/useJobs";
 import { apiFetch } from "../utils/apiFetch";
 
+const JOB_ARMOR_TYPE = {
+  warrior: "plate", fender: "plate",
+  adventurer: "leather", beastmaster: "leather",
+  gunslinger: "leather", thief: "leather",
+  alchemist: "cloth", engineer: "cloth",
+  sage: "cloth", scholar: "cloth",
+};
+
 const SLOT_LABELS = {
   head: "Head",
   chest: "Chest",
@@ -91,8 +99,8 @@ const EquipmentView = () => {
 
   const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
 
-  // While a job is being previewed, show that job's equipment in the dropdowns
-  const jobId = pendingJob?.id ?? selectedChar?.current_job?.id;
+  const currentJobName = pendingJob?.name ?? selectedChar?.current_job?.name;
+  const armorType = JOB_ARMOR_TYPE[currentJobName];
 
   const { data: inventory, loading } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
@@ -107,11 +115,11 @@ const EquipmentView = () => {
   const equipmentBySlot = useMemo(() => {
     const slots = {};
     inventory
-      .filter((item) => item.equipment.job_id === jobId && !equippedByOthers.has(item.equipment.id))
+      .filter((item) => item.equipment.equipment_type === armorType && !equippedByOthers.has(item.equipment.id))
       .forEach((item) => {
         const eq = item.equipment;
-        if (!slots[eq.type]) slots[eq.type] = [];
-        slots[eq.type].push(eq);
+        if (!slots[eq.slot]) slots[eq.slot] = [];
+        slots[eq.slot].push(eq);
       });
     // Only include currently equipped items if we haven't changed the job
     if (!pendingJob) {
@@ -122,7 +130,7 @@ const EquipmentView = () => {
       });
     }
     return slots;
-  }, [inventory, jobId, selectedChar, pendingJob, equippedByOthers]);
+  }, [inventory, armorType, selectedChar, pendingJob, equippedByOthers]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);

@@ -14,6 +14,7 @@ from app.models.character import Character
 from app.repositories.character_repository import get_character_by_id
 from app.services.auth_service import ServiceError
 from app.schemas import PartyInventorySchema
+from app.models.equipment import JOB_ARMOR_TYPE
 
 
 def get_inventory(user_id):
@@ -42,7 +43,8 @@ def equip_from_inventory(user_id, inventory_id, character_id, slot):
         raise ServiceError("Character not found", 404)
 
     equipment = inventory_item.equipment
-    if equipment.job_id != character.current_job_id:
+    job_name = character.current_job.name
+    if equipment.equipment_type != JOB_ARMOR_TYPE.get(job_name):
         raise ServiceError("Equipment is not compatible with this character's job", 400)
 
     if is_equipment_on_other_character(equipment.id, user.party.id, int(character_id)):
