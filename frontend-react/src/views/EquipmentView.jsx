@@ -128,7 +128,7 @@ const EquipmentView = () => {
           {/* LEFT: avatar sobre la imagen */}
           <div
             className="flex-1 flex items-center justify-center"
-            style={{ transform: "translateX(-0.5rem) translateY(3.5rem)" }}
+            style={{ transform: "translateX(0.5rem) translateY(3.5rem)" }}
           >
             {selectedChar.current_job?.icon ? (
               <img
