@@ -1,11 +1,8 @@
-// src/views/EquipmentView.jsx
 import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { Dropdown } from "primereact/dropdown";
 import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
-import useJobs from "../hooks/useJobs";
-import { apiFetch } from "../utils/apiFetch";
 
 const JOB_ARMOR_TYPE = {
   warrior: "plate", fender: "plate",
@@ -31,13 +28,6 @@ const itemTemplate = (option) => (
     <span className="text-xs font-semibold shrink-0 text-accent-sub">
       +{option.equipment?.rating}
     </span>
-  </div>
-);
-
-const jobTemplate = (option) => (
-  <div className="flex items-center gap-3">
-    <img src={option.icon} alt={option.name} className="w-5 h-5 object-contain" />
-    <span className="capitalize">{option.name}</span>
   </div>
 );
 
@@ -91,20 +81,14 @@ const EquipmentView = () => {
 
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [selections, setSelections] = useState({});
-
-  const [changingJob, setChangingJob] = useState(false);
-  const [pendingJob, setPendingJob] = useState(null);
-  const [jobSaving, setJobSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
   const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
 
-  const currentJobName = pendingJob?.name ?? selectedChar?.current_job?.name;
-  const armorType = JOB_ARMOR_TYPE[currentJobName];
+  const armorType = JOB_ARMOR_TYPE[selectedChar?.current_job?.name];
 
   const { data: inventory, loading, refetch: refetchInventory } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
-  const { jobs } = useJobs();
 
   const equippedBySelectedChar = useMemo(() => new Set(
     (selectedChar?.equipped_items ?? []).map((ei) => ei.inventory_id).filter(Boolean)
@@ -112,7 +96,6 @@ const EquipmentView = () => {
 
   const equipmentBySlot = useMemo(() => {
     const slots = {};
-    // Unequipped items available to assign
     inventory
       .filter((item) => !item.equipped && item.equipment.equipment_type === armorType)
       .forEach((item) => {
@@ -120,51 +103,37 @@ const EquipmentView = () => {
         if (!slots[slot]) slots[slot] = [];
         slots[slot].push(item);
       });
-    // Add items currently equipped on the selected character so they appear selected
-    if (!pendingJob) {
-      inventory
-        .filter((item) => equippedBySelectedChar.has(item.id))
-        .forEach((item) => {
-          const slot = item.equipment.slot;
-          if (!slots[slot]) slots[slot] = [];
-          if (!slots[slot].find((o) => o.id === item.id)) slots[slot].push(item);
-        });
-    }
+    inventory
+      .filter((item) => equippedBySelectedChar.has(item.id))
+      .forEach((item) => {
+        const slot = item.equipment.slot;
+        if (!slots[slot]) slots[slot] = [];
+        if (!slots[slot].find((o) => o.id === item.id)) slots[slot].push(item);
+      });
     return slots;
-  }, [inventory, armorType, selectedChar, pendingJob, equippedBySelectedChar]);
+  }, [inventory, armorType, selectedChar, equippedBySelectedChar]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
   }, [characters]);
 
-  // Rebuild selections whenever the relevant axes change:
-  // - character switch, confirmed job change, inventory reload → restore from equipped items
-  // - pending job chosen → blank slate for the new job
-  // - pending job cancelled (null) → restore from equipped items
   useEffect(() => {
     if (!selectedChar || !inventory.length) return;
-    if (pendingJob) {
-      setSelections((prev) => ({ ...prev, [selectedChar.id]: {} }));
-    } else {
-      setSelections((prev) => ({
-        ...prev,
-        [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
-      }));
-    }
-  }, [selectedChar?.id, selectedChar?.current_job?.id, inventory, pendingJob?.id]);
-
-  const jobChanged = !!(pendingJob && pendingJob.id !== selectedChar?.current_job?.id);
+    setSelections((prev) => ({
+      ...prev,
+      [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
+    }));
+  }, [selectedChar?.id, selectedChar?.current_job?.id, inventory]);
 
   const hasChanges = useMemo(() => {
     if (!selectedChar) return false;
-    if (jobChanged) return true;
     const charSelections = selections[selectedChar.id] ?? {};
     return SLOTS.some((slot) => {
       const selected = charSelections[slot];
       const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
       return selected?.id !== equipped?.inventory_id;
     });
-  }, [selections, selectedChar, jobChanged]);
+  }, [selections, selectedChar]);
 
   const handleChange = (slot, value) => {
     setSelections((prev) => ({
@@ -176,26 +145,10 @@ const EquipmentView = () => {
   const handleSave = async () => {
     setSaveError(null);
     try {
-      // 1. Apply job change first if one is pending
-      if (jobChanged) {
-        setJobSaving(true);
-        const res = await apiFetch(`/api/v1/characters/${selectedChar.id}/job`, {
-          method: "PATCH",
-          body: JSON.stringify({ job_id: pendingJob.id }),
-        });
-        if (!res.ok) {
-          const body = await res.json();
-          throw new Error(body.error || "Failed to change job");
-        }
-        setJobSaving(false);
-      }
-
-      // 2. Apply equipment changes for the (new) job
       const charSelections = selections[selectedChar.id] ?? {};
       const slotsToSave = SLOTS.filter((slot) => {
         const selected = charSelections[slot];
         if (!selected) return false;
-        if (jobChanged) return true; // backend cleared all, save anything selected
         const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
         return selected?.id !== equipped?.inventory_id;
       });
@@ -208,24 +161,17 @@ const EquipmentView = () => {
         );
       }
 
-      setChangingJob(false);
-      setPendingJob(null);
       refetch();
       refetchInventory();
     } catch (err) {
       setSaveError(err.message);
-      setJobSaving(false);
     }
   };
 
   const handleCharSelect = (charId) => {
     setSelectedCharId(charId);
-    setChangingJob(false);
-    setPendingJob(null);
     setSaveError(null);
   };
-
-  const isSaving = saving || jobSaving;
 
   return (
     <div className="space-y-5">
@@ -256,61 +202,19 @@ const EquipmentView = () => {
                 Character
               </p>
               <h3 className="text-xl font-bold text-primary">{selectedChar.name}</h3>
-              <p className={`text-sm capitalize ${pendingJob ? "line-through text-muted" : "text-accent-sub"}`}>
+              <p className="text-sm capitalize text-accent-sub">
                 {selectedChar.current_job?.name}
               </p>
-              {pendingJob && (
-                <p className="text-sm capitalize text-accent-sub">{pendingJob.name}</p>
-              )}
             </div>
-            <button
-              onClick={() => {
-                setChangingJob((v) => !v);
-                setPendingJob(null);
-                setSaveError(null);
-              }}
-              className={`mt-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 border shrink-0 ${
-                changingJob
-                  ? "bg-accent-dim border-accent text-primary"
-                  : "bg-input border-soft text-secondary"
-              }`}
-            >
-              {changingJob ? "Cancel" : "Change Job"}
-            </button>
           </div>
-
-          {/* JOB CHANGE PANEL — selection only, applied via Save changes */}
-          {changingJob && (
-            <div className="border-b border-faint px-6 py-4 space-y-2 bg-card-header">
-              <label className="text-[10px] uppercase tracking-widest text-muted">
-                New Job
-              </label>
-              <Dropdown
-                unstyled
-                pt={dropdownPT}
-                value={pendingJob}
-                onChange={(e) => setPendingJob(e.value)}
-                options={jobs}
-                optionLabel="name"
-                itemTemplate={jobTemplate}
-                valueTemplate={pendingJob ? jobTemplate : undefined}
-                placeholder="Select a job..."
-              />
-              {pendingJob && (
-                <p className="text-[11px] text-status-red">
-                  Changing job will unequip all currently equipped items.
-                </p>
-              )}
-            </div>
-          )}
 
           {/* EQUIPMENT SLOTS */}
           <div className="p-6 flex flex-col sm:flex-row gap-5 items-stretch">
             {/* CHARACTER AVATAR */}
             <div className="w-full h-48 sm:w-48 sm:h-56 sm:shrink-0 sm:self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
-              {(pendingJob ?? selectedChar.current_job)?.icon ? (
+              {selectedChar.current_job?.icon ? (
                 <img
-                  src={(pendingJob ?? selectedChar.current_job).icon}
+                  src={selectedChar.current_job.icon}
                   alt={selectedChar.name}
                   className="w-full h-full object-contain p-3"
                 />
@@ -344,7 +248,7 @@ const EquipmentView = () => {
                         itemTemplate={itemTemplate}
                         valueTemplate={(o) => o ? itemTemplate(o) : <span className="text-muted">No item equipped</span>}
                         placeholder="No item equipped"
-                        disabled={isSaving}
+                        disabled={saving}
                       />
                     </div>
                   ))
@@ -358,14 +262,14 @@ const EquipmentView = () => {
               <div className="flex justify-end pt-1">
                 <button
                   onClick={handleSave}
-                  disabled={!hasChanges || isSaving}
+                  disabled={!hasChanges || saving}
                   className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-                    hasChanges && !isSaving
+                    hasChanges && !saving
                       ? "bg-accent-dim border-accent text-primary cursor-pointer"
                       : "bg-input border-faint text-disabled cursor-not-allowed"
                   }`}
                 >
-                  {isSaving ? "Saving..." : "Save changes"}
+                  {saving ? "Saving..." : "Save changes"}
                 </button>
               </div>
             </div>
