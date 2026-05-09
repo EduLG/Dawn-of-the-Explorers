@@ -22,7 +22,7 @@ const SLOT_LABELS = {
   chest: "Chest",
   primary_hand: "P.Hand",
   secondary_hand: "S.Hand",
-  accesory: "Accessory",
+  accesory: "Acc.",
 };
 
 const SLOTS = Object.keys(SLOT_LABELS);
@@ -116,60 +116,59 @@ const EquipmentView = () => {
       </div>
 
       {/* MAIN PANEL */}
-      {selectedChar && (
-        <div
-          className="flex rounded-2xl border border-soft overflow-hidden min-h-[220px]"
-          style={{
-            backgroundImage: `url(${characterPreviewImg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "bottom right",
-          }}
-        >
-          {/* LEFT: avatar sobre la imagen */}
-          <div
-            className="flex-1 flex items-center justify-center"
-            style={{ transform: "translateX(0.5rem) translateY(3.5rem)" }}
+      {selectedChar && (() => {
+        const slotButtons = SLOTS.map((slot) => (
+          <button
+            key={slot}
+            onClick={() => handleSlotClick(slot)}
+            className={`w-full sm:w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left border transition-[filter] duration-150 ${
+              activeSlot === slot
+                ? "bg-accent-dim border-accent text-primary"
+                : "bg-input border-soft text-secondary hover:brightness-125"
+            }`}
           >
-            {selectedChar.current_job?.icon ? (
-              <img
-                src={selectedChar.current_job.icon}
-                alt={selectedChar.name}
-                className="w-28 sm:w-36 object-contain"
-              />
-            ) : (
-              <span className="text-4xl font-bold text-accent opacity-60">
-                {selectedChar.name?.[0] ?? "?"}
-              </span>
-            )}
-          </div>
+            <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
+              {SLOT_LABELS[slot]}
+            </span>
+            <span className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}>
+              {getEquippedItemName(slot)}
+            </span>
+          </button>
+        ));
 
-          {/* RIGHT: overlay sólido + botones */}
-          <div className="flex items-center py-6 px-8 bg-card">
-            <div className="flex flex-col gap-2">
-              {SLOTS.map((slot) => (
-                <button
-                  key={slot}
-                  onClick={() => handleSlotClick(slot)}
-                  className={`w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left border transition-[filter] duration-150 ${
-                    activeSlot === slot
-                      ? "bg-accent-dim border-accent text-primary"
-                      : "bg-input border-soft text-secondary hover:brightness-125"
-                  }`}
-                >
-                  <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
-                    {SLOT_LABELS[slot]}
-                  </span>
-                  <span
-                    className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}
-                  >
-                    {getEquippedItemName(slot)}
-                  </span>
-                </button>
-              ))}
+        const avatar = selectedChar.current_job?.icon ? (
+          <img src={selectedChar.current_job.icon} alt={selectedChar.name} className="w-28 object-contain" />
+        ) : (
+          <span className="text-4xl font-bold text-accent opacity-60">{selectedChar.name?.[0] ?? "?"}</span>
+        );
+
+        return (
+          <>
+            {/* MOBILE: avatar arriba sin fondo, botones debajo */}
+            <div className="sm:hidden flex flex-col gap-4">
+              <div className="flex justify-center py-6 rounded-2xl border border-soft bg-card">
+                {avatar}
+              </div>
+              <div className="flex flex-col gap-2 w-full">
+                {slotButtons}
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+
+            {/* DESKTOP: layout con imagen de fondo */}
+            <div
+              className="hidden sm:flex rounded-2xl border border-soft overflow-hidden min-h-[220px]"
+              style={{ backgroundImage: `url(${characterPreviewImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
+            >
+              <div className="flex-1 flex items-center justify-center" style={{ transform: "translateX(0.5rem) translateY(3.5rem)" }}>
+                <img src={selectedChar.current_job?.icon} alt={selectedChar.name} className="w-36 object-contain" />
+              </div>
+              <div className="flex items-center py-6 px-8 bg-card">
+                <div className="flex flex-col gap-2">{slotButtons}</div>
+              </div>
+            </div>
+          </>
+        );
+      })()}
 
       {/* ITEM LIST PANEL */}
       {activeSlot && selectedChar && (
