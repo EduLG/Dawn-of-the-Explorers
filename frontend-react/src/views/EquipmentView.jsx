@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
-import hangarImg from "../assets/resources/Hangar.png";
+import characterPreviewImg from "../assets/resources/character_preview.png";
 
 const JOB_ARMOR_TYPE = {
   warrior: "plate", fender: "plate",
@@ -100,9 +100,24 @@ const EquipmentView = () => {
       {/* MAIN PANEL */}
       {selectedChar && (
         <div
-          className="flex items-center justify-between py-6 px-8 rounded-2xl border border-soft overflow-hidden"
-          style={{ backgroundImage: `url(${hangarImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
+          className="flex items-center py-6 px-8 rounded-2xl border border-soft overflow-hidden min-h-[220px]"
+          style={{ backgroundImage: `url(${characterPreviewImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
         >
+          {/* CHARACTER AVATAR — centered in the space left of the buttons */}
+          <div className="flex-1 flex items-center justify-center" style={{ transform: "translateX(-2.25rem) translateY(4rem)" }}>
+            {selectedChar.current_job?.icon ? (
+              <img
+                src={selectedChar.current_job.icon}
+                alt={selectedChar.name}
+                className="w-28 sm:w-36 object-contain"
+              />
+            ) : (
+              <span className="text-4xl font-bold text-accent opacity-60">
+                {selectedChar.name?.[0] ?? "?"}
+              </span>
+            )}
+          </div>
+
           {/* SLOT BUTTONS */}
           <div className="flex flex-col gap-2">
             {SLOTS.map((slot) => (
@@ -123,21 +138,6 @@ const EquipmentView = () => {
                 </span>
               </button>
             ))}
-          </div>
-
-          {/* CHARACTER AVATAR */}
-          <div className="w-28 sm:w-36 shrink-0 flex items-center justify-center">
-            {selectedChar.current_job?.icon ? (
-              <img
-                src={selectedChar.current_job.icon}
-                alt={selectedChar.name}
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <span className="text-4xl font-bold text-accent opacity-60">
-                {selectedChar.name?.[0] ?? "?"}
-              </span>
-            )}
           </div>
         </div>
       )}
