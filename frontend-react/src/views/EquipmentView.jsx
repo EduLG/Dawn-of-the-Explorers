@@ -5,11 +5,16 @@ import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
 import characterPreviewImg from "../assets/resources/character_preview.png";
 
 const JOB_ARMOR_TYPE = {
-  warrior: "plate", fender: "plate",
-  adventurer: "leather", beastmaster: "leather",
-  gunslinger: "leather", thief: "leather",
-  alchemist: "cloth", engineer: "cloth",
-  sage: "cloth", scholar: "cloth",
+  warrior: "plate",
+  fender: "plate",
+  adventurer: "leather",
+  beastmaster: "leather",
+  gunslinger: "leather",
+  thief: "leather",
+  alchemist: "cloth",
+  engineer: "cloth",
+  sage: "cloth",
+  scholar: "cloth",
 };
 
 const SLOT_LABELS = {
@@ -32,22 +37,35 @@ const EquipmentView = () => {
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [activeSlot, setActiveSlot] = useState(null);
 
-  const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
+  const selectedChar =
+    characters.find((c) => c.id === selectedCharId) ?? characters[0];
   const armorType = JOB_ARMOR_TYPE[selectedChar?.current_job?.name];
 
-  const { data: inventory, loading, refetch: refetchInventory } = useInventory();
+  const {
+    data: inventory,
+    loading,
+    refetch: refetchInventory,
+  } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
 
   useEffect(() => {
-    if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
+    if (characters.length > 0 && !selectedCharId)
+      setSelectedCharId(characters[0].id);
   }, [characters]);
 
-  const equippedBySelectedChar = useMemo(() => new Set(
-    (selectedChar?.equipped_items ?? []).map((ei) => ei.inventory_id).filter(Boolean)
-  ), [selectedChar]);
+  const equippedBySelectedChar = useMemo(
+    () =>
+      new Set(
+        (selectedChar?.equipped_items ?? [])
+          .map((ei) => ei.inventory_id)
+          .filter(Boolean),
+      ),
+    [selectedChar],
+  );
 
   const getEquippedItemName = (slot) =>
-    selectedChar?.equipped_items?.find((i) => i.slot === slot)?.equipment?.name ?? "—";
+    selectedChar?.equipped_items?.find((i) => i.slot === slot)?.equipment
+      ?.name ?? "—";
 
   const availableItems = useMemo(() => {
     if (!activeSlot || !selectedChar) return [];
@@ -59,9 +77,9 @@ const EquipmentView = () => {
     );
   }, [activeSlot, inventory, armorType, selectedChar, equippedBySelectedChar]);
 
-  const equippedIdForActiveSlot = selectedChar?.equipped_items?.find(
-    (i) => i.slot === activeSlot,
-  )?.inventory_id ?? null;
+  const equippedIdForActiveSlot =
+    selectedChar?.equipped_items?.find((i) => i.slot === activeSlot)
+      ?.inventory_id ?? null;
 
   const handleSlotClick = (slot) =>
     setActiveSlot((prev) => (prev === slot ? null : slot));
@@ -100,11 +118,18 @@ const EquipmentView = () => {
       {/* MAIN PANEL */}
       {selectedChar && (
         <div
-          className="flex items-center py-6 px-8 rounded-2xl border border-soft overflow-hidden min-h-[220px]"
-          style={{ backgroundImage: `url(${characterPreviewImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
+          className="flex rounded-2xl border border-soft overflow-hidden min-h-[220px]"
+          style={{
+            backgroundImage: `url(${characterPreviewImg})`,
+            backgroundSize: "cover",
+            backgroundPosition: "bottom right",
+          }}
         >
-          {/* CHARACTER AVATAR — centered in the space left of the buttons */}
-          <div className="flex-1 flex items-center justify-center" style={{ transform: "translateX(-2.25rem) translateY(4rem)" }}>
+          {/* LEFT: avatar sobre la imagen */}
+          <div
+            className="flex-1 flex items-center justify-center"
+            style={{ transform: "translateX(-0.5rem) translateY(3.5rem)" }}
+          >
             {selectedChar.current_job?.icon ? (
               <img
                 src={selectedChar.current_job.icon}
@@ -118,26 +143,30 @@ const EquipmentView = () => {
             )}
           </div>
 
-          {/* SLOT BUTTONS */}
-          <div className="flex flex-col gap-2">
-            {SLOTS.map((slot) => (
-              <button
-                key={slot}
-                onClick={() => handleSlotClick(slot)}
-                className={`w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left transition-colors duration-150 border ${
-                  activeSlot === slot
-                    ? "bg-accent-dim border-accent text-primary"
-                    : "bg-input border-soft text-secondary hover:bg-white/5"
-                }`}
-              >
-                <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
-                  {SLOT_LABELS[slot]}
-                </span>
-                <span className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}>
-                  {getEquippedItemName(slot)}
-                </span>
-              </button>
-            ))}
+          {/* RIGHT: overlay sólido + botones */}
+          <div className="flex items-center py-6 px-8 bg-card">
+            <div className="flex flex-col gap-2">
+              {SLOTS.map((slot) => (
+                <button
+                  key={slot}
+                  onClick={() => handleSlotClick(slot)}
+                  className={`w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left border transition-[filter] duration-150 ${
+                    activeSlot === slot
+                      ? "bg-accent-dim border-accent text-primary"
+                      : "bg-input border-soft text-secondary hover:brightness-125"
+                  }`}
+                >
+                  <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
+                    {SLOT_LABELS[slot]}
+                  </span>
+                  <span
+                    className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}
+                  >
+                    {getEquippedItemName(slot)}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -154,13 +183,18 @@ const EquipmentView = () => {
           {loading ? (
             <p className="px-4 py-4 text-sm text-muted">Loading...</p>
           ) : availableItems.length === 0 ? (
-            <p className="px-4 py-4 text-sm text-muted">No items available for this slot.</p>
+            <p className="px-4 py-4 text-sm text-muted">
+              No items available for this slot.
+            </p>
           ) : (
             <ul>
               {availableItems.map((item) => {
                 const isEquipped = equippedIdForActiveSlot === item.id;
                 return (
-                  <li key={item.id} className="border-b border-faint last:border-0">
+                  <li
+                    key={item.id}
+                    className="border-b border-faint last:border-0"
+                  >
                     <button
                       onClick={() => handleEquip(item)}
                       disabled={saving}
