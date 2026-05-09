@@ -10,3 +10,4 @@ class PartyInventory(db.Model):
 
     party = db.relationship('Party', back_populates='inventory')
     equipment = db.relationship('Equipment', back_populates='in_inventories')
+    character_equipment = db.relationship('CharacterEquipment', back_populates='inventory_item', uselist=False)

@@ -20,9 +20,6 @@ class Equipment(db.Model):
     rating = db.Column(db.Integer, default=0)
     equipment_type = db.Column(db.String, nullable=False)
 
-    # M:N with Character through CharacterEquipment
-    equipped_by = db.relationship('CharacterEquipment', back_populates='equipment', cascade='all, delete-orphan')
-
     # 1:N with PartyInventory
     in_inventories = db.relationship('PartyInventory', back_populates='equipment', cascade='all, delete-orphan')
 
