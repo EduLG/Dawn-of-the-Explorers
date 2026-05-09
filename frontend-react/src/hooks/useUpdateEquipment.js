@@ -5,15 +5,18 @@ export function useUpdateEquipment() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  const updateEquipment = async (characterId, slot, equipmentId) => {
+  const updateEquipment = async (inventoryId, characterId, slot) => {
     setSaving(true);
     setError(null);
     try {
-      const res = await apiFetch(`/api/v1/equipment/character/${characterId}`, {
-        method: "PUT",
-        body: JSON.stringify({ slot, equipment_id: equipmentId }),
+      const res = await apiFetch(`/api/v1/inventory/${inventoryId}/equip`, {
+        method: "POST",
+        body: JSON.stringify({ character_id: characterId, slot }),
       });
-      if (!res.ok) throw new Error("Failed to update equipment");
+      if (!res.ok) {
+        const body = await res.json();
+        throw new Error(body.error || "Failed to equip item");
+      }
     } catch (err) {
       setError(err);
       throw err;

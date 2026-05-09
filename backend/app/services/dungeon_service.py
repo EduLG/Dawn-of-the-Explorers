@@ -106,14 +106,10 @@ def _resolve_exploration(exploration, user):
 
 
 def _resolve(party_rating, min_rating, dungeon_rating):
-    # Entry dungeon (min_rating=0): never fails, scale from ratio
     if min_rating == 0:
-        if dungeon_rating == 0:
-            return True, 2
-        ratio = party_rating / dungeon_rating
-        if ratio < 1.17: return True, 2
-        if ratio < 1.34: return True, 3
-        if ratio < 1.50: return True, 4
+        if party_rating < 10:  return True, 2
+        if party_rating < 24:  return True, 3
+        if party_rating < 48:  return True, 4
         return True, 5
 
     if dungeon_rating == 0:

@@ -27,9 +27,9 @@ const SLOTS = Object.keys(SLOT_LABELS);
 
 const itemTemplate = (option) => (
   <div className="flex items-center justify-between gap-4">
-    <span>{option.name}</span>
+    <span>{option.equipment?.name}</span>
     <span className="text-xs font-semibold shrink-0 text-accent-sub">
-      +{option.rating}
+      +{option.equipment?.rating}
     </span>
   </div>
 );
@@ -75,9 +75,9 @@ const buildInitialSelections = (character, equipmentBySlot) => {
   const result = {};
   SLOTS.forEach((slot) => {
     const equipped = character.equipped_items?.find((i) => i.slot === slot);
-    const equippedId = equipped?.equipment?.id;
+    const equippedInventoryId = equipped?.inventory_id;
     const options = equipmentBySlot[slot] ?? [];
-    result[slot] = options.find((o) => o.id === equippedId) ?? null;
+    result[slot] = options.find((o) => o.id === equippedInventoryId) ?? null;
   });
   return result;
 };
@@ -102,35 +102,36 @@ const EquipmentView = () => {
   const currentJobName = pendingJob?.name ?? selectedChar?.current_job?.name;
   const armorType = JOB_ARMOR_TYPE[currentJobName];
 
-  const { data: inventory, loading } = useInventory();
+  const { data: inventory, loading, refetch: refetchInventory } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
   const { jobs } = useJobs();
 
-  const equippedByOthers = useMemo(() => new Set(
-    characters
-      .filter((c) => c.id !== selectedChar?.id)
-      .flatMap((c) => (c.equipped_items ?? []).map((ei) => ei.equipment?.id).filter(Boolean))
-  ), [characters, selectedChar?.id]);
+  const equippedBySelectedChar = useMemo(() => new Set(
+    (selectedChar?.equipped_items ?? []).map((ei) => ei.inventory_id).filter(Boolean)
+  ), [selectedChar]);
 
   const equipmentBySlot = useMemo(() => {
     const slots = {};
+    // Unequipped items available to assign
     inventory
-      .filter((item) => item.equipment.equipment_type === armorType && !equippedByOthers.has(item.equipment.id))
+      .filter((item) => !item.equipped && item.equipment.equipment_type === armorType)
       .forEach((item) => {
-        const eq = item.equipment;
-        if (!slots[eq.slot]) slots[eq.slot] = [];
-        slots[eq.slot].push(eq);
-      });
-    // Only include currently equipped items if we haven't changed the job
-    if (!pendingJob) {
-      selectedChar?.equipped_items?.forEach(({ slot, equipment }) => {
-        if (!equipment) return;
+        const slot = item.equipment.slot;
         if (!slots[slot]) slots[slot] = [];
-        if (!slots[slot].find((e) => e.id === equipment.id)) slots[slot].push(equipment);
+        slots[slot].push(item);
       });
+    // Add items currently equipped on the selected character so they appear selected
+    if (!pendingJob) {
+      inventory
+        .filter((item) => equippedBySelectedChar.has(item.id))
+        .forEach((item) => {
+          const slot = item.equipment.slot;
+          if (!slots[slot]) slots[slot] = [];
+          if (!slots[slot].find((o) => o.id === item.id)) slots[slot].push(item);
+        });
     }
     return slots;
-  }, [inventory, armorType, selectedChar, pendingJob, equippedByOthers]);
+  }, [inventory, armorType, selectedChar, pendingJob, equippedBySelectedChar]);
 
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
@@ -161,7 +162,7 @@ const EquipmentView = () => {
     return SLOTS.some((slot) => {
       const selected = charSelections[slot];
       const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
-      return selected?.id !== equipped?.equipment?.id;
+      return selected?.id !== equipped?.inventory_id;
     });
   }, [selections, selectedChar, jobChanged]);
 
@@ -196,13 +197,13 @@ const EquipmentView = () => {
         if (!selected) return false;
         if (jobChanged) return true; // backend cleared all, save anything selected
         const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
-        return selected?.id !== equipped?.equipment?.id;
+        return selected?.id !== equipped?.inventory_id;
       });
 
       if (slotsToSave.length > 0) {
         await Promise.all(
           slotsToSave.map((slot) =>
-            updateEquipment(selectedChar.id, slot, charSelections[slot].id)
+            updateEquipment(charSelections[slot].id, selectedChar.id, slot)
           )
         );
       }
@@ -210,6 +211,7 @@ const EquipmentView = () => {
       setChangingJob(false);
       setPendingJob(null);
       refetch();
+      refetchInventory();
     } catch (err) {
       setSaveError(err.message);
       setJobSaving(false);
@@ -338,8 +340,9 @@ const EquipmentView = () => {
                         value={selections[selectedChar.id]?.[slot] ?? null}
                         onChange={(e) => handleChange(slot, e.value)}
                         options={equipmentBySlot[slot] ?? []}
-                        optionLabel="name"
+                        optionLabel={(o) => o.equipment?.name ?? ""}
                         itemTemplate={itemTemplate}
+                        valueTemplate={(o) => o ? itemTemplate(o) : <span className="text-muted">No item equipped</span>}
                         placeholder="No item equipped"
                         disabled={isSaving}
                       />

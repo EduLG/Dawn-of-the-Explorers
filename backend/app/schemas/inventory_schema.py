@@ -12,3 +12,7 @@ class InventoryEquipmentSchema(Schema):
 class PartyInventorySchema(Schema):
     id = fields.Int()
     equipment = fields.Nested(InventoryEquipmentSchema)
+    equipped = fields.Method("get_equipped")
+
+    def get_equipped(self, obj):
+        return obj.character_equipment is not None
