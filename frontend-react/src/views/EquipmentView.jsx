@@ -159,8 +159,8 @@ const EquipmentView = () => {
               className="hidden sm:flex rounded-2xl border border-soft overflow-hidden min-h-[220px]"
               style={{ backgroundImage: `url(${characterPreviewImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
             >
-              <div className="flex-1 flex items-center justify-center" style={{ transform: "translateX(0.5rem) translateY(3.5rem)" }}>
-                <img src={selectedChar.current_job?.icon} alt={selectedChar.name} className="w-36 object-contain" />
+              <div className="flex-1 flex items-center justify-center" style={{ transform: "translateX(0.5rem)" }}>
+                <img src={selectedChar.current_job?.icon} alt={selectedChar.name} className="w-44 object-contain" />
               </div>
               <div className="flex items-center py-6 px-8 bg-card">
                 <div className="flex flex-col gap-2">{slotButtons}</div>
