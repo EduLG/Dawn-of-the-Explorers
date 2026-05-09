@@ -6,11 +6,9 @@ from app.repositories.inventory_repository import (
 )
 from app.repositories.equipment_repository import (
     update_character_equipment as update_char_equip_repo,
-    unequip_by_equipment_and_party,
-    is_equipment_on_other_character,
+    unequip_by_inventory_id,
 )
 from app.models.character_equipment import CharacterEquipment
-from app.models.character import Character
 from app.repositories.character_repository import get_character_by_id
 from app.services.auth_service import ServiceError
 from app.schemas import PartyInventorySchema
@@ -38,6 +36,9 @@ def equip_from_inventory(user_id, inventory_id, character_id, slot):
     if inventory_item.party_id != user.party.id:
         raise ServiceError("Forbidden", 403)
 
+    if inventory_item.character_equipment is not None:
+        raise ServiceError("Item is already equipped", 409)
+
     character = get_character_by_id(character_id)
     if not character or character.party_id != user.party.id:
         raise ServiceError("Character not found", 404)
@@ -47,11 +48,7 @@ def equip_from_inventory(user_id, inventory_id, character_id, slot):
     if equipment.equipment_type != JOB_ARMOR_TYPE.get(job_name):
         raise ServiceError("Equipment is not compatible with this character's job", 400)
 
-    if is_equipment_on_other_character(equipment.id, user.party.id, int(character_id)):
-        raise ServiceError("This item is already equipped by another character", 409)
-
-    update_char_equip_repo(character_id, slot, equipment.id)
-    remove_from_inventory(inventory_id)
+    update_char_equip_repo(character_id, slot, inventory_id)
 
 
 def delete_inventory_item(user_id, inventory_id, force=False):
@@ -66,20 +63,10 @@ def delete_inventory_item(user_id, inventory_id, force=False):
     if inventory_item.party_id != user.party.id:
         raise ServiceError("Forbidden", 403)
 
-    equipped = (
-        CharacterEquipment.query
-        .join(Character, CharacterEquipment.character_id == Character.id)
-        .filter(
-            Character.party_id == user.party.id,
-            CharacterEquipment.equipment_id == inventory_item.equipment_id,
-        )
-        .first()
-    )
-
-    if equipped and not force:
+    if inventory_item.character_equipment is not None and not force:
         raise ServiceError("Item is equipped by a character", 409)
 
-    if equipped:
-        unequip_by_equipment_and_party(inventory_item.equipment_id, user.party.id)
+    if inventory_item.character_equipment is not None:
+        unequip_by_inventory_id(inventory_id)
 
     remove_from_inventory(inventory_id)
