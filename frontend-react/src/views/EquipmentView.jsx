@@ -1,8 +1,8 @@
 import { useState, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
-import { Dropdown } from "primereact/dropdown";
 import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
+import hangarImg from "../assets/resources/Hangar.png";
 
 const JOB_ARMOR_TYPE = {
   warrior: "plate", fender: "plate",
@@ -15,62 +15,12 @@ const JOB_ARMOR_TYPE = {
 const SLOT_LABELS = {
   head: "Head",
   chest: "Chest",
-  primary_hand: "Primary Hand",
-  secondary_hand: "Secondary Hand",
+  primary_hand: "P.Hand",
+  secondary_hand: "S.Hand",
   accesory: "Accessory",
 };
 
 const SLOTS = Object.keys(SLOT_LABELS);
-
-const itemTemplate = (option) => (
-  <div className="flex items-center justify-between gap-4">
-    <span>{option.equipment?.name}</span>
-    <span className="text-xs font-semibold shrink-0 text-accent-sub">
-      +{option.equipment?.rating}
-    </span>
-  </div>
-);
-
-const dropdownPT = {
-  root: {
-    className:
-      "relative w-full flex items-center rounded-xl cursor-pointer transition-colors duration-200 border bg-input border-field",
-  },
-  input: {
-    className:
-      "flex-1 px-4 py-2.5 text-sm bg-transparent outline-none cursor-pointer truncate text-primary",
-  },
-  trigger: {
-    className: "flex items-center justify-center w-10 shrink-0 text-muted",
-  },
-  panel: {
-    className:
-      "border rounded-xl shadow-2xl overflow-hidden z-50 bg-modal border-soft backdrop-blur-md",
-  },
-  wrapper: { className: "overflow-auto max-h-56" },
-  list: { className: "p-1 m-0 list-none" },
-  item: ({ context }) => ({
-    className: `px-4 py-2.5 rounded-lg text-sm cursor-pointer transition-colors duration-150 mx-1 ${
-      context.selected
-        ? "bg-accent-dim text-primary font-semibold"
-        : "text-secondary"
-    }`,
-  }),
-  emptyMessage: {
-    className: "px-4 py-3 text-sm text-center text-muted",
-  },
-};
-
-const buildInitialSelections = (character, equipmentBySlot) => {
-  const result = {};
-  SLOTS.forEach((slot) => {
-    const equipped = character.equipped_items?.find((i) => i.slot === slot);
-    const equippedInventoryId = equipped?.inventory_id;
-    const options = equipmentBySlot[slot] ?? [];
-    result[slot] = options.find((o) => o.id === equippedInventoryId) ?? null;
-  });
-  return result;
-};
 
 const EquipmentView = () => {
   const { party, refetch } = useOutletContext();
@@ -80,103 +30,58 @@ const EquipmentView = () => {
   );
 
   const [selectedCharId, setSelectedCharId] = useState(null);
-  const [selections, setSelections] = useState({});
-  const [saveError, setSaveError] = useState(null);
+  const [activeSlot, setActiveSlot] = useState(null);
 
   const selectedChar = characters.find((c) => c.id === selectedCharId) ?? characters[0];
-
   const armorType = JOB_ARMOR_TYPE[selectedChar?.current_job?.name];
 
   const { data: inventory, loading, refetch: refetchInventory } = useInventory();
   const { updateEquipment, saving } = useUpdateEquipment();
 
-  const equippedBySelectedChar = useMemo(() => new Set(
-    (selectedChar?.equipped_items ?? []).map((ei) => ei.inventory_id).filter(Boolean)
-  ), [selectedChar]);
-
-  const equipmentBySlot = useMemo(() => {
-    const slots = {};
-    inventory
-      .filter((item) => !item.equipped && item.equipment.equipment_type === armorType)
-      .forEach((item) => {
-        const slot = item.equipment.slot;
-        if (!slots[slot]) slots[slot] = [];
-        slots[slot].push(item);
-      });
-    inventory
-      .filter((item) => equippedBySelectedChar.has(item.id))
-      .forEach((item) => {
-        const slot = item.equipment.slot;
-        if (!slots[slot]) slots[slot] = [];
-        if (!slots[slot].find((o) => o.id === item.id)) slots[slot].push(item);
-      });
-    return slots;
-  }, [inventory, armorType, selectedChar, equippedBySelectedChar]);
-
   useEffect(() => {
     if (characters.length > 0 && !selectedCharId) setSelectedCharId(characters[0].id);
   }, [characters]);
 
-  useEffect(() => {
-    if (!selectedChar || !inventory.length) return;
-    setSelections((prev) => ({
-      ...prev,
-      [selectedChar.id]: buildInitialSelections(selectedChar, equipmentBySlot),
-    }));
-  }, [selectedChar?.id, selectedChar?.current_job?.id, inventory]);
+  const equippedBySelectedChar = useMemo(() => new Set(
+    (selectedChar?.equipped_items ?? []).map((ei) => ei.inventory_id).filter(Boolean)
+  ), [selectedChar]);
 
-  const hasChanges = useMemo(() => {
-    if (!selectedChar) return false;
-    const charSelections = selections[selectedChar.id] ?? {};
-    return SLOTS.some((slot) => {
-      const selected = charSelections[slot];
-      const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
-      return selected?.id !== equipped?.inventory_id;
-    });
-  }, [selections, selectedChar]);
+  const getEquippedItemName = (slot) =>
+    selectedChar?.equipped_items?.find((i) => i.slot === slot)?.equipment?.name ?? "—";
 
-  const handleChange = (slot, value) => {
-    setSelections((prev) => ({
-      ...prev,
-      [selectedChar.id]: { ...prev[selectedChar.id], [slot]: value },
-    }));
-  };
+  const availableItems = useMemo(() => {
+    if (!activeSlot || !selectedChar) return [];
+    return inventory.filter(
+      (item) =>
+        item.equipment.slot === activeSlot &&
+        item.equipment.equipment_type === armorType &&
+        (!item.equipped || equippedBySelectedChar.has(item.id)),
+    );
+  }, [activeSlot, inventory, armorType, selectedChar, equippedBySelectedChar]);
 
-  const handleSave = async () => {
-    setSaveError(null);
-    try {
-      const charSelections = selections[selectedChar.id] ?? {};
-      const slotsToSave = SLOTS.filter((slot) => {
-        const selected = charSelections[slot];
-        if (!selected) return false;
-        const equipped = selectedChar.equipped_items?.find((i) => i.slot === slot);
-        return selected?.id !== equipped?.inventory_id;
-      });
+  const equippedIdForActiveSlot = selectedChar?.equipped_items?.find(
+    (i) => i.slot === activeSlot,
+  )?.inventory_id ?? null;
 
-      if (slotsToSave.length > 0) {
-        await Promise.all(
-          slotsToSave.map((slot) =>
-            updateEquipment(charSelections[slot].id, selectedChar.id, slot)
-          )
-        );
-      }
+  const handleSlotClick = (slot) =>
+    setActiveSlot((prev) => (prev === slot ? null : slot));
 
-      refetch();
-      refetchInventory();
-    } catch (err) {
-      setSaveError(err.message);
-    }
+  const handleEquip = async (item) => {
+    if (saving || equippedIdForActiveSlot === item.id) return;
+    await updateEquipment(item.id, selectedChar.id, activeSlot);
+    refetch();
+    refetchInventory();
   };
 
   const handleCharSelect = (charId) => {
     setSelectedCharId(charId);
-    setSaveError(null);
+    setActiveSlot(null);
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {/* CHARACTER TABS */}
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {characters.map((char) => (
           <button
             key={char.id}
@@ -192,88 +97,89 @@ const EquipmentView = () => {
         ))}
       </div>
 
-      {/* CHARACTER CARD */}
+      {/* MAIN PANEL */}
       {selectedChar && (
-        <div className="w-full rounded-2xl overflow-hidden border border-soft bg-card shadow-card">
-          {/* CARD HEADER */}
-          <div className="border-b border-faint px-6 py-4 bg-card-header flex items-start justify-between gap-4">
-            <div>
-              <p className="text-[10px] uppercase tracking-widest text-muted">
-                Character
-              </p>
-              <h3 className="text-xl font-bold text-primary">{selectedChar.name}</h3>
-              <p className="text-sm capitalize text-accent-sub">
-                {selectedChar.current_job?.name}
-              </p>
-            </div>
-          </div>
-
-          {/* EQUIPMENT SLOTS */}
-          <div className="p-6 flex flex-col sm:flex-row gap-5 items-stretch">
-            {/* CHARACTER AVATAR */}
-            <div className="w-full h-48 sm:w-48 sm:h-56 sm:shrink-0 sm:self-start rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
-              {selectedChar.current_job?.icon ? (
-                <img
-                  src={selectedChar.current_job.icon}
-                  alt={selectedChar.name}
-                  className="w-full h-full object-contain p-3"
-                />
-              ) : (
-                <span className="text-5xl font-bold text-accent opacity-60">
-                  {selectedChar.name?.[0] ?? "?"}
+        <div
+          className="flex items-center justify-between py-6 px-8 rounded-2xl border border-soft overflow-hidden"
+          style={{ backgroundImage: `url(${hangarImg})`, backgroundSize: "cover", backgroundPosition: "bottom right" }}
+        >
+          {/* SLOT BUTTONS */}
+          <div className="flex flex-col gap-2">
+            {SLOTS.map((slot) => (
+              <button
+                key={slot}
+                onClick={() => handleSlotClick(slot)}
+                className={`w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left transition-colors duration-150 border ${
+                  activeSlot === slot
+                    ? "bg-accent-dim border-accent text-primary"
+                    : "bg-input border-soft text-secondary hover:bg-white/5"
+                }`}
+              >
+                <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
+                  {SLOT_LABELS[slot]}
                 </span>
-              )}
-            </div>
-
-            {/* DROPDOWNS + SAVE */}
-            <div className="flex-1 flex flex-col gap-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {loading ? (
-                  <p className="text-sm col-span-2 text-muted">
-                    Loading equipment...
-                  </p>
-                ) : (
-                  SLOTS.map((slot) => (
-                    <div key={slot} className="flex flex-col gap-1.5">
-                      <label className="text-[10px] uppercase tracking-widest text-muted">
-                        {SLOT_LABELS[slot]}
-                      </label>
-                      <Dropdown
-                        unstyled
-                        pt={dropdownPT}
-                        value={selections[selectedChar.id]?.[slot] ?? null}
-                        onChange={(e) => handleChange(slot, e.value)}
-                        options={equipmentBySlot[slot] ?? []}
-                        optionLabel={(o) => o.equipment?.name ?? ""}
-                        itemTemplate={itemTemplate}
-                        valueTemplate={(o) => o ? itemTemplate(o) : <span className="text-muted">No item equipped</span>}
-                        placeholder="No item equipped"
-                        disabled={saving}
-                      />
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {saveError && (
-                <p className="text-xs text-status-red">{saveError}</p>
-              )}
-
-              <div className="flex justify-end pt-1">
-                <button
-                  onClick={handleSave}
-                  disabled={!hasChanges || saving}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 border ${
-                    hasChanges && !saving
-                      ? "bg-accent-dim border-accent text-primary cursor-pointer"
-                      : "bg-input border-faint text-disabled cursor-not-allowed"
-                  }`}
-                >
-                  {saving ? "Saving..." : "Save changes"}
-                </button>
-              </div>
-            </div>
+                <span className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}>
+                  {getEquippedItemName(slot)}
+                </span>
+              </button>
+            ))}
           </div>
+
+          {/* CHARACTER AVATAR */}
+          <div className="w-28 sm:w-36 shrink-0 flex items-center justify-center">
+            {selectedChar.current_job?.icon ? (
+              <img
+                src={selectedChar.current_job.icon}
+                alt={selectedChar.name}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <span className="text-4xl font-bold text-accent opacity-60">
+                {selectedChar.name?.[0] ?? "?"}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ITEM LIST PANEL */}
+      {activeSlot && selectedChar && (
+        <div className="rounded-2xl border border-soft bg-card overflow-hidden">
+          <div className="px-4 py-2.5 border-b border-faint bg-card-header">
+            <p className="text-[10px] uppercase tracking-widest text-muted">
+              {SLOT_LABELS[activeSlot]}
+            </p>
+          </div>
+
+          {loading ? (
+            <p className="px-4 py-4 text-sm text-muted">Loading...</p>
+          ) : availableItems.length === 0 ? (
+            <p className="px-4 py-4 text-sm text-muted">No items available for this slot.</p>
+          ) : (
+            <ul>
+              {availableItems.map((item) => {
+                const isEquipped = equippedIdForActiveSlot === item.id;
+                return (
+                  <li key={item.id} className="border-b border-faint last:border-0">
+                    <button
+                      onClick={() => handleEquip(item)}
+                      disabled={saving}
+                      className={`w-full flex items-center justify-between px-4 py-3 text-sm transition-colors duration-150 ${
+                        isEquipped
+                          ? "bg-accent-dim text-primary font-semibold cursor-default"
+                          : "text-secondary hover:bg-white/5 cursor-pointer"
+                      }`}
+                    >
+                      <span>{item.equipment.name}</span>
+                      <span className="text-xs font-semibold text-accent-sub shrink-0 ml-4">
+                        +{item.equipment.rating}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
       )}
     </div>
