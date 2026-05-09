@@ -117,7 +117,7 @@ def _resolve(party_rating, min_rating, dungeon_rating):
 
     ratio = party_rating / dungeon_rating
 
-    if ratio < 0.70: return False, 0
+    if ratio < 0.60: return False, 0
     if ratio < 1.00: return True, 1
     if ratio < 1.17: return True, 2
     if ratio < 1.34: return True, 3
