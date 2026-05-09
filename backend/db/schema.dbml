@@ -31,15 +31,15 @@ Table job {
 Table equipment {
   id int [pk, increment]
   name varchar [not null]
-  type varchar [not null, note: "head | chest | primary_hand | secondary_hand | accesory"]
+  slot varchar [not null, note: "head | chest | primary_hand | secondary_hand | accesory"]
+  equipment_type varchar [not null, note: "plate | leather | cloth"]
   rating int [default: 0]
-  job_id int [not null, ref: > job.id] // only characters with this job can equip it
 }
 
 Table character_equipment {
   id int [pk, increment]
   character_id int [not null, ref: > character.id]
-  equipment_id int [not null, ref: > equipment.id]
+  inventory_id int [not null, ref: > party_inventory.id]
   slot varchar [not null, note: "head | chest | primary_hand | secondary_hand | accesory"]
 
   Indexes {
@@ -58,10 +58,11 @@ Table dungeon {
   name varchar [not null]
   description varchar
   image_path varchar
+  rating int [not null, default: 0]
   min_rating int [not null, default: 0] // minimum party rating to attempt
   visibility_rating int [not null, default: 0] // minimum rating to see the dungeon
   duration int [not null, default: 60, note: "seconds the exploration takes"]
-  loot json [note: "array of equipment drop rules"]
+  loot json [note: "array of equipment IDs available as drops"]
 }
 
 Table exploration {
