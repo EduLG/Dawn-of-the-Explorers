@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 5000
 
-CMD ["sh", "-c", "python -m alembic upgrade head && gunicorn --bind 0.0.0.0:5000 run:app"]
+CMD ["sh", "-c", "python -m alembic upgrade head; gunicorn --bind 0.0.0.0:5000 run:app"]
