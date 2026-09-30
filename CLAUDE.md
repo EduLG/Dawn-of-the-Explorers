@@ -8,6 +8,12 @@ Virtual RPG Table Top ("Dawn of the Explorers") is a full-stack idle RPG web app
 
 Production: frontend on Vercel (https://dawn-of-the-explorers.vercel.app), backend on Railway. An Android app that wraps the same frontend is planned — see `docs/android-plan.md`.
 
+## Working Rules
+
+- **Git operations are done only by the user:** creating branches, commits, merges, pushes, pull requests and tags. Do not run any of them. Leave changes uncommitted in the working tree, explain what changed, and suggest when it is a good moment for each operation. Read-only git commands (`status`, `log`, `diff`) are fine.
+- **Deployments and production variables (Railway, Vercel) are changed only by the user.** Say when a change is needed and what to set.
+- Explain each step before doing it and wait for confirmation.
+
 ## Development Commands
 
 ### Docker (recomendado)

@@ -27,8 +27,10 @@ Contexto compartido entre Edu y el agente para llevar Dawn of the Explorers a An
 
 ## Forma de trabajo
 
-- Una rama por tarea o grupo pequeño de tareas, creada desde `develop` y fusionada en `develop`.
 - El agente explica cada paso antes de hacerlo y espera confirmación.
+- **Las operaciones de git las hace solo Edu:** crear ramas, commits, merges, push, pull requests y tags. El agente no ejecuta ninguna de ellas; deja los cambios sin confirmar en el directorio de trabajo, explica qué ha tocado y sugiere cuándo toca cada operación (por ejemplo: "este es buen momento para un commit" o "esta tarea conviene hacerla en una rama nueva desde `develop`").
+- Como referencia para esas sugerencias: una rama por tarea o grupo pequeño de tareas, creada desde `develop` y fusionada de vuelta en `develop`. La decisión final es de Edu.
+- Los despliegues y los cambios de variables en producción (Railway, Vercel) también los hace solo Edu; el agente indica cuándo hacen falta y qué hay que cambiar.
 - Cada tarea de Jira tiene un criterio "Hecho cuando" que se comprueba antes de cerrarla.
 - Los cambios de la fase 2 se comprueban siempre en ancho móvil y en escritorio, porque el código es compartido con la web.
 - Tareas manuales de Edu: instalar Android Studio (DOTE-22), desplegar y configurar variables en Railway (DOTE-26), generar y custodiar la keystore (DOTE-42), probar en el teléfono (DOTE-44) y elegir el canal de distribución (DOTE-47).

@@ -15,3 +15,7 @@ Thumbs.db
 .env
 .env.local
 .env.*.local
+
+# Agent working docs (local only)
+CLAUDE.md
+docs/android-plan.md
