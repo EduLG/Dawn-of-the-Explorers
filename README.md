@@ -100,7 +100,7 @@ Backend reads from `backend/.env` (or Docker environment):
 | `FLASK_DEBUG`    | no       | Set to `True` to enable debug mode and auto-reload                   |
 | `FRONTEND_URL`   | no       | Allowed CORS origin (default: `http://localhost:5173`)               |
 
-JWT tokens expire after **24 hours**. A refresh token is issued alongside the access token.
+Access tokens expire after **15 minutes**. A refresh token, valid for **30 days**, is issued alongside the access token.
 
 ---
 
