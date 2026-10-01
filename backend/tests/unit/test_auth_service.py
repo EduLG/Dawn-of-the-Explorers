@@ -13,7 +13,7 @@ class TestRegisterUser:
         fake_user.id = 1
         mock_create = mocker.patch("app.services.auth_service.create_user", return_value=fake_user)
 
-        result = register_user("eduladron", "edu@test.com", "securepass")
+        result = register_user("eduladron", "edu@test.com", "SecurePass1")
 
         assert result == fake_user
 
@@ -33,7 +33,7 @@ class TestRegisterUser:
         mocker.patch("app.services.auth_service.get_user_by_email", return_value=None)
 
         with pytest.raises(ServiceError) as exc_info:
-            register_user("eduladron", "edu@test.com", "securepass")
+            register_user("eduladron", "edu@test.com", "SecurePass1")
 
         assert exc_info.value.status_code == 409
 
@@ -42,9 +42,24 @@ class TestRegisterUser:
         mocker.patch("app.services.auth_service.get_user_by_email", return_value=mocker.Mock())
 
         with pytest.raises(ServiceError) as exc_info:
-            register_user("eduladron", "edu@test.com", "securepass")
+            register_user("eduladron", "edu@test.com", "SecurePass1")
 
         assert exc_info.value.status_code == 409
+
+
+    @pytest.mark.parametrize("password", [
+        "Short1",        # fewer than 8 characters
+        "nouppercase1",  # no uppercase letter
+        "NOLOWERCASE1",  # no lowercase letter
+    ])
+    def test_register_invalid_password_raises_400(self, mocker, password):
+        mock_create = mocker.patch("app.services.auth_service.create_user")
+
+        with pytest.raises(ServiceError) as exc_info:
+            register_user("eduladron", "edu@test.com", password)
+
+        assert exc_info.value.status_code == 400
+        mock_create.assert_not_called()
 
 
 class TestAuthenticateUser:
