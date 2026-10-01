@@ -68,7 +68,8 @@ cd backend
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env       # fill in DATABASE_URL and JWT_SECRET_KEY
+cp .env.example .env       # defaults point to the Docker database
+docker compose up -d db    # from the repo root: start only PostgreSQL
 flask db upgrade           # create tables via migrations
 python seed_db.py          # load initial data
 flask run
@@ -95,7 +96,7 @@ Backend reads from `backend/.env` (or Docker environment):
 
 | Variable         | Required | Description                                                          |
 | ---------------- | -------- | -------------------------------------------------------------------- |
-| `DATABASE_URL`   | yes      | PostgreSQL connection string — `postgresql://user:pass@host:5432/db` |
+| `DATABASE_URL`   | yes      | PostgreSQL connection string — locally `postgresql://vtt_user:vtt_password@localhost:5433/vtt_db` (the Docker `db` service) |
 | `JWT_SECRET_KEY` | yes      | Secret used to sign JWT tokens. Change before deploying to prod      |
 | `FLASK_DEBUG`    | no       | Set to `True` to enable debug mode and auto-reload                   |
 | `FRONTEND_URL`   | no       | Allowed CORS origin (default: `http://localhost:5173`)               |
