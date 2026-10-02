@@ -88,7 +88,7 @@ p, li, blockquote, .font-body {
   width: 100%;
   padding: 10px 16px;
   border-radius: 12px;
-  font-size: 14px;
+  font-size: 16px; /* below 16px iOS zooms in when the input gets focus */
   border: 1px solid var(--border-input);
   background: var(--bg-input);
   color: var(--text-primary);

@@ -4,7 +4,7 @@ import loginImage from "../assets/resources/dawn_of_the_explorers.png";
 const LoginLayout = () => {
   return (
     <div
-      className="min-h-screen w-full"
+      className="h-dvh w-full overflow-y-auto"
       style={{
         backgroundImage: `url(${loginImage})`,
         backgroundSize: "cover",

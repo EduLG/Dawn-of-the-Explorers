@@ -64,26 +64,28 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
   };
 
   return (
+    // Same top offset as the login page so the modal sits below the background title.
+    // It scrolls when the keyboard leaves too little height.
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
+      className="fixed inset-0 z-50 overflow-y-auto flex flex-col items-center px-4 pb-6 pt-[calc(30dvh+1rem)]"
       style={{ background: "rgba(8,4,2,0.75)", backdropFilter: "blur(4px)", fontFamily: "var(--font-body)" }}
       onClick={() => setVisible(false)}
     >
       <div
-        className="w-full max-w-sm bg-[#12090400] backdrop-blur-xl border border-white/12 rounded-2xl p-8 shadow-2xl"
+        className="w-full max-w-sm bg-[#12090400] backdrop-blur-xl border border-white/12 rounded-2xl p-6 shadow-2xl"
         style={{ background: "rgba(20,11,4,0.92)" }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h2 className="text-2xl font-bold text-[#f3e5c8] mb-1">
+        <h2 className="text-xl font-bold text-[#f3e5c8] mb-0.5">
           {mode === "login" ? "Welcome back" : "Create account"}
         </h2>
-        <p className="text-[#a89070] text-xs mb-6">
+        <p className="text-[#a89070] text-xs mb-4">
           {mode === "login" ? "Sign in to continue your adventure." : "Join and start your adventure."}
         </p>
 
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {mode === "register" && (
-            <div className="flex flex-col gap-1.5">
+            <div className="flex flex-col gap-1">
               <label className={labelClass}>Email</label>
               <input
                 type="email"
@@ -95,7 +97,7 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
             </div>
           )}
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <label className={labelClass}>Username</label>
             <input
               type="text"
@@ -106,7 +108,7 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
+          <div className="flex flex-col gap-1">
             <label className={labelClass}>Password</label>
             <input
               type="password"
@@ -139,14 +141,14 @@ const LogRegModal = ({ visible, setVisible, mode }) => {
           <button
             disabled={loading}
             onClick={mode === "login" ? handleLogin : handleRegister}
-            className="w-full py-3 mt-2 rounded-xl bg-[#c9973b] hover:bg-[#b8862a] disabled:opacity-50 text-[#1a0f00] font-bold text-sm tracking-wide uppercase transition-colors"
+            className="w-full py-3 mt-1 rounded-xl bg-[#c9973b] hover:bg-[#b8862a] disabled:opacity-50 text-[#1a0f00] font-bold text-sm tracking-wide uppercase transition-colors"
           >
             {loading ? "Loading..." : mode === "login" ? "Login" : "Register"}
           </button>
 
           <button
             onClick={() => setVisible(false)}
-            className="text-center text-xs text-[#6b5a45] hover:text-[#a89070] transition-colors"
+            className="-mt-1 -mb-2 py-3 text-center text-xs text-[#8a7458] hover:text-[#a89070] transition-colors"
           >
             Cancel
           </button>

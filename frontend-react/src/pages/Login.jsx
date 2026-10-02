@@ -26,10 +26,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ fontFamily: "var(--font-body)" }}>
+    // The title is painted in the background image and always ends near 30% of the viewport height,
+    // so the content starts just below it instead of being centered over it.
+    <div className="min-h-full flex flex-col items-center px-4 pb-6 pt-[calc(30dvh+1rem)]" style={{ fontFamily: "var(--font-body)" }}>
       <div className="w-full max-w-md flex flex-col items-center gap-8">
         <div
-          className="w-full backdrop-blur-xl border border-[#c9973b]/20 rounded-2xl p-8 flex flex-col gap-4 shadow-2xl"
+          className={`w-full backdrop-blur-xl border border-[#c9973b]/20 rounded-2xl p-6 sm:p-8 flex flex-col gap-4 shadow-2xl ${
+            logRegVisible ? "invisible" : ""
+          }`}
           style={{ background: "rgba(13,7,3,0.88)" }}
         >
           <button
@@ -63,7 +67,7 @@ const Login = () => {
             <p className="text-red-400 text-xs text-center">{demoError}</p>
           )}
 
-          <p className="text-[#4a3a2a] text-xs text-center">
+          <p className="text-[#8a7458] text-xs text-center">
             Demo mode — no account needed, changes are not saved
           </p>
         </div>
