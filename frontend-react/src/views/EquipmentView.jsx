@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useInventory } from "../hooks/useInventory";
 import { useUpdateEquipment } from "../hooks/useUpdateEquipment";
@@ -36,6 +36,7 @@ const EquipmentView = () => {
 
   const [selectedCharId, setSelectedCharId] = useState(null);
   const [activeSlot, setActiveSlot] = useState(null);
+  const itemListRef = useRef(null);
 
   const selectedChar =
     characters.find((c) => c.id === selectedCharId) ?? characters[0];
@@ -79,6 +80,11 @@ const EquipmentView = () => {
     selectedChar?.equipped_items?.find((i) => i.slot === activeSlot)
       ?.inventory_id ?? null;
 
+  // On mobile the item list opens below the fold; bring it into view when a slot is chosen.
+  useEffect(() => {
+    if (activeSlot) itemListRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, [activeSlot]);
+
   const handleSlotClick = (slot) =>
     setActiveSlot((prev) => (prev === slot ? null : slot));
 
@@ -102,7 +108,7 @@ const EquipmentView = () => {
           <button
             key={char.id}
             onClick={() => handleCharSelect(char.id)}
-            className={`w-full px-5 py-2 rounded-xl text-sm font-semibold text-center transition-all duration-200 border ${
+            className={`w-full min-h-11 px-5 py-2.5 rounded-xl text-sm font-semibold text-center transition-all duration-200 border ${
               (selectedCharId ?? characters[0]?.id) === char.id
                 ? "bg-accent-dim border-accent text-primary"
                 : "bg-input border-soft text-secondary"
@@ -119,16 +125,16 @@ const EquipmentView = () => {
           <button
             key={slot}
             onClick={() => handleSlotClick(slot)}
-            className={`w-full sm:w-64 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left border transition-[filter] duration-150 ${
+            className={`w-full sm:w-72 flex items-center gap-3 px-4 py-2.5 rounded-xl text-left border transition-[filter] duration-150 ${
               activeSlot === slot
                 ? "bg-accent-dim border-accent text-primary"
                 : "bg-input border-soft text-secondary hover:brightness-125"
             }`}
           >
-            <span className="text-[10px] uppercase tracking-widest text-muted w-16 shrink-0">
+            <span className="text-[12px] uppercase tracking-widest text-secondary w-16 shrink-0">
               {SLOT_LABELS[slot]}
             </span>
-            <span className={`text-sm truncate ${activeSlot === slot ? "font-semibold" : ""}`}>
+            <span className={`text-sm min-w-0 break-words ${activeSlot === slot ? "font-semibold" : ""}`}>
               {getEquippedItemName(slot)}
             </span>
           </button>
@@ -170,9 +176,12 @@ const EquipmentView = () => {
 
       {/* ITEM LIST PANEL */}
       {activeSlot && selectedChar && (
-        <div className="rounded-2xl border border-soft bg-card overflow-hidden">
+        <div
+          ref={itemListRef}
+          className="rounded-2xl border border-soft bg-card overflow-hidden scroll-mt-24 scroll-mb-24 lg:scroll-mb-4"
+        >
           <div className="px-4 py-2.5 border-b border-faint bg-card-header">
-            <p className="text-[10px] uppercase tracking-widest text-muted">
+            <p className="text-[12px] uppercase tracking-widest text-secondary">
               {SLOT_LABELS[activeSlot]}
             </p>
           </div>
