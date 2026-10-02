@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { Avatar, DropdownMenu } from "@radix-ui/themes";
 import useUser from "../hooks/useUser";
@@ -8,11 +7,11 @@ import bgImage from "../assets/resources/bgImage.png";
 import headerlogo from "../assets/resources/header-logo.png";
 
 const navItems = [
-  { label: "Team", mobileLabel: "Team", to: "/home/team" },
-  { label: "Characters", mobileLabel: "Chars", to: "/home/equipment" },
-  { label: "Inventory", mobileLabel: "Inventory", to: "/home/inventory" },
-  { label: "Exploration quests", mobileLabel: "Quests", to: "/home/quests" },
-  { label: "Market", mobileLabel: "Market", to: "/home/market" },
+  { label: "Team", mobileLabel: "Team", icon: "pi-users", to: "/home/team" },
+  { label: "Characters", mobileLabel: "Chars", icon: "pi-user", to: "/home/equipment" },
+  { label: "Inventory", mobileLabel: "Inventory", icon: "pi-box", to: "/home/inventory" },
+  { label: "Exploration quests", mobileLabel: "Quests", icon: "pi-compass", to: "/home/quests" },
+  { label: "Market", mobileLabel: "Market", icon: "pi-shopping-bag", to: "/home/market" },
 ];
 
 const sidebarLinkClass = ({ isActive }) =>
@@ -22,6 +21,13 @@ const sidebarLinkClass = ({ isActive }) =>
       : "text-muted hover:bg-white/8 hover:text-primary border border-transparent"
   }`;
 
+const bottomLinkClass = ({ isActive }) =>
+  `flex flex-col items-center justify-center gap-1 min-h-14 px-1 border-t-2 transition-colors duration-200 ${
+    isActive
+      ? "border-[var(--accent)] text-accent bg-accent-dim"
+      : "border-transparent text-muted"
+  }`;
+
 const Home = () => {
   const { data: user, refetch } = useUser();
   const party = user?.party;
@@ -29,7 +35,6 @@ const Home = () => {
   const isDemo = isDemoToken(localStorage.getItem("token"));
 
   const navigate = useNavigate();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -39,7 +44,7 @@ const Home = () => {
 
   return (
     <div
-      className="min-h-screen w-full antialiased"
+      className="min-h-screen w-full antialiased px-safe"
       style={{
         backgroundImage: `linear-gradient(rgba(10,6,2,0.72), rgba(10,6,2,0.72)), url(${bgImage})`,
         backgroundSize: "cover",
@@ -47,33 +52,16 @@ const Home = () => {
       }}
     >
       {/* HEADER */}
-      <header className="sticky top-0 z-20 backdrop-blur-md bg-header border-b border-faint">
+      <header className="sticky top-0 z-20 backdrop-blur-md bg-header border-b border-faint pt-safe">
         {/* DEMO BANNER */}
         {isDemo && (
           <div className="w-full py-1.5 px-4 text-center text-xs font-semibold tracking-wide uppercase bg-[#c9973b]/15 border-b border-[#c9973b]/20 text-[#c9973b]">
-            Demo mode — changes are not saved
+            <span className="sm:hidden">Demo mode — not saved</span>
+            <span className="hidden sm:inline">Demo mode — changes are not saved</span>
           </div>
         )}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            {/* Hamburger */}
-            <button
-              className="lg:hidden flex flex-col justify-center gap-1.5 w-8 h-8 cursor-pointer"
-              onClick={() => setMenuOpen((prev) => !prev)}
-              aria-label="Toggle navigation"
-            >
-              <span
-                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "rotate-45 translate-y-2" : ""}`}
-              />
-              <span
-                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "opacity-0" : ""}`}
-              />
-              <span
-                className={`block h-0.5 bg-primary transition-all duration-200 ${menuOpen ? "-rotate-45 -translate-y-2" : ""}`}
-              />
-            </button>
-            <img src={headerlogo} alt="Logo" className="h-10 sm:h-12" />
-          </div>
+          <img src={headerlogo} alt="Logo" className="h-10 sm:h-12" />
 
           <div className="flex items-center gap-3">
             <div className="text-right hidden sm:block">
@@ -109,28 +97,10 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Menu desplegable movil */}
-        {menuOpen && (
-          <nav className="lg:hidden border-t border-faint bg-header px-4 py-3">
-            <ul className="flex flex-col gap-1">
-              {navItems.map((item) => (
-                <li key={item.to}>
-                  <NavLink
-                    to={item.to}
-                    className={sidebarLinkClass}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    {item.label}
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        )}
       </header>
 
-      {/* LAYOUT */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
+      {/* LAYOUT (extra bottom padding on mobile leaves room for the bottom nav) */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 pb-[calc(6rem_+_env(safe-area-inset-bottom))] lg:pb-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6">
         {/* SIDEBAR DESKTOP */}
         <aside className="hidden lg:block">
           <nav className="rounded-2xl p-3 sticky top-24 border border-soft bg-card">
@@ -154,6 +124,20 @@ const Home = () => {
           <Outlet context={{ user, party, refetch }} />
         </main>
       </div>
+
+      {/* BOTTOM NAV MOBILE */}
+      <nav className="lg:hidden fixed bottom-0 inset-x-0 z-20 backdrop-blur-md bg-header border-t border-faint pb-safe px-safe">
+        <ul className="grid grid-cols-5">
+          {navItems.map((item) => (
+            <li key={item.to}>
+              <NavLink to={item.to} className={bottomLinkClass}>
+                <i className={`pi ${item.icon} text-lg`} aria-hidden="true" />
+                <span className="text-[13px] leading-none">{item.mobileLabel}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       {/* ONBOARDING MODAL */}
       {needsOnboarding && (

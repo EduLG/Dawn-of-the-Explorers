@@ -75,6 +75,14 @@ p, li, blockquote, .font-body {
 @utility shadow-card  { box-shadow: var(--shadow-card); }
 @utility shadow-modal { box-shadow: var(--shadow-modal); }
 
+/* ── Safe area utilities (notch, status bar, gesture bar; 0 on devices without them) ── */
+@utility pt-safe { padding-top: env(safe-area-inset-top); }
+@utility pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+@utility px-safe {
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
 /* ── Compound field classes ── */
 .field-input {
   width: 100%;

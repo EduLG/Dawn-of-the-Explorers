@@ -5,6 +5,7 @@ import { PrimeReactProvider } from "primereact/api";
 import "@radix-ui/themes/styles.css";
 import "primereact/resources/themes/lara-dark-amber/theme.css";
 import "primereact/resources/primereact.css";
+import "primeicons/primeicons.css";
 import App from "./App.jsx";
 import "./styles/index.css";
 
