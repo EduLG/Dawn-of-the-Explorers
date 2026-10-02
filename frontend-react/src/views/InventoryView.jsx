@@ -29,8 +29,16 @@ const SlotIcon = ({ type }) => {
   );
 };
 
+const SLOT_LABELS = {
+  head: "Head",
+  chest: "Chest",
+  primary_hand: "Primary hand",
+  secondary_hand: "Secondary hand",
+  accesory: "Accessory",
+};
+
 const SortIndicator = ({ active, dir }) => (
-  <span className={`ml-1 text-[10px] ${active ? "text-primary" : "text-muted opacity-40"}`}>
+  <span className={`ml-1 text-[12px] ${active ? "text-primary" : "text-muted opacity-40"}`}>
     {active && dir === "desc" ? "▼" : "▲"}
   </span>
 );
@@ -46,6 +54,7 @@ const InventoryView = () => {
   const { data: inventory, loading, refetch: refetchInventory } = useInventory();
 
   const [armorFilter, setArmorFilter] = useState("all");
+  const [slotFilter, setSlotFilter] = useState("all");
   const [sortConfig, setSortConfig] = useState({ key: "rating", dir: "asc" });
   const [pendingDelete, setPendingDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
@@ -57,6 +66,21 @@ const InventoryView = () => {
     [inventory]
   );
 
+  // Slots present among the items of the selected type, in equipment order
+  const slotsForType = useMemo(() => {
+    const present = new Set(
+      inventory
+        .filter((i) => i.equipment.equipment_type === armorFilter)
+        .map((i) => i.equipment.slot),
+    );
+    return Object.keys(SLOT_LABELS).filter((slot) => present.has(slot));
+  }, [inventory, armorFilter]);
+
+  const handleArmorFilterChange = (value) => {
+    setArmorFilter(value);
+    setSlotFilter("all");
+  };
+
   const handleSort = (key) => {
     setSortConfig((prev) =>
       prev.key === key
@@ -66,10 +90,11 @@ const InventoryView = () => {
   };
 
   const sorted = useMemo(() => {
-    const base =
-      armorFilter === "all"
-        ? inventory
-        : inventory.filter((i) => i.equipment.equipment_type === armorFilter);
+    const base = inventory.filter(
+      (i) =>
+        (armorFilter === "all" || i.equipment.equipment_type === armorFilter) &&
+        (slotFilter === "all" || i.equipment.slot === slotFilter),
+    );
 
     return [...base].sort((a, b) => {
       const eq1 = a.equipment;
@@ -82,7 +107,7 @@ const InventoryView = () => {
       }
       return sortConfig.dir === "asc" ? cmp : -cmp;
     });
-  }, [inventory, armorFilter, sortConfig]);
+  }, [inventory, armorFilter, slotFilter, sortConfig]);
 
   const handleDeleteClick = (invItem) => {
     const equippedByChar = characters.find((c) =>
@@ -128,22 +153,35 @@ const InventoryView = () => {
       </div>
 
       {/* FILTER */}
-      <Flex align="center" gap="3">
-        <Text size="1" color="gray" className="uppercase tracking-widest shrink-0">
-          Filter by type
-        </Text>
-        <Select.Root value={armorFilter} onValueChange={setArmorFilter}>
-          <Select.Trigger placeholder="No filter" />
+      <Flex align="center" gap="3" wrap="wrap">
+        <Select.Root value={armorFilter} onValueChange={handleArmorFilterChange} size="3">
+          <Select.Trigger placeholder="No filter" aria-label="Filter by type" style={{ minHeight: 44 }} />
           <Select.Content>
-            <Select.Item value="all">No filter</Select.Item>
+            <Select.Item value="all" style={{ minHeight: 44 }}>No filter</Select.Item>
             <Select.Separator />
             {armorTypes.map((type) => (
-              <Select.Item key={type} value={type}>
+              <Select.Item key={type} value={type} style={{ minHeight: 44 }}>
                 {type}
               </Select.Item>
             ))}
           </Select.Content>
         </Select.Root>
+
+        {/* Second filter, shown once a type is chosen */}
+        {armorFilter !== "all" && (
+          <Select.Root value={slotFilter} onValueChange={setSlotFilter} size="3">
+            <Select.Trigger placeholder="All slots" aria-label="Filter by slot" style={{ minHeight: 44 }} />
+            <Select.Content>
+              <Select.Item value="all" style={{ minHeight: 44 }}>All slots</Select.Item>
+              <Select.Separator />
+              {slotsForType.map((slot) => (
+                <Select.Item key={slot} value={slot} style={{ minHeight: 44 }}>
+                  {SLOT_LABELS[slot]}
+                </Select.Item>
+              ))}
+            </Select.Content>
+          </Select.Root>
+        )}
       </Flex>
 
       {/* TABLE */}
@@ -154,7 +192,7 @@ const InventoryView = () => {
           <p className="text-sm text-muted">
             {armorFilter === "all"
               ? "Your inventory is empty. Complete quests to earn loot!"
-              : `No items for "${armorFilter}" in inventory.`}
+              : `No items for "${armorFilter}"${slotFilter !== "all" ? ` / "${SLOT_LABELS[slotFilter]}"` : ""} in inventory.`}
           </p>
         </div>
       ) : (
@@ -167,14 +205,14 @@ const InventoryView = () => {
                   <Table.ColumnHeaderCell key={key} justify={justify} className={className}>
                     <button
                       onClick={() => handleSort(key)}
-                      className="flex items-center gap-0.5 cursor-pointer select-none hover:text-primary transition-colors"
+                      className="flex items-center gap-0.5 min-h-11 cursor-pointer select-none hover:text-primary transition-colors"
                     >
                       {label}
                       <SortIndicator active={sortConfig.key === key} dir={sortConfig.dir} />
                     </button>
                   </Table.ColumnHeaderCell>
                 ))}
-                <Table.ColumnHeaderCell style={{ width: "4.5rem" }} />
+                <Table.ColumnHeaderCell />
               </Table.Row>
             </Table.Header>
 
@@ -196,11 +234,14 @@ const InventoryView = () => {
                       <Text weight="bold" color="bronze">+{eq.rating}</Text>
                     </Table.Cell>
                     <Table.Cell justify="end">
+                      {/* Icon only on mobile to leave room for the item name */}
                       <button
                         onClick={() => handleDeleteClick(invItem)}
-                        className="text-[10px] uppercase tracking-wider text-disabled hover:text-status-red transition-colors"
+                        aria-label={`Discard ${eq.name}`}
+                        className="min-w-11 min-h-11 inline-flex items-center justify-center gap-1.5 sm:px-2 text-[12px] uppercase tracking-wider text-secondary hover:text-status-red transition-colors"
                       >
-                        Discard
+                        <i className="pi pi-trash" aria-hidden="true" />
+                        <span className="hidden sm:inline">Discard</span>
                       </button>
                     </Table.Cell>
                   </Table.Row>
@@ -234,13 +275,15 @@ const InventoryView = () => {
 
           <Flex gap="3" justify="end" mt="4">
             <Dialog.Close>
-              <Button variant="soft" color="gray" disabled={deleting}>
+              <Button variant="soft" color="gray" size="3" style={{ minHeight: 44 }} disabled={deleting}>
                 Cancel
               </Button>
             </Dialog.Close>
             <Button
               variant="soft"
               color="red"
+              size="3"
+              style={{ minHeight: 44 }}
               disabled={deleting}
               onClick={handleConfirmDelete}
             >
