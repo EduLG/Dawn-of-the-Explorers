@@ -23,7 +23,7 @@ const CharacterCard = ({
   const slots = { head, chest, primaryArm, secondaryArm, accesory };
 
   return (
-    <div className="rounded-2xl overflow-hidden shadow-card border border-soft bg-card transition-all duration-300 hover:border-[--accent-border]">
+    <div className="@container rounded-2xl overflow-hidden shadow-card border border-soft bg-card transition-all duration-300 hover:border-[--accent-border]">
       {/* CARD HEADER */}
       <div className="border-b border-faint px-5 py-4 flex items-center justify-between gap-3 bg-card-header">
         <div className="flex flex-col gap-0.5">
@@ -47,18 +47,18 @@ const CharacterCard = ({
         </div>
       </div>
 
-      {/* CARD BODY */}
-      <div className="p-5 flex gap-4 items-stretch">
+      {/* CARD BODY: stacked on narrow cards, side by side from @xl */}
+      <div className="p-5 flex flex-col @xl:flex-row gap-4 items-stretch">
         {/* AVATAR */}
         <div className="flex-shrink-0">
-          <div className="w-40 h-full min-h-40 rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
+          <div className="w-full h-40 @xl:w-40 @xl:h-full min-h-40 rounded-xl border border-accent bg-accent-dim flex items-center justify-center overflow-hidden">
             <Avatar src={icon} size="9" fallback={charName?.[0] ?? "?"} />
           </div>
         </div>
 
         {/* EQUIPMENT PANEL */}
         <div className="flex-1 min-w-0 rounded-xl border border-faint bg-input overflow-hidden flex flex-col">
-          <div className="px-4 py-2 border-b border-faint bg-card-header">
+          <div className="px-4 py-2 border-b border-faint bg-card-header flex items-baseline justify-between gap-2">
             <span className="text-xs uppercase tracking-widest font-semibold text-accent-sub">
               Equipment
             </span>
@@ -67,11 +67,14 @@ const CharacterCard = ({
             {equipmentSlots.map(({ key, label }) => (
               <li
                 key={key}
-                className="flex items-center justify-between gap-2 text-sm border-b border-faint last:border-b-0 pb-1 last:pb-0"
+                className="flex items-baseline justify-between gap-2 text-sm border-b border-faint last:border-b-0 pb-1 last:pb-0"
               >
                 <span className="w-20 shrink-0 text-secondary">{label}</span>
-                <span className="truncate text-right text-primary">
-                  {slots[key] || "—"}
+                <span className="flex-1 min-w-0 text-right break-words text-primary">
+                  {slots[key]?.name || "—"}
+                </span>
+                <span className="w-8 shrink-0 text-right font-semibold text-accent">
+                  {slots[key] ? `+${slots[key].rating}` : "—"}
                 </span>
               </li>
             ))}

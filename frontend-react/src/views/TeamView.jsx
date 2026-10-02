@@ -2,8 +2,8 @@ import { useOutletContext } from "react-router-dom";
 import CharacterCard from "../components/CharacterCard";
 import hangarImg from "../assets/resources/Hangar.png";
 
-const getEquippedItemName = (equippedItems, slot) =>
-  equippedItems?.find((item) => item.slot === slot)?.equipment?.name || "—";
+const getEquippedItem = (equippedItems, slot) =>
+  equippedItems?.find((item) => item.slot === slot)?.equipment;
 
 const TeamView = () => {
   const { party } = useOutletContext();
@@ -75,11 +75,11 @@ const TeamView = () => {
               characterClass={character.current_job?.name}
               rating={character.rating || 0}
               icon={character.current_job?.icon}
-              primaryArm={getEquippedItemName(equippedItems, "primary_hand")}
-              secondaryArm={getEquippedItemName(equippedItems, "secondary_hand")}
-              head={getEquippedItemName(equippedItems, "head")}
-              chest={getEquippedItemName(equippedItems, "chest")}
-              accesory={getEquippedItemName(equippedItems, "accesory")}
+              primaryArm={getEquippedItem(equippedItems, "primary_hand")}
+              secondaryArm={getEquippedItem(equippedItems, "secondary_hand")}
+              head={getEquippedItem(equippedItems, "head")}
+              chest={getEquippedItem(equippedItems, "chest")}
+              accesory={getEquippedItem(equippedItems, "accesory")}
             />
           );
         })}
