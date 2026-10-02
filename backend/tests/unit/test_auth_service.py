@@ -1,5 +1,5 @@
 import pytest
-from app.services.auth_service import register_user, authenticate_user, ServiceError
+from app.services.auth_service import register_user, authenticate_user, refresh_access_token, ServiceError
 
 
 class TestRegisterUser:
@@ -103,3 +103,26 @@ class TestAuthenticateUser:
             authenticate_user("eduladron", "wrongpass")
 
         assert exc_info.value.status_code == 401
+
+
+class TestRefreshAccessToken:
+
+    def test_refresh_regular_token_has_no_demo_claims(self, mocker):
+        mock_create = mocker.patch("app.services.auth_service.create_access_token", return_value="fake_access")
+
+        result = refresh_access_token(1, {"sub": "1", "type": "refresh"})
+
+        assert result == "fake_access"
+        mock_create.assert_called_once_with(identity=1, additional_claims=None)
+
+    def test_refresh_demo_token_keeps_demo_claims(self, mocker):
+        mock_create = mocker.patch("app.services.auth_service.create_access_token", return_value="fake_access")
+        claims = {"sub": "demo-abc", "type": "refresh", "is_demo": True, "demo_session_id": "demo-abc"}
+
+        result = refresh_access_token("demo-abc", claims)
+
+        assert result == "fake_access"
+        mock_create.assert_called_once_with(
+            identity="demo-abc",
+            additional_claims={"is_demo": True, "demo_session_id": "demo-abc"},
+        )

@@ -1,6 +1,12 @@
 from flask import request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity, create_access_token
-from app.services.auth_service import register_user, authenticate_user, create_demo_session, ServiceError
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from app.services.auth_service import (
+    register_user,
+    authenticate_user,
+    create_demo_session,
+    refresh_access_token,
+    ServiceError,
+)
 
 
 def register_user_handler():
@@ -61,6 +67,5 @@ def demo_login_handler():
 
 @jwt_required(refresh=True)
 def refresh_token_handler():
-    user_id = get_jwt_identity()
-    new_access_token = create_access_token(identity=user_id)
+    new_access_token = refresh_access_token(get_jwt_identity(), get_jwt())
     return jsonify({"access_token": new_access_token}), 200

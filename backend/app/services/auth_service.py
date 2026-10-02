@@ -68,6 +68,17 @@ def create_demo_session():
     }
 
 
+def refresh_access_token(identity, claims):
+    """
+    Issues a new access token from a verified refresh token.
+    Demo claims are carried over so the refreshed token stays bound to its demo session.
+    """
+    additional_claims = None
+    if claims.get("is_demo"):
+        additional_claims = {"is_demo": True, "demo_session_id": claims.get("demo_session_id")}
+    return create_access_token(identity=identity, additional_claims=additional_claims)
+
+
 def authenticate_user(username, password):
     if not username or not password:
         raise ServiceError("Missing data", 400)
